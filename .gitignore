@@ -1,0 +1,31 @@
+__pycache__/
+*.pyc
+*.pyo
+.DS_Store
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+
+# Data (too large for git)
+data/clevrer/
+data/*.zip
+data/*.json
+
+# Experiments & checkpoints
+experiments/
+wandb/
+*.pt
+*.pth
+*.ckpt
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
