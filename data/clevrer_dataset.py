@@ -47,13 +47,17 @@ class CLEVRERDataset(Dataset):
 
         # Load annotations
         ann_file = self.data_dir / f"{split}.json"
-        if ann_file.exists():
-            with open(ann_file, "r") as f:
-                self.annotations = json.load(f)
-            print(f"Loaded {len(self.annotations)} annotations from {ann_file}")
+        if ann_file.exists() and ann_file.stat().st_size > 0:
+            try:
+                with open(ann_file, "r") as f:
+                    self.annotations = json.load(f)
+                print(f"Loaded {len(self.annotations)} annotations from {ann_file}")
+            except json.JSONDecodeError:
+                self.annotations = []
+                print(f"Warning: {ann_file} is invalid JSON. Running in frame-only mode.")
         else:
             self.annotations = []
-            print(f"Warning: {ann_file} not found. Running in frame-only mode.")
+            print(f"Warning: {ann_file} not found or empty. Running in frame-only mode.")
 
         # Scan for all .mp4 files across range directories
         self.video_paths = self._scan_videos()
