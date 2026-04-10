@@ -156,20 +156,22 @@ def main():
         import wandb
         wandb.init(project=config.train.wandb_project, name=config.exp_name)
 
-    # Data
-    train_dataset = CLEVRERDataset(
+    # Data — both train and val scan the same data_dir for mp4 files.
+    # When full dataset is available, use separate dirs via --data_dir.
+    # For now, we split the found videos 90/10.
+    full_dataset = CLEVRERDataset(
         data_dir=config.data.data_dir,
-        split="train",
+        split="validation",  # split name only affects annotation loading
         num_frames=config.data.num_frames,
         frame_skip=config.data.frame_skip,
         resolution=config.data.resolution,
     )
-    val_dataset = CLEVRERDataset(
-        data_dir=config.data.data_dir,
-        split="validation",
-        num_frames=config.data.num_frames,
-        frame_skip=config.data.frame_skip,
-        resolution=config.data.resolution,
+    n_total = len(full_dataset)
+    n_val = max(1, n_total // 10)
+    n_train = n_total - n_val
+    train_dataset, val_dataset = torch.utils.data.random_split(
+        full_dataset, [n_train, n_val],
+        generator=torch.Generator().manual_seed(config.seed),
     )
 
     train_loader = DataLoader(

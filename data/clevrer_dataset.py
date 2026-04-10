@@ -3,152 +3,145 @@ CLEVRER dataset loader for CausalComp.
 
 Loads video frames and annotations from the CLEVRER dataset.
 Supports compositional train/test splits (CLEVRER-Comp).
+
+Actual CLEVRER directory structure:
+    data_dir/
+        video_10000-11000/
+            video_10000.mp4
+            video_10001.mp4
+            ...
+        video_11000-12000/
+            ...
+        validation.json
 """
 
 import json
-import os
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional
 
 import numpy as np
 import torch
-from PIL import Image
 from torch.utils.data import Dataset
 from torchvision import transforms
+import torchvision.io as vio
 
 
 class CLEVRERDataset(Dataset):
     """CLEVRER video dataset.
 
     Each sample is a short video clip of T frames with object annotations.
-
-    Directory structure expected:
-        data_dir/
-            video_train/      or  video_validation/
-                video_00000/
-                    frame_00000.png
-                    frame_00001.png
-                    ...
-            train.json
-            validation.json
+    Reads .mp4 files directly via torchvision.io.
     """
 
     def __init__(self, data_dir: str, split: str = "train",
                  num_frames: int = 16, frame_skip: int = 4,
                  resolution: int = 128, comp_split: Optional[Dict] = None):
-        """
-        Args:
-            data_dir: path to CLEVRER data
-            split: "train" or "validation"
-            num_frames: number of frames to sample per clip
-            frame_skip: sample every N-th frame
-            resolution: resize frames to this size
-            comp_split: optional compositional split config
-                        {"video_ids": [list of video IDs to include]}
-        """
         self.data_dir = Path(data_dir)
         self.split = split
         self.num_frames = num_frames
         self.frame_skip = frame_skip
+        self.resolution = resolution
 
-        # Image transform
-        self.transform = transforms.Compose([
-            transforms.Resize((resolution, resolution)),
-            transforms.ToTensor(),  # [0, 1], [C, H, W]
-        ])
+        # Image transform (applied per frame after reading)
+        self.resize = transforms.Resize((resolution, resolution), antialias=True)
 
         # Load annotations
         ann_file = self.data_dir / f"{split}.json"
         if ann_file.exists():
             with open(ann_file, "r") as f:
                 self.annotations = json.load(f)
+            print(f"Loaded {len(self.annotations)} annotations from {ann_file}")
         else:
             self.annotations = []
             print(f"Warning: {ann_file} not found. Running in frame-only mode.")
 
-        # Determine video directory
-        if split == "train":
-            self.video_dir = self.data_dir / "video_train"
-        else:
-            self.video_dir = self.data_dir / "video_validation"
-
-        # List available videos
-        if self.video_dir.exists():
-            self.video_ids = sorted([
-                d.name for d in self.video_dir.iterdir() if d.is_dir()
-            ])
-        else:
-            # Fallback: generate dummy IDs from annotations
-            self.video_ids = [
-                f"video_{ann['scene_index']:05d}"
-                for ann in self.annotations
-            ] if self.annotations else []
+        # Scan for all .mp4 files across range directories
+        self.video_paths = self._scan_videos()
+        print(f"Found {len(self.video_paths)} videos for split '{split}'")
 
         # Apply compositional split filter
         if comp_split is not None and "video_ids" in comp_split:
             allowed = set(comp_split["video_ids"])
-            self.video_ids = [v for v in self.video_ids if v in allowed]
+            self.video_paths = [
+                p for p in self.video_paths if p.stem in allowed
+            ]
 
-        # Build annotation index
+        # Build annotation index (keyed by scene_index)
         self.ann_index = {}
         for ann in self.annotations:
-            vid_name = f"video_{ann['scene_index']:05d}"
-            self.ann_index[vid_name] = ann
+            scene_idx = ann.get("scene_index", None)
+            if scene_idx is not None:
+                self.ann_index[scene_idx] = ann
+
+    def _scan_videos(self) -> List[Path]:
+        """Scan data_dir for all .mp4 files in range subdirectories."""
+        mp4_files = []
+
+        # CLEVRER stores videos in range dirs: video_10000-11000/, video_0-1000/, etc.
+        for subdir in sorted(self.data_dir.iterdir()):
+            if subdir.is_dir() and subdir.name.startswith("video_"):
+                mp4s = sorted(subdir.glob("video_*.mp4"))
+                mp4_files.extend(mp4s)
+
+        # Also check for mp4s directly in data_dir
+        mp4_files.extend(sorted(self.data_dir.glob("video_*.mp4")))
+
+        return mp4_files
 
     def __len__(self):
-        return len(self.video_ids)
+        return len(self.video_paths)
 
     def __getitem__(self, idx: int) -> Dict[str, torch.Tensor]:
-        vid_name = self.video_ids[idx]
-        vid_dir = self.video_dir / vid_name
+        mp4_path = self.video_paths[idx]
+        vid_name = mp4_path.stem  # e.g. "video_10000"
 
-        # Load frames
-        frames = self._load_frames(vid_dir)
+        # Extract scene index from filename
+        scene_idx = int(vid_name.split("_")[1])
+
+        # Load video frames
+        frames = self._load_video(mp4_path)
 
         # Load annotations if available
-        ann = self.ann_index.get(vid_name, {})
-
-        # Extract object info from annotations
+        ann = self.ann_index.get(scene_idx, {})
         objects = self._extract_objects(ann)
-
-        # Extract causal events (ground truth for evaluation)
         events = self._extract_events(ann)
 
         return {
             "video": frames,          # [T, 3, H, W]
             "video_id": vid_name,
-            "objects": objects,        # dict of object properties
-            "events": events,          # list of causal events
+            "objects": objects,
+            "events": events,
         }
 
-    def _load_frames(self, vid_dir: Path) -> torch.Tensor:
-        """Load and sample T frames from a video directory."""
-        # List all frames
-        frame_files = sorted(vid_dir.glob("frame_*.png"))
-        if not frame_files:
-            # Try alternative naming
-            frame_files = sorted(vid_dir.glob("*.png"))
+    def _load_video(self, mp4_path: Path) -> torch.Tensor:
+        """Load and sample T frames from an mp4 file."""
+        try:
+            # Read video: returns (T, H, W, C) uint8
+            video, _, info = vio.read_video(str(mp4_path), pts_unit="sec")
+        except Exception as e:
+            print(f"Warning: failed to read {mp4_path}: {e}")
+            return torch.zeros(self.num_frames, 3, self.resolution, self.resolution)
 
-        if not frame_files:
-            # Return dummy frames for debugging
-            return torch.randn(self.num_frames, 3, 128, 128)
-
-        total_frames = len(frame_files)
+        total_frames = video.shape[0]
 
         # Sample frames with frame_skip
-        max_start = total_frames - self.num_frames * self.frame_skip
-        start = np.random.randint(0, max(1, max_start))
+        needed = self.num_frames * self.frame_skip
+        max_start = max(0, total_frames - needed)
+        start = np.random.randint(0, max(1, max_start + 1))
         indices = [
             min(start + i * self.frame_skip, total_frames - 1)
             for i in range(self.num_frames)
         ]
 
-        frames = []
-        for idx in indices:
-            img = Image.open(frame_files[idx]).convert("RGB")
-            frames.append(self.transform(img))
+        # Select frames and convert: [T, H, W, C] uint8 → [T, C, H, W] float32
+        frames = video[indices]                         # [T, H, W, C]
+        frames = frames.permute(0, 3, 1, 2).float()    # [T, C, H, W]
+        frames = frames / 255.0                         # normalize to [0, 1]
 
-        return torch.stack(frames)  # [T, 3, H, W]
+        # Resize
+        frames = self.resize(frames)  # [T, C, H_new, W_new]
+
+        return frames
 
     def _extract_objects(self, ann: dict) -> dict:
         """Extract object properties from CLEVRER annotations."""
