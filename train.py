@@ -77,7 +77,8 @@ def train_one_epoch(model, loader, optimizer, config, epoch, logger):
             logger.info(
                 f"Epoch {epoch} [{batch_idx}/{len(loader)}] "
                 f"loss={avg['total']:.4f} recon={avg['recon']:.4f} "
-                f"dyn={avg['dynamics']:.4f} sparse={avg['sparsity']:.4f}"
+                f"dyn={avg['dynamics']:.4f} sparse={avg.get('sparsity',0):.4f} "
+                f"mincon={avg.get('min_connect',0):.4f}"
             )
 
     return {k: v / num_batches for k, v in total_losses.items()}

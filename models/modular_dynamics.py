@@ -134,14 +134,11 @@ class ModularCausalDynamics(nn.Module):
                 # sum over j (dim=1) to get total effect on i
                 delta_inter += (effect_tau * weight).sum(dim=1)  # [B, K, D]
 
-            # Update slots
-            combined = torch.cat([h + delta_self, delta_inter], dim=-1)
-            update = self.update_mlp(combined)
-
-            if self.residual:
-                h = h + update
-            else:
-                h = update
+            # Update slots — NO skip connection from input slots.
+            # This forces the model to actually predict the next state
+            # rather than defaulting to identity.
+            combined = torch.cat([delta_self, delta_inter], dim=-1)
+            h = self.update_mlp(combined)
 
         return h
 

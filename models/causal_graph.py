@@ -161,8 +161,15 @@ class CausalGraphDiscovery(nn.Module):
 
         losses = {}
 
-        # Sparsity loss: encourage fewer edges
-        losses["sparsity"] = edge_probs.sum(dim=(-1, -2)).mean()
+        # Sparsity loss: encourage fewer edges (but not zero!)
+        avg_edges = edge_probs.sum(dim=(-1, -2)).mean()
+        losses["sparsity"] = avg_edges
+
+        # Minimum connectivity loss: penalize if average edges per object < 1
+        # This prevents the graph from collapsing to all-zero
+        K = edge_probs.shape[1]
+        min_edges_target = float(K)  # at least K edges total (1 per object)
+        losses["min_connect"] = F.relu(min_edges_target - avg_edges)
 
         # Type entropy loss: encourage crisp type assignment
         type_dist = F.softmax(type_logits, dim=-1)

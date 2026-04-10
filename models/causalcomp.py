@@ -143,24 +143,31 @@ class CausalComp(nn.Module):
         # Graph losses (aggregate over timesteps)
         sparsity_losses = []
         entropy_losses = []
+        min_connect_losses = []
         for graph_info in output["graph_infos"]:
             gl = self.graph_discovery.compute_loss(graph_info)
             sparsity_losses.append(gl["sparsity"])
             entropy_losses.append(gl["type_entropy"])
+            min_connect_losses.append(gl["min_connect"])
 
         if sparsity_losses:
             losses["sparsity"] = torch.stack(sparsity_losses).mean()
             losses["type_entropy"] = torch.stack(entropy_losses).mean()
+            losses["min_connect"] = torch.stack(min_connect_losses).mean()
         else:
             losses["sparsity"] = torch.tensor(0.0, device=pred.device)
             losses["type_entropy"] = torch.tensor(0.0, device=pred.device)
+            losses["min_connect"] = torch.tensor(0.0, device=pred.device)
 
         # Total weighted loss
+        # Note: sparsity weight is kept low (0.001) to prevent graph collapse.
+        # min_connect weight is high (1.0) to enforce minimum connectivity.
         losses["total"] = (
             config.recon_weight * losses["recon"] +
             config.dynamics_weight * losses["dynamics"] +
-            config.sparsity_weight * losses["sparsity"] +
-            config.entropy_weight * losses["type_entropy"]
+            config.sparsity_weight * 0.1 * losses["sparsity"] +  # reduce sparsity push
+            config.entropy_weight * losses["type_entropy"] +
+            1.0 * losses["min_connect"]  # prevent graph collapse
         )
 
         return losses
