@@ -58,7 +58,7 @@ class DataConfig:
     data_dir: str = "./data/clevrer"
     resolution: int = 128           # resize frames to 128x128
     num_frames: int = 16            # frames per clip
-    frame_skip: int = 4             # sample every 4th frame
+    frame_skip: int = 8             # sample every 8th frame (larger gap → more motion)
     num_workers: int = 4
 
 

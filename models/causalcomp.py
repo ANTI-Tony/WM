@@ -75,43 +75,49 @@ class CausalComp(nn.Module):
         # --- Encode all frames to slots ---
         all_slots, all_attn = self.encoder(video)  # [B, T, K, D], [B, T, K, N]
 
-        # --- For each timestep, discover graph and predict next ---
+        # --- Autoregressive rollout ---
+        # Step 1: use GT slots[0] as starting point
+        # Step 2+: use PREDICTED slots as input (errors compound → forces good dynamics)
         pred_slots_list = []
+        pred_frames_list = []
         graph_info_list = []
-        recon_list = []
 
         # Reconstruct first frame (sanity check for slot quality)
         recon_t0, masks_t0, _ = self.decoder(all_slots[:, 0])
-        recon_list.append(recon_t0)
+
+        # Start from GT-encoded slots of first frame
+        current_slots = all_slots[:, 0]  # [B, K, D]
 
         for t in range(min(T - 1, rollout_steps)):
-            slots_t = all_slots[:, t]  # [B, K, D]
-
-            # Discover causal graph at time t
-            edge_probs, edge_types, graph_info = self.graph_discovery(slots_t)
+            # Discover causal graph from current slots
+            edge_probs, edge_types, graph_info = self.graph_discovery(current_slots)
             graph_info_list.append(graph_info)
 
             # Predict next slots
-            pred_slots_next = self.dynamics(slots_t, edge_probs, edge_types)
+            pred_slots_next = self.dynamics(current_slots, edge_probs, edge_types)
             pred_slots_list.append(pred_slots_next)
 
-            # Decode predicted slots
-            recon_next, _, _ = self.decoder(pred_slots_next)
-            recon_list.append(recon_next)
+            # Decode predicted slots to frame (for frame-level loss)
+            pred_frame, _, _ = self.decoder(pred_slots_next)
+            pred_frames_list.append(pred_frame)
 
-        # Stack predictions
-        pred_slots = torch.stack(pred_slots_list, dim=1)  # [B, T', K, D]
-        recon_frames = torch.stack(recon_list, dim=1)      # [B, T'+1, 3, H, W]
+            # AUTOREGRESSIVE: use prediction as next input (not GT!)
+            current_slots = pred_slots_next
+
+        pred_slots = torch.stack(pred_slots_list, dim=1)    # [B, T', K, D]
+        pred_frames = torch.stack(pred_frames_list, dim=1)  # [B, T', 3, H, W]
 
         return {
-            "pred_slots": pred_slots,         # [B, T', K, D]
-            "target_slots": all_slots[:, 1:rollout_steps+1],  # [B, T', K, D]
-            "recon_frames": recon_frames,      # [B, T'+1, 3, H, W]
-            "target_frames": video[:, :rollout_steps+1],      # [B, T'+1, 3, H, W]
-            "all_slots": all_slots,            # [B, T, K, D]
-            "attn_maps": all_attn,             # [B, T, K, N]
-            "graph_infos": graph_info_list,    # list of dicts
-            "masks_t0": masks_t0,              # [B, K, 1, H, W]
+            "pred_slots": pred_slots,                        # [B, T', K, D]
+            "target_slots": all_slots[:, 1:rollout_steps+1], # [B, T', K, D]
+            "recon_t0": recon_t0,                            # [B, 3, H, W]
+            "frame_t0": video[:, 0],                         # [B, 3, H, W]
+            "pred_frames": pred_frames,                      # [B, T', 3, H, W]
+            "target_frames": video[:, 1:rollout_steps+1],    # [B, T', 3, H, W]
+            "all_slots": all_slots,                          # [B, T, K, D]
+            "attn_maps": all_attn,                           # [B, T, K, N]
+            "graph_infos": graph_info_list,
+            "masks_t0": masks_t0,                            # [B, K, 1, H, W]
         }
 
     def compute_loss(self, output: dict, config) -> dict:
@@ -124,21 +130,34 @@ class CausalComp(nn.Module):
             losses: dict of named loss terms + total loss
         """
         losses = {}
+        dev = output["pred_slots"].device
 
-        # L_recon: reconstruction quality
-        recon = output["recon_frames"]
-        target = output["target_frames"]
-        T_recon = min(recon.shape[1], target.shape[1])
-        losses["recon"] = F.mse_loss(recon[:, :T_recon], target[:, :T_recon])
+        # L_recon: first frame reconstruction (trains encoder + decoder)
+        losses["recon"] = F.mse_loss(output["recon_t0"], output["frame_t0"])
 
-        # L_dynamics: slot prediction accuracy
-        pred = output["pred_slots"]
-        target_slots = output["target_slots"]
-        T_pred = min(pred.shape[1], target_slots.shape[1])
+        # L_dynamics_frame: predicted future frames vs GT future frames
+        # This is the KEY loss — forces the model to predict visually correct futures
+        pred_frames = output["pred_frames"]
+        target_frames = output["target_frames"]
+        T_pred = min(pred_frames.shape[1], target_frames.shape[1])
         if T_pred > 0:
-            losses["dynamics"] = F.mse_loss(pred[:, :T_pred], target_slots[:, :T_pred])
+            # Weight later steps more (errors should compound)
+            frame_losses = []
+            for t in range(T_pred):
+                weight = 1.0 + 0.5 * t  # step 0: 1.0, step 4: 3.0
+                frame_losses.append(weight * F.mse_loss(pred_frames[:, t], target_frames[:, t]))
+            losses["dynamics_frame"] = torch.stack(frame_losses).mean()
         else:
-            losses["dynamics"] = torch.tensor(0.0, device=pred.device)
+            losses["dynamics_frame"] = torch.tensor(0.0, device=dev)
+
+        # L_dynamics_slot: slot-level prediction (auxiliary)
+        pred_slots = output["pred_slots"]
+        target_slots = output["target_slots"]
+        T_slot = min(pred_slots.shape[1], target_slots.shape[1])
+        if T_slot > 0:
+            losses["dynamics_slot"] = F.mse_loss(pred_slots[:, :T_slot], target_slots[:, :T_slot])
+        else:
+            losses["dynamics_slot"] = torch.tensor(0.0, device=dev)
 
         # Graph losses (aggregate over timesteps)
         sparsity_losses = []
@@ -155,19 +174,19 @@ class CausalComp(nn.Module):
             losses["type_entropy"] = torch.stack(entropy_losses).mean()
             losses["min_connect"] = torch.stack(min_connect_losses).mean()
         else:
-            losses["sparsity"] = torch.tensor(0.0, device=pred.device)
-            losses["type_entropy"] = torch.tensor(0.0, device=pred.device)
-            losses["min_connect"] = torch.tensor(0.0, device=pred.device)
+            losses["sparsity"] = torch.tensor(0.0, device=dev)
+            losses["type_entropy"] = torch.tensor(0.0, device=dev)
+            losses["min_connect"] = torch.tensor(0.0, device=dev)
 
         # Total weighted loss
-        # Note: sparsity weight is kept low (0.001) to prevent graph collapse.
-        # min_connect weight is high (1.0) to enforce minimum connectivity.
+        # dynamics_frame is the primary learning signal for graph + dynamics
         losses["total"] = (
             config.recon_weight * losses["recon"] +
-            config.dynamics_weight * losses["dynamics"] +
-            config.sparsity_weight * 0.1 * losses["sparsity"] +  # reduce sparsity push
+            2.0 * losses["dynamics_frame"] +           # main signal: future frame prediction
+            0.5 * losses["dynamics_slot"] +            # auxiliary: slot-level prediction
+            config.sparsity_weight * 0.1 * losses["sparsity"] +
             config.entropy_weight * losses["type_entropy"] +
-            1.0 * losses["min_connect"]  # prevent graph collapse
+            1.0 * losses["min_connect"]
         )
 
         return losses

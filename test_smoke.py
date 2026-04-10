@@ -117,7 +117,7 @@ def test_full_model():
     output = model(video, rollout_steps=3)
 
     assert "pred_slots" in output
-    assert "recon_frames" in output
+    assert "pred_frames" in output
     assert "graph_infos" in output
 
     # Loss computation
