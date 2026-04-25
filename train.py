@@ -57,7 +57,11 @@ def train_one_epoch(model, loader, optimizer, config, epoch, logger):
 
         # Forward
         output = model(video, rollout_steps=config.train.rollout_steps)
-        losses = model.compute_loss(output, config.train)
+        collision_adj = batch.get("collision_adj", None)
+        if collision_adj is not None:
+            collision_adj = collision_adj.to(config.device)
+        losses = model.compute_loss(output, config.train, epoch=epoch,
+                                    collision_adj=collision_adj)
 
         # Backward
         optimizer.zero_grad()
@@ -74,20 +78,20 @@ def train_one_epoch(model, loader, optimizer, config, epoch, logger):
         # Log
         if batch_idx % config.train.log_interval == 0:
             avg = {k: v / num_batches for k, v in total_losses.items()}
+            phase = "P1:recon" if epoch < config.train.warmup_epochs else "P2:full"
             logger.info(
-                f"Epoch {epoch} [{batch_idx}/{len(loader)}] "
+                f"[{phase}] Epoch {epoch} [{batch_idx}/{len(loader)}] "
                 f"loss={avg['total']:.4f} recon={avg['recon']:.4f} "
                 f"dynF={avg.get('dynamics_frame',0):.4f} "
-                f"dynS={avg.get('dynamics_slot',0):.4f} "
-                f"sparse={avg.get('sparsity',0):.2f} "
-                f"mincon={avg.get('min_connect',0):.4f}"
+                f"edgeSup={avg.get('edge_sup',0):.4f} "
+                f"sparse={avg.get('sparsity',0):.2f}"
             )
 
     return {k: v / num_batches for k, v in total_losses.items()}
 
 
 @torch.no_grad()
-def evaluate(model, loader, config):
+def evaluate(model, loader, config, epoch=0):
     model.eval()
     total_losses = {}
     num_batches = 0
@@ -95,7 +99,11 @@ def evaluate(model, loader, config):
     for batch in loader:
         video = batch["video"].to(config.device)
         output = model(video, rollout_steps=config.train.rollout_steps)
-        losses = model.compute_loss(output, config.train)
+        collision_adj = batch.get("collision_adj", None)
+        if collision_adj is not None:
+            collision_adj = collision_adj.to(config.device)
+        losses = model.compute_loss(output, config.train, epoch=epoch,
+                                    collision_adj=collision_adj)
 
         for k, v in losses.items():
             total_losses[k] = total_losses.get(k, 0) + v.item()
@@ -239,7 +247,7 @@ def main():
 
         # Evaluate
         if epoch % config.train.eval_interval == 0:
-            val_metrics = evaluate(model, val_loader, config)
+            val_metrics = evaluate(model, val_loader, config, epoch=epoch)
             elapsed = time.time() - t0
             logger.info(
                 f"Epoch {epoch}/{config.train.num_epochs} ({elapsed:.1f}s) | "

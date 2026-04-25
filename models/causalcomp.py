@@ -120,31 +120,37 @@ class CausalComp(nn.Module):
             "masks_t0": masks_t0,                            # [B, K, 1, H, W]
         }
 
-    def compute_loss(self, output: dict, config) -> dict:
+    def compute_loss(self, output: dict, config, epoch: int = 0,
+                     collision_adj: torch.Tensor = None) -> dict:
         """Compute all loss terms.
+
+        Two-phase training:
+          Phase 1 (epoch < warmup): recon only (learn good slots first)
+          Phase 2 (epoch >= warmup): recon + dynamics + graph supervision
 
         Args:
             output: dict from forward()
             config: TrainConfig with loss weights
+            epoch: current epoch (for curriculum)
+            collision_adj: [B, T, max_obj, max_obj] GT collision matrix (optional)
         Returns:
             losses: dict of named loss terms + total loss
         """
         losses = {}
         dev = output["pred_slots"].device
+        phase2 = (epoch >= config.warmup_epochs)
 
-        # L_recon: first frame reconstruction (trains encoder + decoder)
+        # L_recon: first frame reconstruction (always active)
         losses["recon"] = F.mse_loss(output["recon_t0"], output["frame_t0"])
 
         # L_dynamics_frame: predicted future frames vs GT future frames
-        # This is the KEY loss — forces the model to predict visually correct futures
         pred_frames = output["pred_frames"]
         target_frames = output["target_frames"]
         T_pred = min(pred_frames.shape[1], target_frames.shape[1])
-        if T_pred > 0:
-            # Weight later steps more (errors should compound)
+        if T_pred > 0 and phase2:
             frame_losses = []
             for t in range(T_pred):
-                weight = 1.0 + 0.5 * t  # step 0: 1.0, step 4: 3.0
+                weight = 1.0 + 0.5 * t
                 frame_losses.append(weight * F.mse_loss(pred_frames[:, t], target_frames[:, t]))
             losses["dynamics_frame"] = torch.stack(frame_losses).mean()
         else:
@@ -154,12 +160,44 @@ class CausalComp(nn.Module):
         pred_slots = output["pred_slots"]
         target_slots = output["target_slots"]
         T_slot = min(pred_slots.shape[1], target_slots.shape[1])
-        if T_slot > 0:
+        if T_slot > 0 and phase2:
             losses["dynamics_slot"] = F.mse_loss(pred_slots[:, :T_slot], target_slots[:, :T_slot])
         else:
             losses["dynamics_slot"] = torch.tensor(0.0, device=dev)
 
-        # Graph losses (aggregate over timesteps)
+        # L_edge_supervision: use GT collision adjacency to supervise edges
+        # This breaks the uniform equilibrium by giving the graph direct signal
+        losses["edge_sup"] = torch.tensor(0.0, device=dev)
+        if collision_adj is not None and phase2 and output["graph_infos"]:
+            K = output["graph_infos"][0]["edge_probs"].shape[1]
+            max_obj = collision_adj.shape[-1]
+
+            # Build proximity target: objects that collide anywhere in the clip
+            # should have high edge probability
+            # collision_adj: [B, T, max_obj, max_obj]
+            # Collapse over time: if any collision in the clip, target=1
+            col_any = collision_adj.any(dim=1).float()  # [B, max_obj, max_obj]
+
+            # Truncate or pad to match num_slots K
+            if max_obj >= K:
+                col_target = col_any[:, :K, :K]
+            else:
+                col_target = F.pad(col_any, (0, K - max_obj, 0, K - max_obj))
+
+            col_target = col_target.to(dev)
+
+            # Also add proximity signal: objects close together should have edges
+            # (even if not colliding yet, they might interact soon)
+            if "positions" in output:
+                pass  # positions handled in batch, not output
+
+            # BCE loss between predicted edges and GT collision adjacency
+            edge_probs = output["graph_infos"][0]["edge_probs"]  # [B, K, K]
+            losses["edge_sup"] = F.binary_cross_entropy(
+                edge_probs, col_target, reduction="mean"
+            )
+
+        # Graph regularization losses
         sparsity_losses = []
         entropy_losses = []
         min_connect_losses = []
@@ -179,15 +217,19 @@ class CausalComp(nn.Module):
             losses["min_connect"] = torch.tensor(0.0, device=dev)
 
         # Total weighted loss
-        # dynamics_frame is the primary learning signal for graph + dynamics
-        losses["total"] = (
-            config.recon_weight * losses["recon"] +
-            2.0 * losses["dynamics_frame"] +           # main signal: future frame prediction
-            0.5 * losses["dynamics_slot"] +            # auxiliary: slot-level prediction
-            config.sparsity_weight * 0.1 * losses["sparsity"] +
-            config.entropy_weight * losses["type_entropy"] +
-            1.0 * losses["min_connect"]
-        )
+        if phase2:
+            losses["total"] = (
+                config.recon_weight * losses["recon"] +
+                2.0 * losses["dynamics_frame"] +
+                0.5 * losses["dynamics_slot"] +
+                5.0 * losses["edge_sup"] +  # strong supervision to break uniform edges
+                config.sparsity_weight * 0.1 * losses["sparsity"] +
+                config.entropy_weight * losses["type_entropy"] +
+                1.0 * losses["min_connect"]
+            )
+        else:
+            # Phase 1: only reconstruction
+            losses["total"] = config.recon_weight * losses["recon"]
 
         return losses
 

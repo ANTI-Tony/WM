@@ -84,8 +84,13 @@ class SyntheticPhysicsDataset(Dataset):
         # Simulate physics and render frames
         frames = []
         events = []
+        positions = []  # [T, num_obj, 2] object (x,y) per frame
 
         for t in range(self.num_frames):
+            # Record positions before rendering
+            pos_t = [[o["x"] / R, o["y"] / R] for o in objects]  # normalize to [0,1]
+            positions.append(pos_t)
+
             # Render current frame
             frame = self._render_frame(objects, R)
             frames.append(frame)
@@ -96,6 +101,23 @@ class SyntheticPhysicsDataset(Dataset):
                 events.append({"type": "collision", "frame": t, "objects": c})
 
         video = torch.stack(frames)  # [T, 3, H, W]
+
+        # Build per-frame collision adjacency matrix [T, max_obj, max_obj]
+        max_obj = self.num_objects_range[1]
+        collision_adj = torch.zeros(self.num_frames, max_obj, max_obj)
+        for ev in events:
+            t = ev["frame"]
+            i, j = ev["objects"]
+            if i < max_obj and j < max_obj:
+                collision_adj[t, i, j] = 1.0
+                collision_adj[t, j, i] = 1.0
+
+        # Pad positions to max_obj
+        positions_tensor = torch.zeros(self.num_frames, max_obj, 2)
+        for t in range(self.num_frames):
+            for i, pos in enumerate(positions[t]):
+                if i < max_obj:
+                    positions_tensor[t, i] = torch.tensor(pos)
 
         # Object properties for evaluation
         obj_props = [{
@@ -109,6 +131,8 @@ class SyntheticPhysicsDataset(Dataset):
             "video_id": f"synthetic_{idx:05d}",
             "objects": {"num_objects": num_obj, "properties": obj_props},
             "events": events,
+            "positions": positions_tensor,    # [T, max_obj, 2]
+            "collision_adj": collision_adj,   # [T, max_obj, max_obj]
         }
 
     def _render_frame(self, objects: list, R: int) -> torch.Tensor:
@@ -203,9 +227,14 @@ class SyntheticPhysicsDataset(Dataset):
 def synthetic_collate_fn(batch: List[dict]) -> dict:
     """Collate function for synthetic dataset."""
     videos = torch.stack([b["video"] for b in batch])
-    return {
+    result = {
         "video": videos,
         "video_ids": [b["video_id"] for b in batch],
         "objects": [b["objects"] for b in batch],
         "events": [b["events"] for b in batch],
     }
+    # Stack GT supervision signals if available
+    if "collision_adj" in batch[0]:
+        result["collision_adj"] = torch.stack([b["collision_adj"] for b in batch])
+        result["positions"] = torch.stack([b["positions"] for b in batch])
+    return result
