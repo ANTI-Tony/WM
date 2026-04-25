@@ -22,7 +22,7 @@ from configs import Config
 from data.clevrer_dataset import CLEVRERDataset, clevrer_collate_fn
 from models.causalcomp import CausalComp
 from utils.logger import setup_logger, log_metrics
-from utils.visualize import visualize_slots, visualize_graph
+# visualize is imported lazily (needs matplotlib which may conflict with numpy)
 
 
 def set_seed(seed: int):
