@@ -85,11 +85,24 @@ class SyntheticPhysicsDataset(Dataset):
         frames = []
         events = []
         positions = []  # [T, num_obj, 2] object (x,y) per frame
+        gt_states = []  # [T, num_obj, state_dim] full GT state per frame
 
         for t in range(self.num_frames):
-            # Record positions before rendering
+            # Record full state before rendering
             pos_t = [[o["x"] / R, o["y"] / R] for o in objects]  # normalize to [0,1]
             positions.append(pos_t)
+
+            # GT state: [x, y, vx, vy, r, g, b, radius] per object
+            state_t = []
+            for o in objects:
+                state_t.append([
+                    o["x"] / R, o["y"] / R,             # position [0,1]
+                    o["vx"] / self.max_velocity,         # velocity [-1,1]
+                    o["vy"] / self.max_velocity,
+                    o["color"][0], o["color"][1], o["color"][2],  # RGB
+                    o["radius"] / 10.0,                  # size normalized
+                ])
+            gt_states.append(state_t)
 
             # Render current frame
             frame = self._render_frame(objects, R)
@@ -112,12 +125,16 @@ class SyntheticPhysicsDataset(Dataset):
                 collision_adj[t, i, j] = 1.0
                 collision_adj[t, j, i] = 1.0
 
-        # Pad positions to max_obj
+        # Pad positions and GT states to max_obj
         positions_tensor = torch.zeros(self.num_frames, max_obj, 2)
+        gt_states_tensor = torch.zeros(self.num_frames, max_obj, 8)  # state_dim=8
         for t in range(self.num_frames):
             for i, pos in enumerate(positions[t]):
                 if i < max_obj:
                     positions_tensor[t, i] = torch.tensor(pos)
+            for i, state in enumerate(gt_states[t]):
+                if i < max_obj:
+                    gt_states_tensor[t, i] = torch.tensor(state)
 
         # Object properties for evaluation
         obj_props = [{
@@ -131,8 +148,10 @@ class SyntheticPhysicsDataset(Dataset):
             "video_id": f"synthetic_{idx:05d}",
             "objects": {"num_objects": num_obj, "properties": obj_props},
             "events": events,
-            "positions": positions_tensor,    # [T, max_obj, 2]
-            "collision_adj": collision_adj,   # [T, max_obj, max_obj]
+            "positions": positions_tensor,      # [T, max_obj, 2]
+            "collision_adj": collision_adj,     # [T, max_obj, max_obj]
+            "gt_states": gt_states_tensor,     # [T, max_obj, 8]
+            "num_objects": num_obj,
         }
 
     def _render_frame(self, objects: list, R: int) -> torch.Tensor:
@@ -237,4 +256,7 @@ def synthetic_collate_fn(batch: List[dict]) -> dict:
     if "collision_adj" in batch[0]:
         result["collision_adj"] = torch.stack([b["collision_adj"] for b in batch])
         result["positions"] = torch.stack([b["positions"] for b in batch])
+    if "gt_states" in batch[0]:
+        result["gt_states"] = torch.stack([b["gt_states"] for b in batch])
+        result["num_objects"] = [b["num_objects"] for b in batch]
     return result
