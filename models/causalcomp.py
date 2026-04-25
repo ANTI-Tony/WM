@@ -62,11 +62,13 @@ class CausalComp(nn.Module):
             resolution=resolution,
         )
 
-    def forward(self, video: torch.Tensor, rollout_steps: int = 1):
+    def forward(self, video: torch.Tensor, rollout_steps: int = 1,
+                positions: torch.Tensor = None):
         """
         Args:
             video: [B, T, 3, H, W] video clip
             rollout_steps: how many future steps to predict
+            positions: [B, T, max_obj, 2] GT object positions (optional)
         Returns:
             output: dict with all predictions and losses
         """
@@ -118,6 +120,7 @@ class CausalComp(nn.Module):
             "attn_maps": all_attn,                           # [B, T, K, N]
             "graph_infos": graph_info_list,
             "masks_t0": masks_t0,                            # [B, K, 1, H, W]
+            "positions": positions,                          # [B, T, max_obj, 2] or None
         }
 
     def compute_loss(self, output: dict, config, epoch: int = 0,
@@ -166,36 +169,70 @@ class CausalComp(nn.Module):
             losses["dynamics_slot"] = torch.tensor(0.0, device=dev)
 
         # L_edge_supervision: use GT collision adjacency to supervise edges
-        # This breaks the uniform equilibrium by giving the graph direct signal
+        # Must match slots to objects first using attention map centroids
         losses["edge_sup"] = torch.tensor(0.0, device=dev)
-        if collision_adj is not None and phase2 and output["graph_infos"]:
-            K = output["graph_infos"][0]["edge_probs"].shape[1]
-            max_obj = collision_adj.shape[-1]
-
-            # Build proximity target: objects that collide anywhere in the clip
-            # should have high edge probability
-            # collision_adj: [B, T, max_obj, max_obj]
-            # Collapse over time: if any collision in the clip, target=1
-            col_any = collision_adj.any(dim=1).float()  # [B, max_obj, max_obj]
-
-            # Truncate or pad to match num_slots K
-            if max_obj >= K:
-                col_target = col_any[:, :K, :K]
-            else:
-                col_target = F.pad(col_any, (0, K - max_obj, 0, K - max_obj))
-
-            col_target = col_target.to(dev)
-
-            # Also add proximity signal: objects close together should have edges
-            # (even if not colliding yet, they might interact soon)
-            if "positions" in output:
-                pass  # positions handled in batch, not output
-
-            # BCE loss between predicted edges and GT collision adjacency
+        positions = output.get("positions", None)
+        if (collision_adj is not None and positions is not None
+                and phase2 and output["graph_infos"]):
             edge_probs = output["graph_infos"][0]["edge_probs"]  # [B, K, K]
-            losses["edge_sup"] = F.binary_cross_entropy(
-                edge_probs, col_target, reduction="mean"
-            )
+            B_cur, K, _ = edge_probs.shape
+            max_obj = collision_adj.shape[-1]
+            num_obj = min(max_obj, K)
+            attn_maps = output["attn_maps"][:, 0]  # [B, K, N] first frame
+            H = W = int(attn_maps.shape[-1] ** 0.5)
+
+            col_any = collision_adj.any(dim=1).float().to(dev)  # [B, max_obj, max_obj]
+
+            # Coordinate grids [0,1]
+            yy = torch.linspace(0, 1, H, device=dev)
+            xx = torch.linspace(0, 1, W, device=dev)
+            grid_y, grid_x = torch.meshgrid(yy, xx, indexing="ij")
+            grid_x = grid_x.reshape(1, -1)  # [1, N]
+            grid_y = grid_y.reshape(1, -1)
+
+            # Slot centroids from attention maps
+            attn_norm = attn_maps / (attn_maps.sum(dim=-1, keepdim=True) + 1e-8)
+            slot_cx = (attn_norm * grid_x).sum(dim=-1)  # [B, K]
+            slot_cy = (attn_norm * grid_y).sum(dim=-1)  # [B, K]
+            slot_pos = torch.stack([slot_cx, slot_cy], dim=-1)  # [B, K, 2]
+
+            obj_pos = positions[:, 0, :num_obj].to(dev)  # [B, num_obj, 2]
+
+            # Match slots to objects per sample using distance matrix
+            edge_sup_losses = []
+            for b in range(B_cur):
+                cost = torch.cdist(slot_pos[b], obj_pos[b])  # [K, num_obj]
+                # Greedy match: for each object find nearest unused slot
+                matched = {}  # obj_idx → slot_idx
+                used = set()
+                for _ in range(num_obj):
+                    min_val = float('inf')
+                    best_s, best_o = 0, 0
+                    for o in range(num_obj):
+                        if o in matched:
+                            continue
+                        for s in range(K):
+                            if s in used:
+                                continue
+                            if cost[s, o].item() < min_val:
+                                min_val = cost[s, o].item()
+                                best_s, best_o = s, o
+                    matched[best_o] = best_s
+                    used.add(best_s)
+
+                # Reorder collision target to slot space
+                col_target_b = torch.zeros(K, K, device=dev)
+                for oi, si in matched.items():
+                    for oj, sj in matched.items():
+                        if si != sj and oi < max_obj and oj < max_obj:
+                            col_target_b[si, sj] = col_any[b, oi, oj]
+
+                edge_sup_losses.append(
+                    F.binary_cross_entropy(edge_probs[b], col_target_b)
+                )
+
+            if edge_sup_losses:
+                losses["edge_sup"] = torch.stack(edge_sup_losses).mean()
 
         # Graph regularization losses
         sparsity_losses = []

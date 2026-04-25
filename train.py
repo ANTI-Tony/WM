@@ -56,7 +56,11 @@ def train_one_epoch(model, loader, optimizer, config, epoch, logger):
         video = batch["video"].to(config.device)  # [B, T, 3, H, W]
 
         # Forward
-        output = model(video, rollout_steps=config.train.rollout_steps)
+        positions = batch.get("positions", None)
+        if positions is not None:
+            positions = positions.to(config.device)
+        output = model(video, rollout_steps=config.train.rollout_steps,
+                        positions=positions)
         collision_adj = batch.get("collision_adj", None)
         if collision_adj is not None:
             collision_adj = collision_adj.to(config.device)
@@ -98,7 +102,11 @@ def evaluate(model, loader, config, epoch=0):
 
     for batch in loader:
         video = batch["video"].to(config.device)
-        output = model(video, rollout_steps=config.train.rollout_steps)
+        positions = batch.get("positions", None)
+        if positions is not None:
+            positions = positions.to(config.device)
+        output = model(video, rollout_steps=config.train.rollout_steps,
+                        positions=positions)
         collision_adj = batch.get("collision_adj", None)
         if collision_adj is not None:
             collision_adj = collision_adj.to(config.device)
