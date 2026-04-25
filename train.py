@@ -118,6 +118,10 @@ def main():
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--device", type=str, default="cuda")
     parser.add_argument("--wandb", action="store_true", help="Enable wandb logging")
+    parser.add_argument("--synthetic", action="store_true",
+                        help="Use synthetic data (no download needed)")
+    parser.add_argument("--num_videos", type=int, default=2000,
+                        help="Number of synthetic videos to generate")
     args = parser.parse_args()
 
     # Build config with overrides
@@ -159,16 +163,27 @@ def main():
         import wandb
         wandb.init(project=config.train.wandb_project, name=config.exp_name)
 
-    # Data — both train and val scan the same data_dir for mp4 files.
-    # When full dataset is available, use separate dirs via --data_dir.
-    # For now, we split the found videos 90/10.
-    full_dataset = CLEVRERDataset(
-        data_dir=config.data.data_dir,
-        split="validation",  # split name only affects annotation loading
-        num_frames=config.data.num_frames,
-        frame_skip=config.data.frame_skip,
-        resolution=config.data.resolution,
-    )
+    # Data
+    if args.synthetic:
+        from data.synthetic_dataset import SyntheticPhysicsDataset, synthetic_collate_fn
+        logger.info(f"Using synthetic data: {args.num_videos} videos")
+        full_dataset = SyntheticPhysicsDataset(
+            num_videos=args.num_videos,
+            num_frames=config.data.num_frames,
+            resolution=config.data.resolution,
+            seed=config.seed,
+        )
+        collate = synthetic_collate_fn
+    else:
+        full_dataset = CLEVRERDataset(
+            data_dir=config.data.data_dir,
+            split="validation",
+            num_frames=config.data.num_frames,
+            frame_skip=config.data.frame_skip,
+            resolution=config.data.resolution,
+        )
+        collate = clevrer_collate_fn
+
     n_total = len(full_dataset)
     n_val = max(1, n_total // 10)
     n_train = n_total - n_val
@@ -182,7 +197,7 @@ def main():
         batch_size=config.train.batch_size,
         shuffle=True,
         num_workers=config.data.num_workers,
-        collate_fn=clevrer_collate_fn,
+        collate_fn=collate,
         pin_memory=True,
         drop_last=True,
     )
@@ -191,7 +206,7 @@ def main():
         batch_size=config.train.batch_size,
         shuffle=False,
         num_workers=config.data.num_workers,
-        collate_fn=clevrer_collate_fn,
+        collate_fn=collate,
         pin_memory=True,
     )
 
