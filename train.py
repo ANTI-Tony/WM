@@ -246,7 +246,7 @@ def main():
                 f"Train loss={train_metrics['total']:.4f} | "
                 f"Val loss={val_metrics['total']:.4f} | "
                 f"Val recon={val_metrics['recon']:.4f} "
-                f"Val dyn={val_metrics['dynamics']:.4f}"
+                f"Val dynF={val_metrics.get('dynamics_frame',0):.4f}"
             )
 
             if args.wandb:
