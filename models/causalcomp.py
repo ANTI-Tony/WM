@@ -25,7 +25,8 @@ class CausalComp(nn.Module):
     def __init__(self, resolution: int = 128, num_slots: int = 8,
                  slot_dim: int = 128, num_interaction_types: int = 4,
                  encoder_channels: int = 64, dynamics_hidden: int = 128,
-                 num_message_passing: int = 2, gumbel_temperature: float = 0.5):
+                 num_message_passing: int = 2, gumbel_temperature: float = 0.5,
+                 use_dino: bool = False):
         super().__init__()
 
         self.resolution = resolution
@@ -33,12 +34,20 @@ class CausalComp(nn.Module):
         self.slot_dim = slot_dim
 
         # Module 1: Object discovery
-        self.encoder = SlotEncoder(
-            resolution=resolution,
-            num_slots=num_slots,
-            slot_dim=slot_dim,
-            encoder_channels=encoder_channels,
-        )
+        self.use_dino = use_dino
+        if use_dino:
+            from .dino_encoder import DINOSlotEncoder
+            self.encoder = DINOSlotEncoder(
+                num_slots=num_slots,
+                slot_dim=slot_dim,
+            )
+        else:
+            self.encoder = SlotEncoder(
+                resolution=resolution,
+                num_slots=num_slots,
+                slot_dim=slot_dim,
+                encoder_channels=encoder_channels,
+            )
 
         # Module 2: Causal graph discovery
         self.graph_discovery = CausalGraphDiscovery(
