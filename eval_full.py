@@ -162,10 +162,10 @@ def main():
     logger = setup_logger("full_eval", exp_dir / "eval.log")
 
     methods = {
-        "CausalComp":   lambda: GTCausalComp(state_dim=8, slot_dim=64, num_interaction_types=4),
-        "SingleModule": lambda: SingleModuleModel(state_dim=8, slot_dim=64),
-        "FullGraph":    lambda: FullGraphModel(state_dim=8, slot_dim=64),
-        "NoGraph":      lambda: NoGraphModel(state_dim=8, slot_dim=64),
+        "CausalComp":   lambda: GTCausalComp(state_dim=8, slot_dim=128, num_interaction_types=8),
+        "SingleModule": lambda: SingleModuleModel(state_dim=8, slot_dim=128),
+        "FullGraph":    lambda: FullGraphModel(state_dim=8, slot_dim=128),
+        "NoGraph":      lambda: NoGraphModel(state_dim=8, slot_dim=128),
     }
     uses_graph_loss = {"CausalComp": True, "SingleModule": False, "FullGraph": False, "NoGraph": False}
 

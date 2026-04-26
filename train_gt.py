@@ -165,7 +165,7 @@ def compute_loss(output, collision_adj=None):
     # Total
     losses["total"] = (
         5.0 * losses["state_pred"] +
-        10.0 * losses["edge_sup"] +     # strong edge supervision
+        2.0 * losses["edge_sup"] +      # tuned: 2.0 works better than 10.0
         0.001 * losses.get("sparsity", torch.tensor(0.0)) +
         0.01 * losses.get("type_entropy", torch.tensor(0.0))
     )
