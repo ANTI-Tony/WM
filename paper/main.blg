@@ -3,48 +3,44 @@ Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: main.aux
 The style file: plainnat.bst
 Database file #1: references.bib
-Warning--empty booktitle in hafner2023dreamerv3
-Warning--empty journal in cosmos2025
-Warning--empty journal in sora2024
-You've used 20 entries,
+You've used 21 entries,
             2773 wiz_defined-function locations,
-            667 strings with 7379 characters,
-and the built_in function-call counts, 7999 in all, are:
-= -- 629
-> -- 479
+            681 strings with 7791 characters,
+and the built_in function-call counts, 9032 in all, are:
+= -- 727
+> -- 595
 < -- 15
-+ -- 169
-- -- 147
-* -- 528
-:= -- 1247
-add.period$ -- 60
-call.type$ -- 20
-change.case$ -- 103
-chr.to.int$ -- 18
-cite$ -- 43
-duplicate$ -- 444
-empty$ -- 754
-format.name$ -- 176
-if$ -- 1690
-int.to.chr$ -- 3
++ -- 204
+- -- 183
+* -- 630
+:= -- 1419
+add.period$ -- 63
+call.type$ -- 21
+change.case$ -- 113
+chr.to.int$ -- 21
+cite$ -- 42
+duplicate$ -- 463
+empty$ -- 796
+format.name$ -- 218
+if$ -- 1904
+int.to.chr$ -- 1
 int.to.str$ -- 1
-missing$ -- 20
-newline$ -- 108
-num.names$ -- 80
-pop$ -- 284
+missing$ -- 21
+newline$ -- 113
+num.names$ -- 84
+pop$ -- 291
 preamble$ -- 1
-purify$ -- 83
+purify$ -- 92
 quote$ -- 0
-skip$ -- 295
+skip$ -- 328
 stack$ -- 0
-substring$ -- 40
+substring$ -- 92
 swap$ -- 35
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 220
-warning$ -- 3
-while$ -- 60
+type$ -- 231
+warning$ -- 0
+while$ -- 67
 width$ -- 0
-write$ -- 244
-(There were 3 warnings)
+write$ -- 261

@@ -15,7 +15,7 @@
 \providecommand\HyField@AuxAddToCoFields[2]{}
 \citation{ha2018worldmodels,lecun2022jepa}
 \citation{sora2024,cosmos2025}
-\citation{hafner2023dreamerv3}
+\citation{hafner2025dreamerv3}
 \citation{richens2024robust,oocdm2024,stica2026}
 \citation{dreamweaver2025,fiocwm2025}
 \citation{richens2024robust}
@@ -49,66 +49,72 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Problem formulation}{3}{subsection.3.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Architecture overview}{3}{subsection.3.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Causal interaction graph discovery}{3}{subsection.3.3}\protected@file@percent }
+\citation{scholkopf2021causal}
+\citation{richens2024robust}
+\citation{richens2024robust}
 \citation{keysers2020measuring}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.4}Modular causal dynamics}{4}{subsection.3.4}\protected@file@percent }
 \newlabel{sec:dynamics}{{3.4}{4}{Modular causal dynamics}{subsection.3.4}{}}
 \newlabel{eq:dynamics}{{3}{4}{Modular causal dynamics}{equation.3.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Training}{4}{subsection.3.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Theoretical motivation}{4}{subsection.3.5}\protected@file@percent }
+\newlabel{sec:theory}{{3.5}{4}{Theoretical motivation}{subsection.3.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.6}Training}{4}{subsection.3.6}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {4}Experiments}{4}{section.4}\protected@file@percent }
 \newlabel{sec:experiments}{{4}{4}{Experiments}{section.4}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Experimental setup}{4}{subsection.4.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{Environment.}{4}{section*.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Compositional split.}{4}{section*.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Metrics.}{4}{section*.7}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Baselines.}{4}{section*.8}\protected@file@percent }
 \@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Compositional generalization results on synthetic physics benchmark (mean $\pm $ std over 3 seeds). \textbf  {Unseen MSE} is the primary metric---lower is better. $\Delta $ shows improvement over NoGraph baseline on unseen data.}}{5}{table.1}\protected@file@percent }
 \newlabel{tab:main}{{1}{5}{Compositional generalization results on synthetic physics benchmark (mean $\pm $ std over 3 seeds). \textbf {Unseen MSE} is the primary metric---lower is better. $\Delta $ shows improvement over NoGraph baseline on unseen data}{table.1}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Compositional gap analysis. SingleModule achieves low absolute error by memorizing training combinations, resulting in the \emph  {worst} compositional gap (88\%). \textsc  {CausalComp}{}'s typed modules prevent this overfitting.}}{5}{table.2}\protected@file@percent }
 \newlabel{tab:gap}{{2}{5}{Compositional gap analysis. SingleModule achieves low absolute error by memorizing training combinations, resulting in the \emph {worst} compositional gap (88\%). \ours {}'s typed modules prevent this overfitting}{table.2}{}}
+\@writefile{toc}{\contentsline {paragraph}{Compositional split.}{5}{section*.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Metrics.}{5}{section*.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Baselines.}{5}{section*.8}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Main results}{5}{subsection.4.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{Key finding.}{5}{section*.9}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Graph discovery analysis}{5}{subsection.4.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Hyperparameter analysis}{5}{subsection.4.4}\protected@file@percent }
-\citation{bear2021physion}
 \@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces \textbf  {Causal graph discovery.} (a) A scene with 6 colored circles. (b) Ground-truth collision graph. (c) Graph discovered by \textsc  {CausalComp}{}. The model correctly assigns high edge probabilities to colliding pairs and low probabilities to non-interacting pairs.}}{6}{figure.2}\protected@file@percent }
 \newlabel{fig:graph}{{2}{6}{\textbf {Causal graph discovery.} (a) A scene with 6 colored circles. (b) Ground-truth collision graph. (c) Graph discovered by \ours {}. The model correctly assigns high edge probabilities to colliding pairs and low probabilities to non-interacting pairs}{figure.2}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces \textbf  {Edge probability distribution.} Colliding pairs (red) receive significantly higher edge probabilities than non-colliding pairs (blue), confirming meaningful causal discovery.}}{6}{figure.3}\protected@file@percent }
 \newlabel{fig:edges}{{3}{6}{\textbf {Edge probability distribution.} Colliding pairs (red) receive significantly higher edge probabilities than non-colliding pairs (blue), confirming meaningful causal discovery}{figure.3}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces \textbf  {Seen vs.\ Unseen MSE.} \textsc  {CausalComp}{} achieves the best balance: lowest unseen error among non-overfitting methods. SingleModule's small gap between bars masks its 88\% relative gap.}}{6}{figure.4}\protected@file@percent }
 \newlabel{fig:bar}{{4}{6}{\textbf {Seen vs.\ Unseen MSE.} \ours {} achieves the best balance: lowest unseen error among non-overfitting methods. SingleModule's small gap between bars masks its 88\% relative gap}{figure.4}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {5}Discussion and limitations}{6}{section.5}\protected@file@percent }
-\newlabel{sec:discussion}{{5}{6}{Discussion and limitations}{section.5}{}}
-\@writefile{toc}{\contentsline {paragraph}{Why is \textsc  {CausalComp}{}'s gap higher than FullGraph?}{6}{section*.10}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Limitations.}{6}{section*.11}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Graph discovery analysis}{6}{subsection.4.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Hyperparameter analysis}{6}{subsection.4.4}\protected@file@percent }
+\citation{bear2021physion}
 \bibstyle{plainnat}
 \bibdata{references}
-\bibcite{vcd2022}{{1}{2022}{{Anonymous}}{{}}}
-\bibcite{dreamweaver2025}{{2}{2025{a}}{{Anonymous}}{{}}}
-\bibcite{fiocwm2025}{{3}{2025{b}}{{Anonymous}}{{}}}
-\bibcite{wm3c2025}{{4}{2025{c}}{{Anonymous}}{{}}}
-\bibcite{stica2026}{{5}{2026}{{Anonymous}}{{}}}
-\bibcite{bear2021physion}{{6}{2021}{{Bear et~al.}}{{}}}
-\bibcite{ha2018worldmodels}{{7}{2018}{{Ha and Schmidhuber}}{{}}}
-\bibcite{hafner2023dreamerv3}{{8}{2025}{{Hafner et~al.}}{{Hafner, Pasukonis, Ba, and Lillicrap}}}
-\bibcite{jang2017gumbel}{{9}{2017}{{Jang et~al.}}{{Jang, Gu, and Poole}}}
-\bibcite{keysers2020measuring}{{10}{2020}{{Keysers et~al.}}{{Keysers, Sch{\"a}rli, Scales, Buiber, Furber, Kasber, et~al.}}}
-\bibcite{lecun2022jepa}{{11}{2022}{{LeCun}}{{}}}
-\bibcite{locatello2020slotattention}{{12}{2020}{{Locatello et~al.}}{{Locatello, Weissenborn, Unterthiner, Mahendran, Heigold, Uszkoreit, Dosovitskiy, and Kipf}}}
-\bibcite{causaljepa2026}{{13}{2026}{{Nam et~al.}}{{}}}
-\bibcite{cosmos2025}{{14}{2025}{{NVIDIA}}{{}}}
-\bibcite{sora2024}{{15}{2024}{{OpenAI}}{{}}}
-\bibcite{richens2024robust}{{16}{2024}{{Richens and Everitt}}{{}}}
-\bibcite{dyno2025}{{17}{2025}{{Wang et~al.}}{{}}}
-\bibcite{wu2023slotformer}{{18}{2023}{{Wu et~al.}}{{Wu, Dvornik, Greff, Kipf, and Gilitschenski}}}
-\bibcite{oocdm2024}{{19}{2024}{{Yu et~al.}}{{}}}
-\bibcite{combo2025}{{20}{2025}{{Zhang et~al.}}{{}}}
+\bibcite{bear2021physion}{{1}{2021}{{Bear et~al.}}{{}}}
+\bibcite{wm3c2025}{{2}{2025}{{Chen et~al.}}{{}}}
+\bibcite{ha2018worldmodels}{{3}{2018}{{Ha and Schmidhuber}}{{}}}
+\bibcite{hafner2025dreamerv3}{{4}{2025}{{Hafner et~al.}}{{Hafner, Pasukonis, Ba, and Lillicrap}}}
+\bibcite{jang2017gumbel}{{5}{2017}{{Jang et~al.}}{{Jang, Gu, and Poole}}}
+\bibcite{keysers2020measuring}{{6}{2020}{{Keysers et~al.}}{{Keysers, Sch{\"a}rli, Scales, Buiber, Furber, Kasber, et~al.}}}
+\bibcite{stica2026}{{7}{2026}{{Kim et~al.}}{{}}}
+\bibcite{vcd2022}{{8}{2022}{{Lachapelle et~al.}}{{}}}
+\bibcite{lecun2022jepa}{{9}{2022}{{LeCun}}{{}}}
+\bibcite{fiocwm2025}{{10}{2025}{{Li et~al.}}{{}}}
+\bibcite{locatello2020slotattention}{{11}{2020}{{Locatello et~al.}}{{Locatello, Weissenborn, Unterthiner, Mahendran, Heigold, Uszkoreit, Dosovitskiy, and Kipf}}}
+\bibcite{causaljepa2026}{{12}{2026}{{Nam et~al.}}{{}}}
+\bibcite{cosmos2025}{{13}{2025}{{NVIDIA}}{{}}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Discussion and limitations}{7}{section.5}\protected@file@percent }
+\newlabel{sec:discussion}{{5}{7}{Discussion and limitations}{section.5}{}}
+\@writefile{toc}{\contentsline {paragraph}{Why is \textsc  {CausalComp}{}'s gap higher than FullGraph?}{7}{section*.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Limitations.}{7}{section*.11}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {6}Conclusion}{7}{section.6}\protected@file@percent }
+\bibcite{sora2024}{{14}{2024}{{OpenAI}}{{}}}
+\bibcite{richens2024robust}{{15}{2024}{{Richens and Everitt}}{{}}}
+\bibcite{scholkopf2021causal}{{16}{2021}{{Sch{\"o}lkopf et~al.}}{{Sch{\"o}lkopf, Locatello, Bauer, Ke, Kalchbrenner, Goyal, and Bengio}}}
+\bibcite{dreamweaver2025}{{17}{2025}{{Singh et~al.}}{{}}}
+\bibcite{dyno2025}{{18}{2025}{{Wang et~al.}}{{}}}
+\bibcite{wu2023slotformer}{{19}{2023}{{Wu et~al.}}{{Wu, Dvornik, Greff, Kipf, and Gilitschenski}}}
+\bibcite{oocdm2024}{{20}{2024}{{Yu et~al.}}{{}}}
+\bibcite{combo2025}{{21}{2025}{{Zhang et~al.}}{{}}}
 \@writefile{toc}{\contentsline {section}{\numberline {A}Implementation details}{8}{appendix.A}\protected@file@percent }
 \newlabel{app:impl}{{A}{8}{Implementation details}{appendix.A}{}}
 \@writefile{toc}{\contentsline {paragraph}{Architecture.}{8}{section*.13}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{Training.}{8}{section*.14}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{Synthetic environment.}{8}{section*.15}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {B}Qualitative results}{8}{appendix.B}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces \textbf  {Trajectory prediction comparison.} (a) Ground-truth trajectories of 6 objects over 16 frames. (b) \textsc  {CausalComp}{} predictions closely track ground truth. (c) NoGraph baseline shows drift due to inability to model inter-object interactions. Filled circles show final positions; trails show full trajectories.}}{8}{figure.5}\protected@file@percent }
-\newlabel{fig:trajectory}{{5}{8}{\textbf {Trajectory prediction comparison.} (a) Ground-truth trajectories of 6 objects over 16 frames. (b) \ours {} predictions closely track ground truth. (c) NoGraph baseline shows drift due to inability to model inter-object interactions. Filled circles show final positions; trails show full trajectories}{figure.5}{}}
-\gdef \@abspage@last{15}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces \textbf  {Trajectory prediction comparison.} (a) Ground-truth trajectories of 6 objects over 16 frames. (b) \textsc  {CausalComp}{} predictions closely track ground truth. (c) NoGraph baseline shows drift due to inability to model inter-object interactions. Filled circles show final positions; trails show full trajectories.}}{9}{figure.5}\protected@file@percent }
+\newlabel{fig:trajectory}{{5}{9}{\textbf {Trajectory prediction comparison.} (a) Ground-truth trajectories of 6 objects over 16 frames. (b) \ours {} predictions closely track ground truth. (c) NoGraph baseline shows drift due to inability to model inter-object interactions. Filled circles show final positions; trails show full trajectories}{figure.5}{}}
+\gdef \@abspage@last{16}

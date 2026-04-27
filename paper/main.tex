@@ -37,7 +37,7 @@ World models that predict future states from current observations are fundamenta
 \label{sec:intro}
 %==============================================================================
 
-World models---internal simulators that predict how environments evolve over time---are increasingly recognized as central to intelligent behavior~\citep{ha2018worldmodels,lecun2022jepa}. Recent advances in video generation~\citep{sora2024,cosmos2025} and model-based reinforcement learning~\citep{hafner2023dreamerv3} have demonstrated impressive predictive capabilities. However, a fundamental limitation persists: when deployed on \emph{novel combinations} of objects and interactions not seen during training, these models fail to generalize.
+World models---internal simulators that predict how environments evolve over time---are increasingly recognized as central to intelligent behavior~\citep{ha2018worldmodels,lecun2022jepa}. Recent advances in video generation~\citep{sora2024,cosmos2025} and model-based reinforcement learning~\citep{hafner2025dreamerv3} have demonstrated impressive predictive capabilities. However, a fundamental limitation persists: when deployed on \emph{novel combinations} of objects and interactions not seen during training, these models fail to generalize.
 
 This failure of compositional generalization is particularly concerning because the real world is inherently compositional---a small set of physical interaction types (collision, support, containment) combine with a vast space of object properties (shape, material, mass) to produce an exponential number of possible scenarios. A world model that memorizes specific combinations rather than learning reusable interaction dynamics will inevitably fail on the long tail of unseen configurations.
 
@@ -124,6 +124,15 @@ Each interaction type $\tau \in \{1, \ldots, M\}$ has its own dynamics module $f
 
 \textbf{Why this enables compositional generalization.} Consider interaction type $\tau$ = ``elastic collision.'' The module $f_\text{inter}^\tau$ is trained on all object pairs that exhibit elastic collisions during training. At test time, when a novel pair $(a, b)$ collides, the graph discovery module classifies this as type $\tau$, and the \emph{same} $f_\text{inter}^\tau$ is applied---regardless of whether types $a$ and $b$ were ever seen colliding together. The dynamics module generalizes because it has learned the \emph{mechanism} of collision, not the specific pair.
 
+\subsection{Theoretical motivation}
+\label{sec:theory}
+
+Our design is motivated by two theoretical principles:
+
+\textbf{Independent Causal Mechanisms (ICM)~\citep{scholkopf2021causal}.} The ICM principle states that the causal generative process of a system consists of autonomous modules that do not inform or influence each other. In our setting, each interaction type $\tau$ corresponds to an independent causal mechanism: the physics of elastic collision is independent of the physics of gravitational attraction. By assigning a separate module $f_\text{inter}^\tau$ to each mechanism, \ours{} respects this independence---changing one mechanism (e.g., making collisions inelastic) requires updating only $f_\text{inter}^\tau$ without affecting other modules.
+
+\textbf{Causal factorization enables transfer~\citep{richens2024robust}.} \citet{richens2024robust} prove that any agent achieving bounded regret under distributional shifts must have learned an approximate causal model of the data-generating process. We extend this result informally: when the causal model is further \emph{factorized} by interaction type, each factor can be independently reused across novel object combinations. Formally, if the true dynamics factorize as $P(\mathbf{s}_{t+1} | \mathbf{s}_t) = \prod_i P(\mathbf{s}_{t+1}^i | \text{pa}(\mathbf{s}_t^i), \tau_{ij})$ where $\text{pa}(\cdot)$ denotes causal parents and $\tau_{ij}$ the interaction type, then learning each conditional $P(\cdot | \cdot, \tau)$ separately allows generalization to any parent set---including novel object-type combinations not seen during training.
+
 \subsection{Training}
 
 We train in two phases with autoregressive rollout:
@@ -170,10 +179,10 @@ All methods use the same state encoder/decoder architecture (2-layer MLP, hidden
         Method & Causal Graph & Typed Modules & Seen MSE $\downarrow$ & Unseen MSE $\downarrow$ & $\Delta$ \\
         \midrule
         NoGraph & \texttimes & \texttimes & 0.052$\pm$0.002 & 0.077$\pm$0.006 & --- \\
-        FullGraph & \texttimes\,(all-on) & \texttimes & 0.058$\pm$0.001 & 0.083$\pm$0.002 & $-7.8\%$ \\
-        SingleModule & \checkmark & \texttimes & \textbf{0.028$\pm$0.002} & 0.052$\pm$0.001 & $+32.5\%^*$ \\
+        FullGraph & \texttimes\,(all-on) & \texttimes & 0.058$\pm$0.001 & 0.083$\pm$0.002 & $-7.1\%$ \\
+        SingleModule & \checkmark & \texttimes & \textbf{0.028$\pm$0.002} & 0.052$\pm$0.001 & $+32.9\%^*$ \\
         \midrule
-        \textbf{\ours{}} & \checkmark & \checkmark & 0.043$\pm$0.003 & \textbf{0.066$\pm$0.003} & $\mathbf{+14.3\%}$ \\
+        \textbf{\ours{}} & \checkmark & \checkmark & 0.043$\pm$0.003 & \textbf{0.066$\pm$0.003} & $\mathbf{+14.1\%}$ \\
         \bottomrule
     \end{tabular}
 
@@ -181,7 +190,7 @@ All methods use the same state encoder/decoder architecture (2-layer MLP, hidden
     {\small $^*$SingleModule achieves lowest absolute MSE but suffers from 88\% compositional gap (see Table~\ref{tab:gap}), indicating memorization rather than generalization.}
 \end{table}
 
-Table~\ref{tab:main} presents our main results. \ours{} achieves the lowest Unseen MSE (0.066) among methods with comparable generalization behavior, outperforming FullGraph by 20\% and NoGraph by 14\%.
+Table~\ref{tab:main} presents our main results. \ours{} achieves the lowest Unseen MSE (0.066) among methods that do not overfit, outperforming FullGraph by 20\% and NoGraph by 14\%.
 
 SingleModule achieves the lowest absolute MSE on both seen (0.028) and unseen (0.052) data. However, this apparent advantage masks severe overfitting, revealed by the compositional gap analysis in Table~\ref{tab:gap}.
 
