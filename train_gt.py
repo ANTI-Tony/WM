@@ -181,7 +181,8 @@ def main():
     parser.add_argument("--lr", type=float, default=3e-4)
     parser.add_argument("--num_videos", type=int, default=3000)
     parser.add_argument("--rollout_steps", type=int, default=8)
-    parser.add_argument("--num_interaction_types", type=int, default=4)
+    parser.add_argument("--num_interaction_types", type=int, default=8)
+    parser.add_argument("--slot_dim", type=int, default=128)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--synthetic", action="store_true")
     args = parser.parse_args()
@@ -217,7 +218,7 @@ def main():
 
     # Model
     model = GTCausalComp(
-        state_dim=GT_STATE_DIM, slot_dim=64,
+        state_dim=GT_STATE_DIM, slot_dim=args.slot_dim,
         num_interaction_types=args.num_interaction_types, max_objects=6,
     ).to(device)
     num_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
