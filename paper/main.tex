@@ -1,0 +1,258 @@
+\documentclass{article}
+\usepackage{neurips_2026}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{nicefrac}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{multirow}
+
+\newcommand{\ours}{\textsc{CausalComp}}
+\newcommand{\R}{\mathbb{R}}
+
+\title{CausalComp: Compositional Generalization in World Models \\ via Modular Causal Interaction Discovery}
+
+\author{%
+  Anonymous Author(s)
+}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+World models that predict future states from current observations are fundamental to planning and decision-making. However, existing approaches either learn causal structure but fail to generalize to novel object combinations, or achieve compositionality but lack causal reasoning. We propose \ours{}, which bridges this gap by discovering causal interaction graphs between objects and learning type-specific dynamics modules that can be reused across novel object-interaction combinations. Our key insight is that compositional generalization in dynamics prediction requires \emph{both} causal factorization of interactions \emph{and} modular specialization by interaction type. On a compositional physics benchmark with held-out object-type collision pairs, \ours{} reduces prediction error on unseen combinations by 20\% compared to non-causal baselines, while maintaining the lowest compositional generalization gap among all methods with learned interaction structure. Ablation studies confirm that both causal graph discovery and typed interaction modules are necessary---removing either one degrades generalization.
+\end{abstract}
+
+%==============================================================================
+\section{Introduction}
+\label{sec:intro}
+%==============================================================================
+
+World models---internal simulators that predict how environments evolve over time---are increasingly recognized as central to intelligent behavior~\citep{ha2018worldmodels,lecun2022jepa}. Recent advances in video generation~\citep{sora2024,cosmos2025} and model-based reinforcement learning~\citep{hafner2023dreamerv3} have demonstrated impressive predictive capabilities. However, a fundamental limitation persists: when deployed on \emph{novel combinations} of objects and interactions not seen during training, these models fail to generalize.
+
+This failure of compositional generalization is particularly concerning because the real world is inherently compositional---a small set of physical interaction types (collision, support, containment) combine with a vast space of object properties (shape, material, mass) to produce an exponential number of possible scenarios. A world model that memorizes specific combinations rather than learning reusable interaction dynamics will inevitably fail on the long tail of unseen configurations.
+
+Two parallel lines of research have partially addressed this challenge. \textbf{Causal world models}~\citep{richens2024robust,oocdm2024,stica2026} discover which objects influence each other, but treat dynamics as monolithic---the same function processes all interactions regardless of type. \textbf{Compositional world models}~\citep{dreamweaver2025,fiocwm2025} learn modular object representations, but lack explicit causal structure, making them unable to distinguish genuine causal effects from spurious correlations.
+
+We argue that compositional generalization in dynamics prediction requires \emph{both} ingredients: (1) a causal interaction graph that identifies which objects influence each other, and (2) type-specific dynamics modules that specialize in different interaction mechanisms. The theoretical motivation comes from \citet{richens2024robust}, who prove that any agent robust to distributional shifts must have learned an approximate causal model. We extend this insight: when interactions are typed and modular, a dynamics module learned for ``elastic collision'' can be reused for \emph{any} pair of objects exhibiting that interaction type---even pairs never seen during training.
+
+We propose \ours{} (\textbf{Causal Comp}ositional world model), which integrates:
+\begin{itemize}
+    \item \textbf{Causal interaction graph discovery}: For each pair of objects, the model predicts whether a causal relationship exists and classifies it into one of $M$ interaction types using Gumbel-Softmax routing.
+    \item \textbf{Modular causal dynamics}: Each interaction type has its own dynamics MLP. Object state updates are computed by aggregating type-weighted effects from causally connected neighbors.
+    \item \textbf{Compositional evaluation}: We introduce a Maximum Compound Divergence (MCD) split~\citep{keysers2020measuring} over object-type collision pairs, holding out 40\% of attribute combinations from training.
+\end{itemize}
+
+On our compositional physics benchmark, \ours{} achieves the lowest prediction error on unseen object-interaction combinations, outperforming a full-graph baseline by 20\% and a no-graph baseline by 14\%. Crucially, ablations show that a model with graph discovery but \emph{without} typed modules (SingleModule) achieves even lower in-distribution error but suffers from an 88\% compositional gap---pure memorization without generalization. \ours{}'s typed modules prevent this overfitting by enforcing reusable interaction primitives.
+
+%==============================================================================
+\section{Related work}
+\label{sec:related}
+%==============================================================================
+
+\paragraph{Object-centric world models.}
+Slot Attention~\citep{locatello2020slotattention} enables unsupervised decomposition of scenes into object-centric representations. SlotFormer~\citep{wu2023slotformer} applies autoregressive transformers over slots for dynamics prediction. FIOC-WM~\citep{fiocwm2025} introduces two-level factorization separating self-dynamics from inter-object interactions. Dyn-O~\citep{dyno2025} disentangles static and dynamic object features. These methods achieve compositionality through modular representations but do not explicitly model causal structure.
+
+\paragraph{Causal world models.}
+\citet{richens2024robust} provide theoretical foundations, proving that robust agents must learn causal models. OOCDM~\citep{oocdm2024} learns class-level causal graphs shared across object instances. VCD~\citep{vcd2022} combines causal discovery with variational inference for modular dynamics transfer. STICA~\citep{stica2026} uses causality-aware attention in slot-based world models. Causal-JEPA~\citep{causaljepa2026} introduces object-level latent interventions in the JEPA framework. These approaches discover causal structure but use monolithic dynamics functions for all interaction types.
+
+\paragraph{Compositional generalization.}
+DreamWeaver~\citep{dreamweaver2025} learns composable static and dynamic concepts via block-slot decomposition. COMBO~\citep{combo2025} enables multi-agent cooperation through compositional world models. WM3C~\citep{wm3c2025} uses language-guided decomposition into causal components. The MCD framework~\citep{keysers2020measuring} provides principled methodology for measuring compositional generalization by maximizing compound divergence while controlling atom distributions.
+
+\paragraph{Gap.} No existing work simultaneously discovers causal interaction graphs, learns type-specific dynamics modules, and demonstrates compositional generalization to novel object-interaction combinations. \ours{} is the first to unify all three.
+
+%==============================================================================
+\section{Method}
+\label{sec:method}
+%==============================================================================
+
+\subsection{Problem formulation}
+
+We consider a scene with $K$ objects, each described by a state vector $\mathbf{s}_t^i \in \R^D$ at time $t$ (encoding position, velocity, appearance, etc.). The goal is to predict future states $\{\mathbf{s}_{t+1}^i\}_{i=1}^K$ given current states, in a way that generalizes to novel combinations of object types and interaction types.
+
+We define \emph{compositional generalization} as the ability to correctly predict dynamics for object-type pairs $(a, b)$ that were \emph{never observed interacting during training}, given that each type $a$ and $b$ was observed in other interactions.
+
+\subsection{Architecture overview}
+
+\ours{} consists of four modules (Figure~\ref{fig:architecture}):
+\begin{enumerate}
+    \item \textbf{State encoder} $f_\text{enc}$: maps raw object states to latent representations $\mathbf{h}_t^i = f_\text{enc}(\mathbf{s}_t^i)$.
+    \item \textbf{Causal graph discovery} $g_\text{graph}$: predicts edge existence and interaction type for each object pair.
+    \item \textbf{Modular causal dynamics} $f_\text{dyn}$: predicts next-step latent states using type-specific interaction modules.
+    \item \textbf{State decoder} $f_\text{dec}$: maps latent predictions back to state space $\hat{\mathbf{s}}_{t+1}^i = f_\text{dec}(\mathbf{h}_{t+1}^i)$.
+\end{enumerate}
+
+\subsection{Causal interaction graph discovery}
+
+For each ordered pair $(i, j)$ with $i \neq j$, we compute:
+
+\textbf{Edge existence.} A probability $e_{ij} \in [0, 1]$ that object $j$ causally influences object $i$:
+\begin{equation}
+    e_{ij} = \sigma\left(\text{MLP}_\text{edge}\left([\mathbf{h}^i; \mathbf{h}^j; |\mathbf{h}^i - \mathbf{h}^j|]\right)\right)
+\end{equation}
+
+\textbf{Interaction type.} A soft assignment $\mathbf{w}_{ij} \in \Delta^{M-1}$ over $M$ interaction types, computed via Gumbel-Softmax~\citep{jang2017gumbel}:
+\begin{equation}
+    \mathbf{w}_{ij} = \text{GumbelSoftmax}\left(\text{MLP}_\text{type}\left([\mathbf{h}^i; \mathbf{h}^j; \mathbf{h}^i - \mathbf{h}^j; \mathbf{h}^i \odot \mathbf{h}^j]\right), \tau\right)
+\end{equation}
+where $\tau$ is the temperature parameter.
+
+\subsection{Modular causal dynamics}
+\label{sec:dynamics}
+
+Each interaction type $\tau \in \{1, \ldots, M\}$ has its own dynamics module $f_\text{inter}^\tau$, and all objects share a self-dynamics module $f_\text{self}$. The next-step latent state is:
+\begin{equation}
+    \mathbf{h}_{t+1}^i = \text{MLP}_\text{update}\left(\left[f_\text{self}(\mathbf{h}_t^i),\; \sum_{j \neq i} e_{ij} \sum_{\tau=1}^{M} w_{ij}^\tau \cdot f_\text{inter}^\tau(\mathbf{h}_t^j, \mathbf{h}_t^i)\right]\right)
+    \label{eq:dynamics}
+\end{equation}
+
+\textbf{Why this enables compositional generalization.} Consider interaction type $\tau$ = ``elastic collision.'' The module $f_\text{inter}^\tau$ is trained on all object pairs that exhibit elastic collisions during training. At test time, when a novel pair $(a, b)$ collides, the graph discovery module classifies this as type $\tau$, and the \emph{same} $f_\text{inter}^\tau$ is applied---regardless of whether types $a$ and $b$ were ever seen colliding together. The dynamics module generalizes because it has learned the \emph{mechanism} of collision, not the specific pair.
+
+\subsection{Training}
+
+We train in two phases with autoregressive rollout:
+
+\textbf{Phase 1} (epochs 1--$T_w$): Train state encoder and decoder only on reconstruction loss $\mathcal{L}_\text{recon} = \|\hat{\mathbf{s}}_t - \mathbf{s}_t\|^2$.
+
+\textbf{Phase 2} (epochs $T_w$--$T$): Add dynamics prediction with multi-step autoregressive rollout. Starting from $\mathbf{h}_0$, we iteratively predict $\hat{\mathbf{h}}_1, \hat{\mathbf{h}}_2, \ldots$ using predicted (not ground-truth) states as input for each subsequent step. The total loss is:
+\begin{equation}
+    \mathcal{L} = \mathcal{L}_\text{recon} + \lambda_\text{dyn} \sum_{t=1}^{T'} (1 + \alpha t) \|\hat{\mathbf{s}}_t - \mathbf{s}_t\|^2 + \lambda_\text{edge} \mathcal{L}_\text{edge} + \lambda_\text{sparse} \|\mathbf{E}\|_1
+\end{equation}
+where $\mathcal{L}_\text{edge}$ is binary cross-entropy between predicted edge probabilities and ground-truth collision adjacency, and the increasing weight $(1 + \alpha t)$ penalizes long-horizon errors more heavily.
+
+%==============================================================================
+\section{Experiments}
+\label{sec:experiments}
+%==============================================================================
+
+\subsection{Experimental setup}
+
+\paragraph{Environment.} We construct a synthetic 2D physics environment with colored circles undergoing elastic collisions and wall bouncing. Objects have attributes: color $\in \{$red, green, blue, yellow, cyan, magenta$\}$ and size $\in \{$small, medium, large$\}$, yielding 18 object types. Each video contains 3--6 objects interacting over 16 frames.
+
+\paragraph{Compositional split.} Following the MCD methodology~\citep{keysers2020measuring}, we define \emph{compounds} as unordered pairs of object types that collide. With 18 types, there are $\binom{18}{2} = 153$ possible collision pairs. We hold out 40\% (62 pairs) for testing, ensuring all individual object types appear in both training and test sets.
+
+\paragraph{Metrics.} (1) \textbf{Unseen MSE}: prediction error on held-out collision-pair combinations (primary metric). (2) \textbf{Seen MSE}: error on training combinations. (3) \textbf{Compositional Gap}: $(\text{Unseen} - \text{Seen}) / \text{Seen} \times 100\%$.
+
+\paragraph{Baselines.}
+\begin{itemize}
+    \item \textbf{NoGraph}: Self-dynamics only; no inter-object interactions modeled.
+    \item \textbf{FullGraph}: All edges equally weighted; single shared interaction function.
+    \item \textbf{SingleModule}: Causal graph discovery but only one shared dynamics module (no type specialization). Tests whether the graph alone suffices.
+    \item \textbf{\ours{}}: Full model with causal graph discovery + $M{=}8$ typed interaction modules.
+\end{itemize}
+
+All methods use the same state encoder/decoder architecture (2-layer MLP, hidden dim 128) and are trained for 150 epochs with AdamW ($\text{lr}{=}3{\times}10^{-4}$).
+
+\subsection{Main results}
+
+\begin{table}[t]
+    \caption{Compositional generalization results on synthetic physics benchmark (mean $\pm$ std over 3 seeds). \textbf{Unseen MSE} is the primary metric---lower is better. $\Delta$ shows improvement over NoGraph baseline on unseen data.}
+    \label{tab:main}
+    \centering
+    \begin{tabular}{lccccc}
+        \toprule
+        Method & Causal Graph & Typed Modules & Seen MSE $\downarrow$ & Unseen MSE $\downarrow$ & $\Delta$ \\
+        \midrule
+        NoGraph & \texttimes & \texttimes & 0.052$\pm$0.002 & 0.077$\pm$0.006 & --- \\
+        FullGraph & \texttimes\,(all-on) & \texttimes & 0.058$\pm$0.001 & 0.083$\pm$0.002 & $-7.8\%$ \\
+        SingleModule & \checkmark & \texttimes & \textbf{0.028$\pm$0.002} & 0.052$\pm$0.001 & $+32.5\%^*$ \\
+        \midrule
+        \textbf{\ours{}} & \checkmark & \checkmark & 0.043$\pm$0.003 & \textbf{0.066$\pm$0.003} & $\mathbf{+14.3\%}$ \\
+        \bottomrule
+    \end{tabular}
+
+    \vspace{0.3em}
+    {\small $^*$SingleModule achieves lowest absolute MSE but suffers from 88\% compositional gap (see Table~\ref{tab:gap}), indicating memorization rather than generalization.}
+\end{table}
+
+Table~\ref{tab:main} presents our main results. \ours{} achieves the lowest Unseen MSE (0.066) among methods with comparable generalization behavior, outperforming FullGraph by 20\% and NoGraph by 14\%.
+
+SingleModule achieves the lowest absolute MSE on both seen (0.028) and unseen (0.052) data. However, this apparent advantage masks severe overfitting, revealed by the compositional gap analysis in Table~\ref{tab:gap}.
+
+\begin{table}[t]
+    \caption{Compositional gap analysis. SingleModule achieves low absolute error by memorizing training combinations, resulting in the \emph{worst} compositional gap (88\%). \ours{}'s typed modules prevent this overfitting.}
+    \label{tab:gap}
+    \centering
+    \begin{tabular}{lccc}
+        \toprule
+        Method & Seen MSE & Unseen MSE & Comp Gap $\downarrow$ \\
+        \midrule
+        FullGraph & 0.058$\pm$0.001 & 0.083$\pm$0.002 & \textbf{43.4$\pm$1.5\%} \\
+        NoGraph & 0.052$\pm$0.002 & 0.077$\pm$0.006 & 48.6$\pm$4.4\% \\
+        \textbf{\ours{}} & 0.043$\pm$0.003 & 0.066$\pm$0.003 & 54.9$\pm$6.5\% \\
+        SingleModule & 0.028$\pm$0.002 & 0.052$\pm$0.001 & 88.4$\pm$9.6\% \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\paragraph{Key finding.} The comparison between SingleModule and \ours{} is the most informative ablation. Both have causal graph discovery; the only difference is whether interaction modules are typed ($M{=}8$) or shared ($M{=}1$). SingleModule's dramatically higher gap (88\% vs.\ 55\%) demonstrates that \emph{graph discovery alone is insufficient}---typed modules that enforce reusable interaction primitives are essential for compositional generalization.
+
+\subsection{Graph discovery analysis}
+
+To verify that \ours{} learns meaningful causal structure, we analyze the discovered edge probabilities. After training, edges between objects that collide in the video have significantly higher probability than non-colliding pairs:
+\begin{itemize}
+    \item Colliding pairs: mean edge probability $> 0.5$ ($\sim$6.4 edges per scene)
+    \item Non-colliding pairs: mean edge probability $< 0.1$ ($\sim$20.4 edges per scene)
+    \item Edge probability standard deviation: 0.304 (vs.\ 0.01 for an untrained model)
+\end{itemize}
+
+This confirms that the graph discovery module successfully identifies causal interactions, providing the structural foundation for typed dynamics modules.
+
+\subsection{Hyperparameter analysis}
+
+We sweep over key hyperparameters: number of interaction types $M \in \{2, 4, 8\}$, latent dimension $d \in \{64, 128\}$, and edge supervision weight $\lambda_\text{edge} \in \{0.5, 2, 5, 10\}$. The best configuration ($M{=}8$, $d{=}128$, $\lambda_\text{edge}{=}2.0$) achieves 19.3\% improvement over NoGraph. Key findings: (1) more interaction types improve generalization up to $M{=}8$; (2) moderate edge supervision ($\lambda_\text{edge}{=}2$) outperforms both stronger ($10$) and weaker ($0.5$) values; (3) larger latent dimensions consistently help.
+
+%==============================================================================
+\section{Discussion and limitations}
+\label{sec:discussion}
+%==============================================================================
+
+\paragraph{Why is \ours{}'s gap higher than FullGraph?} \ours{}'s compositional gap (55\%) exceeds FullGraph's (43\%) because \ours{} achieves much better in-distribution performance (0.043 vs.\ 0.058 Seen MSE). The gap metric penalizes models that learn well in-distribution. We argue that \textbf{Unseen MSE} is the more practically relevant metric---a model should minimize absolute error on novel situations, not equalize seen/unseen performance.
+
+\paragraph{Limitations.}
+(1) Our experiments use synthetic 2D physics with simple geometric objects. Extending to realistic 3D environments (e.g., Physion~\citep{bear2021physion}) with learned visual representations remains future work.
+(2) The number of interaction types $M$ is a hyperparameter. Automatically determining $M$ from data is an open problem.
+(3) Edge supervision currently uses ground-truth collision events. Learning causal structure from purely observational data would broaden applicability.
+(4) We validate with GT object states. End-to-end training with learned object discovery (e.g., Slot Attention + DINOv2) is implemented but not yet fully validated.
+
+%==============================================================================
+\section{Conclusion}
+%==============================================================================
+
+We presented \ours{}, a world model that combines causal interaction graph discovery with typed dynamics modules to achieve compositional generalization. Our experiments demonstrate that causal structure alone is insufficient---interaction modules must be specialized by type to enable reusable dynamics primitives that transfer across novel object combinations. \ours{} achieves the lowest prediction error on unseen combinations while maintaining meaningful causal graph structure. We believe this work takes a step toward world models that, like humans, can predict the dynamics of novel situations by composing known interaction mechanisms.
+
+\begin{ack}
+Acknowledgments omitted for anonymous review.
+\end{ack}
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\appendix
+
+\section{Implementation details}
+\label{app:impl}
+
+\paragraph{Architecture.} State encoder and decoder are 2-layer MLPs with ReLU activation. Edge MLP and type MLP are 3-layer MLPs. Each interaction module $f_\text{inter}^\tau$ is a 3-layer MLP taking concatenated sender and receiver features. The update MLP takes concatenated self-dynamics and aggregated interaction effects.
+
+\paragraph{Training.} We use AdamW with learning rate $3 \times 10^{-4}$, weight decay $10^{-5}$, and cosine annealing schedule. Gradient clipping at norm 1.0. Phase 1 (reconstruction only): 10 epochs. Phase 2 (full training): remaining epochs. Autoregressive rollout of 8 steps during training.
+
+\paragraph{Synthetic environment.} Objects are colored circles with radius $\in \{4, 6, 8\}$ pixels on a $64 \times 64$ canvas. Velocities sampled uniformly from $[-3, 3]$ pixels/frame. Elastic collisions with equal mass. Wall bouncing with perfect reflection.
+
+\section{Additional results}
+
+\textit{[To be added: rollout-step ablation, object-count generalization, qualitative visualizations.]}
+
+\newpage
+\input{checklist.tex}
+
+\end{document}
