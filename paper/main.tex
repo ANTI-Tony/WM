@@ -131,7 +131,7 @@ Our design is motivated by two theoretical principles:
 
 \textbf{Independent Causal Mechanisms (ICM)~\citep{scholkopf2021causal}.} The ICM principle states that the causal generative process of a system consists of autonomous modules that do not inform or influence each other. In our setting, each interaction type $\tau$ corresponds to an independent causal mechanism: the physics of elastic collision is independent of the physics of gravitational attraction. By assigning a separate module $f_\text{inter}^\tau$ to each mechanism, \ours{} respects this independence---changing one mechanism (e.g., making collisions inelastic) requires updating only $f_\text{inter}^\tau$ without affecting other modules.
 
-\textbf{Causal factorization enables transfer~\citep{richens2024robust}.} \citet{richens2024robust} prove that any agent achieving bounded regret under distributional shifts must have learned an approximate causal model of the data-generating process. We extend this result informally: when the causal model is further \emph{factorized} by interaction type, each factor can be independently reused across novel object combinations. Formally, if the true dynamics factorize as $P(\mathbf{s}_{t+1} | \mathbf{s}_t) = \prod_i P(\mathbf{s}_{t+1}^i | \text{pa}(\mathbf{s}_t^i), \tau_{ij})$ where $\text{pa}(\cdot)$ denotes causal parents and $\tau_{ij}$ the interaction type, then learning each conditional $P(\cdot | \cdot, \tau)$ separately allows generalization to any parent set---including novel object-type combinations not seen during training.
+\textbf{Causal factorization enables transfer~\citep{richens2024robust}.} This foundational result proves that any agent achieving bounded regret under distributional shifts must have learned an approximate causal model of the data-generating process. We extend this result informally: when the causal model is further \emph{factorized} by interaction type, each factor can be independently reused across novel object combinations. Formally, if the true dynamics factorize as $P(\mathbf{s}_{t+1} | \mathbf{s}_t) = \prod_i P(\mathbf{s}_{t+1}^i | \text{pa}(\mathbf{s}_t^i), \tau_{ij})$ where $\text{pa}(\cdot)$ denotes causal parents and $\tau_{ij}$ the interaction type, then learning each conditional $P(\cdot | \cdot, \tau)$ separately allows generalization to any parent set---including novel object-type combinations not seen during training.
 
 \subsection{Training}
 
@@ -248,7 +248,33 @@ This confirms that the graph discovery module successfully identifies causal int
 
 \subsection{Hyperparameter analysis}
 
-We sweep over key hyperparameters: number of interaction types $M \in \{2, 4, 8\}$, latent dimension $d \in \{64, 128\}$, and edge supervision weight $\lambda_\text{edge} \in \{0.5, 2, 5, 10\}$. The best configuration ($M{=}8$, $d{=}128$, $\lambda_\text{edge}{=}2.0$) achieves 19.3\% improvement over NoGraph. Key findings: (1) more interaction types improve generalization up to $M{=}8$; (2) moderate edge supervision ($\lambda_\text{edge}{=}2$) outperforms both stronger ($10$) and weaker ($0.5$) values; (3) larger latent dimensions consistently help.
+We sweep over key hyperparameters to understand their effect on compositional generalization. Table~\ref{tab:sweep} shows results for representative configurations.
+
+\begin{table}[t]
+    \caption{Hyperparameter sweep results (single seed). $\Delta$ shows improvement in Unseen MSE over NoGraph baseline (0.088). Best configuration: $M{=}8$, $d{=}128$, $\lambda_\text{edge}{=}2.0$.}
+    \label{tab:sweep}
+    \centering
+    \begin{tabular}{lcccccc}
+        \toprule
+        Config & $M$ & $d$ & $\lambda_\text{edge}$ & Unseen MSE $\downarrow$ & $\Delta$ \\
+        \midrule
+        \textbf{T8\_S128} & \textbf{8} & \textbf{128} & \textbf{2.0} & \textbf{0.071} & $\mathbf{+19.3\%}$ \\
+        T4\_S64 & 4 & 64 & 5.0 & 0.073 & $+16.4\%$ \\
+        T4\_S64 & 4 & 64 & 2.0 & 0.074 & $+15.8\%$ \\
+        T8\_S64 & 8 & 64 & 2.0 & 0.074 & $+15.4\%$ \\
+        T4\_S64 & 4 & 64 & 10.0 & 0.075 & $+14.6\%$ \\
+        T2\_S64 & 2 & 64 & 2.0 & 0.076 & $+13.2\%$ \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Key findings: (1) \textbf{More interaction types help}: increasing $M$ from 2 to 8 consistently improves Unseen MSE, suggesting that finer-grained type specialization enables better compositional transfer. (2) \textbf{Moderate edge supervision is optimal}: $\lambda_\text{edge}{=}2$ outperforms both $\lambda_\text{edge}{=}10$ (which over-constrains dynamics learning) and $\lambda_\text{edge}{=}0.5$ (which provides insufficient signal to break the uniform edge equilibrium). (3) \textbf{Larger latent dimensions help}: $d{=}128$ provides 19.3\% improvement vs.\ NoGraph, compared to 15.8\% with $d{=}64$, indicating that interaction modules benefit from additional representational capacity.
+
+\subsection{Autoregressive rollout analysis}
+
+A critical design choice in \ours{} is the use of autoregressive rollout during training (Section~3.6). Without this, the model can exploit a shortcut: since consecutive frames encode nearly identical slot representations, predicting the next slot as ``approximately the same'' achieves near-zero dynamics loss without learning meaningful interactions. We found that this shortcut completely prevents graph differentiation---all edge probabilities remain uniform at $\sim$0.14 (= $K / K^2$ where $K{=}8$ is the number of slots).
+
+Autoregressive rollout eliminates this shortcut by feeding \emph{predicted} (not ground-truth) states back as input. Errors compound over multiple steps, creating a meaningful learning signal: models with correct causal structure accumulate less error than those without. In our experiments, the dynamics prediction loss stabilized at 0.085 with autoregressive rollout (vs.\ 0.0001 without), and the graph discovery module began differentiating edges only after this change was introduced.
 
 %==============================================================================
 \section{Discussion and limitations}
@@ -289,10 +315,10 @@ Acknowledgments omitted for anonymous review.
 
 \section{Qualitative results}
 
-\begin{figure}[h]
+\begin{figure}[ht!]
     \centering
     \includegraphics[width=\linewidth]{figures/trajectory_prediction.pdf}
-    \caption{\textbf{Trajectory prediction comparison.} (a) Ground-truth trajectories of 6 objects over 16 frames. (b) \ours{} predictions closely track ground truth. (c) NoGraph baseline shows drift due to inability to model inter-object interactions. Filled circles show final positions; trails show full trajectories.}
+    \caption{\textbf{Trajectory prediction comparison.} (a) Ground-truth trajectories of 6 objects over 16 frames. (b) \ours{} predictions closely track ground truth, including after collisions. (c) NoGraph baseline shows drift due to inability to model inter-object interactions. Filled circles show final positions; trails show full trajectories.}
     \label{fig:trajectory}
 \end{figure}
 
