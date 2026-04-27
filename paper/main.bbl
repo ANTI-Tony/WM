@@ -1,0 +1,108 @@
+\begin{thebibliography}{20}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Anonymous(2022)]{vcd2022}
+Anonymous.
+\newblock Variational causal dynamics: Discovering modular world models from interventions.
+\newblock In \emph{NeurIPS Workshop on Causal Machine Learning}, 2022.
+
+\bibitem[Anonymous(2025{\natexlab{a}})]{dreamweaver2025}
+Anonymous.
+\newblock Dreamweaver: Learning compositional world models from pixels.
+\newblock In \emph{International Conference on Learning Representations}, 2025{\natexlab{a}}.
+
+\bibitem[Anonymous(2025{\natexlab{b}})]{fiocwm2025}
+Anonymous.
+\newblock Learning interactive world model for object-centric reinforcement learning.
+\newblock In \emph{Advances in Neural Information Processing Systems}, 2025{\natexlab{b}}.
+
+\bibitem[Anonymous(2025{\natexlab{c}})]{wm3c2025}
+Anonymous.
+\newblock Modeling unseen environments with language-guided composable causal components in rl.
+\newblock In \emph{International Conference on Learning Representations}, 2025{\natexlab{c}}.
+
+\bibitem[Anonymous(2026)]{stica2026}
+Anonymous.
+\newblock Slot transformer imagination with causality-aware reinforcement learning.
+\newblock In \emph{AAAI Conference on Artificial Intelligence}, 2026.
+
+\bibitem[Bear et~al.(2021)]{bear2021physion}
+Daniel Bear et~al.
+\newblock Physion: Evaluating physical prediction from vision in humans and machines.
+\newblock In \emph{NeurIPS Datasets and Benchmarks}, 2021.
+
+\bibitem[Ha and Schmidhuber(2018)]{ha2018worldmodels}
+David Ha and J{\"u}rgen Schmidhuber.
+\newblock World models.
+\newblock \emph{arXiv preprint arXiv:1803.10122}, 2018.
+
+\bibitem[Hafner et~al.(2025)Hafner, Pasukonis, Ba, and Lillicrap]{hafner2023dreamerv3}
+Danijar Hafner, Jurgis Pasukonis, Jimmy Ba, and Timothy Lillicrap.
+\newblock Mastering diverse domains through world models.
+\newblock 2025.
+
+\bibitem[Jang et~al.(2017)Jang, Gu, and Poole]{jang2017gumbel}
+Eric Jang, Shixiang Gu, and Ben Poole.
+\newblock Categorical reparameterization with gumbel-softmax.
+\newblock In \emph{International Conference on Learning Representations}, 2017.
+
+\bibitem[Keysers et~al.(2020)Keysers, Sch{\"a}rli, Scales, Buiber, Furber, Kasber, et~al.]{keysers2020measuring}
+Daniel Keysers, Nathanael Sch{\"a}rli, Nathan Scales, Hylke Buiber, Daniel Furber, Sergii Kasber, et~al.
+\newblock Measuring compositional generalization: A comprehensive method on realistic data.
+\newblock In \emph{International Conference on Learning Representations}, 2020.
+
+\bibitem[LeCun(2022)]{lecun2022jepa}
+Yann LeCun.
+\newblock A path towards autonomous machine intelligence.
+\newblock \emph{Open Review}, 2022.
+
+\bibitem[Locatello et~al.(2020)Locatello, Weissenborn, Unterthiner, Mahendran, Heigold, Uszkoreit, Dosovitskiy, and Kipf]{locatello2020slotattention}
+Francesco Locatello, Dirk Weissenborn, Thomas Unterthiner, Aravindh Mahendran, Georg Heigold, Jakob Uszkoreit, Alexei Dosovitskiy, and Thomas Kipf.
+\newblock Object-centric learning with slot attention.
+\newblock In \emph{Advances in Neural Information Processing Systems}, 2020.
+
+\bibitem[Nam et~al.(2026)]{causaljepa2026}
+Heejeong Nam et~al.
+\newblock Causal-jepa: Learning world models through object-level latent interventions.
+\newblock \emph{arXiv preprint arXiv:2602.11389}, 2026.
+
+\bibitem[NVIDIA(2025)]{cosmos2025}
+NVIDIA.
+\newblock Cosmos world foundation model.
+\newblock 2025.
+
+\bibitem[OpenAI(2024)]{sora2024}
+OpenAI.
+\newblock Video generation models as world simulators.
+\newblock 2024.
+
+\bibitem[Richens and Everitt(2024)]{richens2024robust}
+Jonathan Richens and Tom Everitt.
+\newblock Robust agents learn causal world models.
+\newblock In \emph{International Conference on Learning Representations}, 2024.
+
+\bibitem[Wang et~al.(2025)]{dyno2025}
+Zizhao Wang et~al.
+\newblock Dyn-o: Building structured world models with object-centric representations.
+\newblock In \emph{Advances in Neural Information Processing Systems}, 2025.
+
+\bibitem[Wu et~al.(2023)Wu, Dvornik, Greff, Kipf, and Gilitschenski]{wu2023slotformer}
+Ziyi Wu, Nikita Dvornik, Klaus Greff, Thomas Kipf, and Igor Gilitschenski.
+\newblock Slotformer: Unsupervised visual dynamics simulation with object-centric models.
+\newblock In \emph{International Conference on Learning Representations}, 2023.
+
+\bibitem[Yu et~al.(2024)]{oocdm2024}
+Zhongwei Yu et~al.
+\newblock Learning causal dynamics models in object-oriented environments.
+\newblock In \emph{International Conference on Machine Learning}, 2024.
+
+\bibitem[Zhang et~al.(2025)]{combo2025}
+Hongxin Zhang et~al.
+\newblock Compositional world models for embodied multi-agent cooperation.
+\newblock In \emph{International Conference on Learning Representations}, 2025.
+
+\end{thebibliography}

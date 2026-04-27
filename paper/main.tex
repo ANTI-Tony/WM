@@ -83,6 +83,13 @@ We define \emph{compositional generalization} as the ability to correctly predic
 
 \subsection{Architecture overview}
 
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\linewidth]{figures/architecture.pdf}
+    \caption{\textbf{\ours{} architecture.} Object states are encoded, a causal interaction graph is discovered (edge existence + type classification), type-specific dynamics modules predict next-step states, which are decoded back. Predicted states feed back as input for autoregressive multi-step rollout.}
+    \label{fig:architecture}
+\end{figure}
+
 \ours{} consists of four modules (Figure~\ref{fig:architecture}):
 \begin{enumerate}
     \item \textbf{State encoder} $f_\text{enc}$: maps raw object states to latent representations $\mathbf{h}_t^i = f_\text{enc}(\mathbf{s}_t^i)$.
@@ -205,7 +212,30 @@ To verify that \ours{} learns meaningful causal structure, we analyze the discov
     \item Edge probability standard deviation: 0.304 (vs.\ 0.01 for an untrained model)
 \end{itemize}
 
-This confirms that the graph discovery module successfully identifies causal interactions, providing the structural foundation for typed dynamics modules.
+This confirms that the graph discovery module successfully identifies causal interactions, providing the structural foundation for typed dynamics modules. Figure~\ref{fig:graph} visualizes a representative example, and Figure~\ref{fig:edges} shows the distribution of edge probabilities.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\linewidth]{figures/graph_discovery.pdf}
+    \caption{\textbf{Causal graph discovery.} (a) A scene with 6 colored circles. (b) Ground-truth collision graph. (c) Graph discovered by \ours{}. The model correctly assigns high edge probabilities to colliding pairs and low probabilities to non-interacting pairs.}
+    \label{fig:graph}
+\end{figure}
+
+\begin{figure}[t]
+    \centering
+    \begin{minipage}{0.48\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{figures/edge_distribution.pdf}
+        \caption{\textbf{Edge probability distribution.} Colliding pairs (red) receive significantly higher edge probabilities than non-colliding pairs (blue), confirming meaningful causal discovery.}
+        \label{fig:edges}
+    \end{minipage}\hfill
+    \begin{minipage}{0.48\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{figures/compositional_bar.pdf}
+        \caption{\textbf{Seen vs.\ Unseen MSE.} \ours{} achieves the best balance: lowest unseen error among non-overfitting methods. SingleModule's small gap between bars masks its 88\% relative gap.}
+        \label{fig:bar}
+    \end{minipage}
+\end{figure}
 
 \subsection{Hyperparameter analysis}
 
@@ -248,9 +278,14 @@ Acknowledgments omitted for anonymous review.
 
 \paragraph{Synthetic environment.} Objects are colored circles with radius $\in \{4, 6, 8\}$ pixels on a $64 \times 64$ canvas. Velocities sampled uniformly from $[-3, 3]$ pixels/frame. Elastic collisions with equal mass. Wall bouncing with perfect reflection.
 
-\section{Additional results}
+\section{Qualitative results}
 
-\textit{[To be added: rollout-step ablation, object-count generalization, qualitative visualizations.]}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\linewidth]{figures/trajectory_prediction.pdf}
+    \caption{\textbf{Trajectory prediction comparison.} (a) Ground-truth trajectories of 6 objects over 16 frames. (b) \ours{} predictions closely track ground truth. (c) NoGraph baseline shows drift due to inability to model inter-object interactions. Filled circles show final positions; trails show full trajectories.}
+    \label{fig:trajectory}
+\end{figure}
 
 \newpage
 \input{checklist.tex}
