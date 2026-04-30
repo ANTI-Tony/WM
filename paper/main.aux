@@ -61,35 +61,33 @@
 \@writefile{toc}{\contentsline {section}{\numberline {4}Experiments}{4}{section.4}\protected@file@percent }
 \newlabel{sec:experiments}{{4}{4}{Experiments}{section.4}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Experimental setup}{4}{subsection.4.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Environment.}{4}{section*.5}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Compositional generalization results on synthetic physics benchmark (mean $\pm $ std over 3 seeds). \textbf  {Unseen MSE} is the primary metric---lower is better. $\Delta $ shows improvement over NoGraph baseline on unseen data.}}{5}{table.1}\protected@file@percent }
-\newlabel{tab:main}{{1}{5}{Compositional generalization results on synthetic physics benchmark (mean $\pm $ std over 3 seeds). \textbf {Unseen MSE} is the primary metric---lower is better. $\Delta $ shows improvement over NoGraph baseline on unseen data}{table.1}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Compositional gap analysis. SingleModule achieves low absolute error by memorizing training combinations, resulting in the \emph  {worst} compositional gap (88\%). \textsc  {CausalComp}{}'s typed modules prevent this overfitting.}}{5}{table.2}\protected@file@percent }
-\newlabel{tab:gap}{{2}{5}{Compositional gap analysis. SingleModule achieves low absolute error by memorizing training combinations, resulting in the \emph {worst} compositional gap (88\%). \ours {}'s typed modules prevent this overfitting}{table.2}{}}
-\@writefile{toc}{\contentsline {paragraph}{Compositional split.}{5}{section*.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Metrics.}{5}{section*.7}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Baselines.}{5}{section*.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Environments.}{4}{section*.5}\protected@file@percent }
+\citation{wu2023slotformer}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Compositional generalization on \textbf  {SimplePhysics} (elastic collisions, 18 object types, mean $\pm $ std over 3 seeds). $\Delta $ = improvement over NoGraph on unseen data.}}{5}{table.1}\protected@file@percent }
+\newlabel{tab:simple}{{1}{5}{Compositional generalization on \textbf {SimplePhysics} (elastic collisions, 18 object types, mean $\pm $ std over 3 seeds). $\Delta $ = improvement over NoGraph on unseen data}{table.1}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Compositional generalization on \textbf  {MultiPhysics} (collisions + gravity + charge, 54 object types, mean $\pm $ std over 3 seeds). CausalComp achieves the lowest gap among all graph-based methods.}}{5}{table.2}\protected@file@percent }
+\newlabel{tab:multi}{{2}{5}{Compositional generalization on \textbf {MultiPhysics} (collisions + gravity + charge, 54 object types, mean $\pm $ std over 3 seeds). CausalComp achieves the lowest gap among all graph-based methods}{table.2}{}}
+\@writefile{toc}{\contentsline {paragraph}{Metrics.}{5}{section*.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Baselines.}{5}{section*.7}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Main results}{5}{subsection.4.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Key finding.}{5}{section*.9}\protected@file@percent }
 \@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces \textbf  {Causal graph discovery.} (a) A scene with 6 colored circles. (b) Ground-truth collision graph. (c) Graph discovered by \textsc  {CausalComp}{}. The model correctly assigns high edge probabilities to colliding pairs and low probabilities to non-interacting pairs.}}{6}{figure.2}\protected@file@percent }
 \newlabel{fig:graph}{{2}{6}{\textbf {Causal graph discovery.} (a) A scene with 6 colored circles. (b) Ground-truth collision graph. (c) Graph discovered by \ours {}. The model correctly assigns high edge probabilities to colliding pairs and low probabilities to non-interacting pairs}{figure.2}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces \textbf  {Edge probability distribution.} Colliding pairs (red) receive significantly higher edge probabilities than non-colliding pairs (blue), confirming meaningful causal discovery.}}{6}{figure.3}\protected@file@percent }
-\newlabel{fig:edges}{{3}{6}{\textbf {Edge probability distribution.} Colliding pairs (red) receive significantly higher edge probabilities than non-colliding pairs (blue), confirming meaningful causal discovery}{figure.3}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces \textbf  {Seen vs.\ Unseen MSE.} \textsc  {CausalComp}{} achieves the best balance: lowest unseen error among non-overfitting methods. SingleModule's small gap between bars masks its 88\% relative gap.}}{6}{figure.4}\protected@file@percent }
-\newlabel{fig:bar}{{4}{6}{\textbf {Seen vs.\ Unseen MSE.} \ours {} achieves the best balance: lowest unseen error among non-overfitting methods. SingleModule's small gap between bars masks its 88\% relative gap}{figure.4}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Graph discovery analysis}{6}{subsection.4.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Hyperparameter analysis}{6}{subsection.4.4}\protected@file@percent }
 \citation{bear2021physion}
-\bibstyle{plainnat}
-\bibdata{references}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces \textbf  {Edge probability distribution.} Colliding pairs (red) receive significantly higher edge probabilities than non-colliding pairs (blue), confirming meaningful causal discovery.}}{7}{figure.3}\protected@file@percent }
+\newlabel{fig:edges}{{3}{7}{\textbf {Edge probability distribution.} Colliding pairs (red) receive significantly higher edge probabilities than non-colliding pairs (blue), confirming meaningful causal discovery}{figure.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces \textbf  {Seen vs.\ Unseen MSE.} \textsc  {CausalComp}{} achieves the best balance: lowest unseen error among non-overfitting methods. SingleModule's small gap between bars masks its 88\% relative gap.}}{7}{figure.4}\protected@file@percent }
+\newlabel{fig:bar}{{4}{7}{\textbf {Seen vs.\ Unseen MSE.} \ours {} achieves the best balance: lowest unseen error among non-overfitting methods. SingleModule's small gap between bars masks its 88\% relative gap}{figure.4}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Hyperparameter sweep results (single seed). $\Delta $ shows improvement in Unseen MSE over NoGraph baseline (0.088). Best configuration: $M{=}8$, $d{=}128$, $\lambda _\text  {edge}{=}2.0$.}}{7}{table.3}\protected@file@percent }
 \newlabel{tab:sweep}{{3}{7}{Hyperparameter sweep results (single seed). $\Delta $ shows improvement in Unseen MSE over NoGraph baseline (0.088). Best configuration: $M{=}8$, $d{=}128$, $\lambda _\text {edge}{=}2.0$}{table.3}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Autoregressive rollout analysis}{7}{subsection.4.5}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {5}Discussion and limitations}{7}{section.5}\protected@file@percent }
 \newlabel{sec:discussion}{{5}{7}{Discussion and limitations}{section.5}{}}
-\@writefile{toc}{\contentsline {paragraph}{Why is \textsc  {CausalComp}{}'s gap higher than FullGraph?}{7}{section*.10}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Limitations.}{7}{section*.11}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {6}Conclusion}{7}{section.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Why is \textsc  {CausalComp}{}'s gap higher than FullGraph?}{7}{section*.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Limitations.}{7}{section*.9}\protected@file@percent }
+\bibstyle{plainnat}
+\bibdata{references}
 \bibcite{bear2021physion}{{1}{2021}{{Bear et~al.}}{{}}}
 \bibcite{wm3c2025}{{2}{2025}{{Chen et~al.}}{{}}}
 \bibcite{ha2018worldmodels}{{3}{2018}{{Ha and Schmidhuber}}{{}}}
@@ -107,15 +105,16 @@
 \bibcite{richens2024robust}{{15}{2024}{{Richens and Everitt}}{{}}}
 \bibcite{scholkopf2021causal}{{16}{2021}{{Sch{\"o}lkopf et~al.}}{{Sch{\"o}lkopf, Locatello, Bauer, Ke, Kalchbrenner, Goyal, and Bengio}}}
 \bibcite{dreamweaver2025}{{17}{2025}{{Singh et~al.}}{{}}}
+\@writefile{toc}{\contentsline {section}{\numberline {6}Conclusion}{8}{section.6}\protected@file@percent }
 \bibcite{dyno2025}{{18}{2025}{{Wang et~al.}}{{}}}
 \bibcite{wu2023slotformer}{{19}{2023}{{Wu et~al.}}{{Wu, Dvornik, Greff, Kipf, and Gilitschenski}}}
 \bibcite{oocdm2024}{{20}{2024}{{Yu et~al.}}{{}}}
 \bibcite{combo2025}{{21}{2025}{{Zhang et~al.}}{{}}}
 \@writefile{toc}{\contentsline {section}{\numberline {A}Implementation details}{9}{appendix.A}\protected@file@percent }
 \newlabel{app:impl}{{A}{9}{Implementation details}{appendix.A}{}}
-\@writefile{toc}{\contentsline {paragraph}{Architecture.}{9}{section*.13}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Training.}{9}{section*.14}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Synthetic environment.}{9}{section*.15}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Architecture.}{9}{section*.11}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Training.}{9}{section*.12}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Synthetic environment.}{9}{section*.13}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {B}Qualitative results}{9}{appendix.B}\protected@file@percent }
 \@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces \textbf  {Trajectory prediction comparison.} (a) Ground-truth trajectories of 6 objects over 16 frames. (b) \textsc  {CausalComp}{} predictions closely track ground truth, including after collisions. (c) NoGraph baseline shows drift due to inability to model inter-object interactions. Filled circles show final positions; trails show full trajectories.}}{9}{figure.5}\protected@file@percent }
 \newlabel{fig:trajectory}{{5}{9}{\textbf {Trajectory prediction comparison.} (a) Ground-truth trajectories of 6 objects over 16 frames. (b) \ours {} predictions closely track ground truth, including after collisions. (c) NoGraph baseline shows drift due to inability to model inter-object interactions. Filled circles show final positions; trails show full trajectories}{figure.5}{}}
