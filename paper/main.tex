@@ -294,7 +294,23 @@ A natural concern is that typed modules reduce compositional gap simply by limit
     \end{tabular}
 \end{table}
 
-The result is striking: \ours{}-Big has \textbf{2.7$\times$ more parameters} than SingleModule-Big, yet its gap is \textbf{2.4$\times$ lower} (52.9\% vs.\ 125.6\%). More capacity makes SingleModule \emph{worse} (more memorization capacity $\to$ more overfitting), while \ours{} \emph{improves} (more capacity per typed module $\to$ better mechanism learning). This definitively rules out implicit regularization: the gap reduction comes from the \emph{structural inductive bias} of typed modules, not from capacity constraints.
+The result is striking: \ours{}-Big has \textbf{2.7$\times$ more parameters} than SingleModule-Big, yet its gap is \textbf{2.4$\times$ lower} (52.9\% vs.\ 125.6\%). More capacity makes SingleModule \emph{worse} (more memorization capacity $\to$ more overfitting), while \ours{} \emph{improves} (more capacity per typed module $\to$ better mechanism learning). This definitively rules out implicit regularization: the gap reduction comes from the \emph{structural inductive bias} of typed modules, not from capacity constraints. Figure~\ref{fig:capacity} visualizes these opposing trends.
+
+\begin{figure}[t]
+    \centering
+    \begin{minipage}{0.48\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{figures/capacity_ablation.pdf}
+        \caption{\textbf{Capacity ablation.} More capacity worsens SingleModule's gap (+30pp) but improves CausalComp's ($-$7pp).}
+        \label{fig:capacity}
+    \end{minipage}\hfill
+    \begin{minipage}{0.48\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{figures/m_curve.pdf}
+        \caption{\textbf{Sensitivity to $M$.} Gap follows a U-shape: $M{=}4$ is optimal, with mild increase for $M{>}8$.}
+        \label{fig:mcurve}
+    \end{minipage}
+\end{figure}
 
 \subsection{Do typed modules learn transferable mechanisms?}
 \label{sec:transfer}
@@ -317,7 +333,14 @@ For each type $\tau$, we collect the module's output activations on \emph{seen} 
     \end{tabular}
 \end{table}
 
-Table~\ref{tab:transfer} shows a striking result: each typed module activates \textbf{almost identically} on seen and unseen object-type combinations (cosine 0.998), confirming that it has learned a general interaction mechanism that transfers across object types. Meanwhile, different typed modules are near-orthogonal (cosine 0.066), indicating strong specialization. This $15{\times}$ ratio provides direct representation-level evidence for our mechanistic claim---typed modules do not memorize which objects interact, but \emph{how} they interact.
+Table~\ref{tab:transfer} and Figure~\ref{fig:transfer} show a striking result: each typed module activates \textbf{almost identically} on seen and unseen object-type combinations (cosine 0.998), confirming that it has learned a general interaction mechanism that transfers across object types. Meanwhile, different typed modules are near-orthogonal (cosine 0.066), indicating strong specialization. This $15{\times}$ ratio provides direct representation-level evidence for our mechanistic claim---typed modules do not memorize which objects interact, but \emph{how} they interact.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\linewidth]{figures/transferability.pdf}
+    \caption{\textbf{Representation transferability.} Left: per-type cosine similarity between seen and unseen activations (all $>$0.995). Red dashed line shows cross-type mean (0.066). Right: the 15$\times$ gap between same-type and cross-type similarity confirms typed modules learn transferable mechanisms.}
+    \label{fig:transfer}
+\end{figure}
 
 \subsection{Sensitivity to $M$}
 \label{sec:m_curve}
