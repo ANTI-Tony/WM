@@ -296,9 +296,33 @@ A natural concern is that typed modules reduce compositional gap simply by limit
 
 The result is striking: \ours{}-Big has \textbf{2.7$\times$ more parameters} than SingleModule-Big, yet its gap is \textbf{2.4$\times$ lower} (52.9\% vs.\ 125.6\%). More capacity makes SingleModule \emph{worse} (more memorization capacity $\to$ more overfitting), while \ours{} \emph{improves} (more capacity per typed module $\to$ better mechanism learning). This definitively rules out implicit regularization: the gap reduction comes from the \emph{structural inductive bias} of typed modules, not from capacity constraints.
 
-\subsection{Sensitivity to $M$ and hyperparameters}
+\subsection{Do typed modules learn transferable mechanisms?}
+\label{sec:transfer}
 
-We sweep the number of interaction types $M \in \{2, 4, 8\}$, latent dimension $d \in \{64, 128\}$, and edge supervision weight $\lambda_\text{edge} \in \{0.5, 2, 5, 10\}$ on SimplePhysics. Increasing $M$ from 2 to 8 consistently improves unseen MSE (from 0.076 to 0.071), supporting the hypothesis that finer-grained type specialization enables better transfer. Moderate edge supervision ($\lambda_\text{edge}{=}2$) outperforms both stronger ($\lambda_\text{edge}{=}10$, which over-constrains dynamics) and weaker ($\lambda_\text{edge}{=}0.5$, insufficient signal).
+Our central claim is that typed modules learn interaction \emph{mechanisms} (e.g., ``elastic collision'') rather than pair-specific dynamics. We test this directly by analyzing the internal representations of each typed module $f_\text{inter}^\tau$.
+
+For each type $\tau$, we collect the module's output activations on \emph{seen} collision pairs (training combinations) and \emph{unseen} collision pairs (held-out combinations), then compute cosine similarity between the mean activation vectors. If the module has learned a transferable mechanism, its activations should be similar regardless of which specific object types are involved.
+
+\begin{table}[t]
+    \caption{Representation transferability analysis. Same-type activations are nearly identical across seen and unseen object pairs (cosine 0.998), while different types are near-orthogonal (cosine 0.066). This confirms typed modules learn transferable mechanisms, not pair-specific patterns.}
+    \label{tab:transfer}
+    \centering
+    \begin{tabular}{lc}
+        \toprule
+        Comparison & Cosine Similarity \\
+        \midrule
+        Same type $\tau$, seen vs.\ unseen pairs & \textbf{0.998 $\pm$ 0.001} \\
+        Different types $\tau \neq \tau'$, within seen & 0.066 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Table~\ref{tab:transfer} shows a striking result: each typed module activates \textbf{almost identically} on seen and unseen object-type combinations (cosine 0.998), confirming that it has learned a general interaction mechanism that transfers across object types. Meanwhile, different typed modules are near-orthogonal (cosine 0.066), indicating strong specialization. This $15{\times}$ ratio provides direct representation-level evidence for our mechanistic claim---typed modules do not memorize which objects interact, but \emph{how} they interact.
+
+\subsection{Sensitivity to $M$}
+\label{sec:m_curve}
+
+We vary the number of interaction types $M \in \{1, 2, 4, 8, 16, 32\}$ on SimplePhysics. The compositional gap follows a U-shape: decreasing from 69.1\% ($M{=}1$) to a minimum of 59.0\% ($M{=}4$), then mildly increasing to 60.2\% ($M{=}32$). Too few types conflate distinct mechanisms; too many fragment the training data per module. The sweet spot ($M{=}4$--$8$) balances expressiveness with sufficient training signal per type.
 
 \subsection{Autoregressive rollout analysis}
 

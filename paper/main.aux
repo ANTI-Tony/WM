@@ -80,17 +80,19 @@
 \newlabel{fig:bar}{{4}{7}{\textbf {Seen vs.\ Unseen MSE.} \ours {} achieves the best balance: lowest unseen error among non-overfitting methods. SingleModule's small gap between bars masks its 88\% relative gap}{figure.4}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Is the gap reduction just implicit regularization?}{7}{subsection.4.4}\protected@file@percent }
 \newlabel{sec:capacity}{{4.4}{7}{Is the gap reduction just implicit regularization?}{subsection.4.4}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Sensitivity to $M$ and hyperparameters}{7}{subsection.4.5}\protected@file@percent }
-\citation{bear2021physion}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Do typed modules learn transferable mechanisms?}{7}{subsection.4.5}\protected@file@percent }
+\newlabel{sec:transfer}{{4.5}{7}{Do typed modules learn transferable mechanisms?}{subsection.4.5}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Capacity-matched ablation on SimplePhysics. Increasing capacity \emph  {worsens} SingleModule's gap (+30pp) but \emph  {improves} CausalComp's gap ($-$7pp). This rules out implicit regularization as the explanation for typed modules' advantage.}}{8}{table.4}\protected@file@percent }
 \newlabel{tab:capacity}{{4}{8}{Capacity-matched ablation on SimplePhysics. Increasing capacity \emph {worsens} SingleModule's gap (+30pp) but \emph {improves} CausalComp's gap ($-$7pp). This rules out implicit regularization as the explanation for typed modules' advantage}{table.4}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.6}Autoregressive rollout analysis}{8}{subsection.4.6}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Representation transferability analysis. Same-type activations are nearly identical across seen and unseen object pairs (cosine 0.998), while different types are near-orthogonal (cosine 0.066). This confirms typed modules learn transferable mechanisms, not pair-specific patterns.}}{8}{table.5}\protected@file@percent }
+\newlabel{tab:transfer}{{5}{8}{Representation transferability analysis. Same-type activations are nearly identical across seen and unseen object pairs (cosine 0.998), while different types are near-orthogonal (cosine 0.066). This confirms typed modules learn transferable mechanisms, not pair-specific patterns}{table.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.6}Sensitivity to $M$}{8}{subsection.4.6}\protected@file@percent }
+\newlabel{sec:m_curve}{{4.6}{8}{Sensitivity to $M$}{subsection.4.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.7}Autoregressive rollout analysis}{8}{subsection.4.7}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {5}Discussion and limitations}{8}{section.5}\protected@file@percent }
 \newlabel{sec:discussion}{{5}{8}{Discussion and limitations}{section.5}{}}
 \@writefile{toc}{\contentsline {paragraph}{Implicit regularization is ruled out.}{8}{section*.8}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{When does \textsc  {CausalComp}{} fail?}{8}{section*.9}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Limitations.}{8}{section*.10}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {6}Conclusion}{8}{section.6}\protected@file@percent }
+\citation{bear2021physion}
 \bibstyle{plainnat}
 \bibdata{references}
 \bibcite{battaglia2016interaction}{{1}{2016}{{Battaglia et~al.}}{{Battaglia, Pascanu, Lai, Rezende, and Kavukcuoglu}}}
@@ -103,6 +105,9 @@
 \bibcite{stica2026}{{8}{2026}{{Kim et~al.}}{{}}}
 \bibcite{kipf2018nri}{{9}{2018}{{Kipf et~al.}}{{Kipf, Fetaya, Wang, Welling, and Zemel}}}
 \bibcite{kipf2020cswm}{{10}{2020}{{Kipf et~al.}}{{Kipf, van~der Pol, and Welling}}}
+\@writefile{toc}{\contentsline {paragraph}{When does \textsc  {CausalComp}{} fail?}{9}{section*.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Limitations.}{9}{section*.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6}Conclusion}{9}{section.6}\protected@file@percent }
 \bibcite{vcd2022}{{11}{2022}{{Lachapelle et~al.}}{{}}}
 \bibcite{lecun2022jepa}{{12}{2022}{{LeCun}}{{}}}
 \bibcite{fiocwm2025}{{13}{2025}{{Li et~al.}}{{}}}
@@ -119,6 +124,6 @@
 \@writefile{toc}{\contentsline {paragraph}{Training.}{10}{section*.13}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{Synthetic environment.}{10}{section*.14}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {B}Qualitative results}{10}{appendix.B}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces \textbf  {Trajectory prediction comparison.} (a) Ground-truth trajectories of 6 objects over 16 frames. (b) \textsc  {CausalComp}{} predictions closely track ground truth, including after collisions. (c) NoGraph baseline shows drift due to inability to model inter-object interactions. Filled circles show final positions; trails show full trajectories.}}{10}{figure.5}\protected@file@percent }
-\newlabel{fig:trajectory}{{5}{10}{\textbf {Trajectory prediction comparison.} (a) Ground-truth trajectories of 6 objects over 16 frames. (b) \ours {} predictions closely track ground truth, including after collisions. (c) NoGraph baseline shows drift due to inability to model inter-object interactions. Filled circles show final positions; trails show full trajectories}{figure.5}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces \textbf  {Trajectory prediction comparison.} (a) Ground-truth trajectories of 6 objects over 16 frames. (b) \textsc  {CausalComp}{} predictions closely track ground truth, including after collisions. (c) NoGraph baseline shows drift due to inability to model inter-object interactions. Filled circles show final positions; trails show full trajectories.}}{11}{figure.5}\protected@file@percent }
+\newlabel{fig:trajectory}{{5}{11}{\textbf {Trajectory prediction comparison.} (a) Ground-truth trajectories of 6 objects over 16 frames. (b) \ours {} predictions closely track ground truth, including after collisions. (c) NoGraph baseline shows drift due to inability to model inter-object interactions. Filled circles show final positions; trails show full trajectories}{figure.5}{}}
 \gdef \@abspage@last{13}
