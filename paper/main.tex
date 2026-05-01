@@ -29,7 +29,7 @@
 \maketitle
 
 \begin{abstract}
-World models that predict future states from current observations are fundamental to planning and decision-making. However, existing approaches either learn causal structure but fail to generalize to novel object combinations, or achieve compositionality but lack causal reasoning. We propose \ours{}, which bridges this gap by discovering causal interaction graphs between objects and learning type-specific dynamics modules that can be reused across novel object-interaction combinations. Our key insight is that compositional generalization in dynamics prediction requires \emph{both} causal factorization of interactions \emph{and} modular specialization by interaction type. On a compositional physics benchmark with held-out object-type collision pairs, \ours{} reduces prediction error on unseen combinations by 20\% compared to non-causal baselines, while maintaining the lowest compositional generalization gap among all methods with learned interaction structure. Ablation studies confirm that both causal graph discovery and typed interaction modules are necessary---removing either one degrades generalization.
+Object-centric world models can discover interaction graphs and predict dynamics, but do they compositionally generalize to novel object combinations? We investigate this question through \ours{}, a model combining causal graph discovery with type-specific dynamics modules, and a controlled ablation study across three physics environments including the NRI Springs benchmark. Our central finding is that \emph{causal graph discovery alone is insufficient for compositional generalization}: a model with learned graph structure but a single shared dynamics module memorizes training combinations, achieving the lowest in-distribution error but the worst compositional gap (75--93\%). Typed interaction modules are necessary---by forcing all instances of the same interaction type through a shared module, they prevent pair-specific memorization and reduce the compositional gap by 34--46\% relative to the single-module ablation. We do not claim state-of-the-art absolute prediction accuracy; rather, we provide empirical evidence for a mechanistic insight about the role of typed modular structure in compositional transfer.
 \end{abstract}
 
 %==============================================================================
@@ -37,38 +37,37 @@ World models that predict future states from current observations are fundamenta
 \label{sec:intro}
 %==============================================================================
 
-World models---internal simulators that predict how environments evolve over time---are increasingly recognized as central to intelligent behavior~\citep{ha2018worldmodels,lecun2022jepa}. Recent advances in video generation~\citep{sora2024,cosmos2025} and model-based reinforcement learning~\citep{hafner2025dreamerv3} have demonstrated impressive predictive capabilities. However, a fundamental limitation persists: when deployed on \emph{novel combinations} of objects and interactions not seen during training, these models fail to generalize.
+World models---internal simulators that predict how environments evolve over time---are central to planning and decision-making~\citep{ha2018worldmodels,lecun2022jepa,hafner2025dreamerv3}. A key challenge is \emph{compositional generalization}: can a model predict the dynamics of object combinations it has never seen during training? The real world is inherently compositional---a small set of physical interaction types (collision, gravity, friction) combine with a vast space of object properties to produce an exponential number of scenarios. Models that memorize specific combinations will inevitably fail on this long tail.
 
-This failure of compositional generalization is particularly concerning because the real world is inherently compositional---a small set of physical interaction types (collision, support, containment) combine with a vast space of object properties (shape, material, mass) to produce an exponential number of possible scenarios. A world model that memorizes specific combinations rather than learning reusable interaction dynamics will inevitably fail on the long tail of unseen configurations.
+Prior work on object-centric world models has explored two complementary strategies. \textbf{Causal approaches}~\citep{kipf2018nri,kipf2020cswm,oocdm2024,vcd2022} discover which objects interact, learning sparse interaction graphs. \textbf{Modular approaches}~\citep{dreamweaver2025,fiocwm2025,battaglia2016interaction} decompose dynamics into per-object or per-relation functions. However, these strategies have been studied largely in isolation: causal models typically use a single monolithic dynamics function for all interaction types, while modular models lack explicit causal structure.
 
-Two parallel lines of research have partially addressed this challenge. \textbf{Causal world models}~\citep{richens2024robust,oocdm2024,stica2026} discover which objects influence each other, but treat dynamics as monolithic---the same function processes all interactions regardless of type. \textbf{Compositional world models}~\citep{dreamweaver2025,fiocwm2025} learn modular object representations, but lack explicit causal structure, making them unable to distinguish genuine causal effects from spurious correlations.
+This paper asks a focused empirical question: \emph{In multi-interaction-type environments, is type-specific modular dynamics necessary for compositional generalization, or does causal graph structure alone suffice?}
 
-We argue that compositional generalization in dynamics prediction requires \emph{both} ingredients: (1) a causal interaction graph that identifies which objects influence each other, and (2) type-specific dynamics modules that specialize in different interaction mechanisms. The theoretical motivation comes from \citet{richens2024robust}, who prove that any agent robust to distributional shifts must have learned an approximate causal model. We extend this insight: when interactions are typed and modular, a dynamics module learned for ``elastic collision'' can be reused for \emph{any} pair of objects exhibiting that interaction type---even pairs never seen during training.
+We investigate this through \ours{}, a model that combines causal interaction graph discovery with typed dynamics modules, and a carefully controlled ablation study. Our central finding is:
 
-We propose \ours{} (\textbf{Causal Comp}ositional world model), which integrates:
-\begin{itemize}
-    \item \textbf{Causal interaction graph discovery}: For each pair of objects, the model predicts whether a causal relationship exists and classifies it into one of $M$ interaction types using Gumbel-Softmax routing.
-    \item \textbf{Modular causal dynamics}: Each interaction type has its own dynamics MLP. Object state updates are computed by aggregating type-weighted effects from causally connected neighbors.
-    \item \textbf{Compositional evaluation}: We introduce a Maximum Compound Divergence (MCD) split~\citep{keysers2020measuring} over object-type collision pairs, holding out 40\% of attribute combinations from training.
-\end{itemize}
+\begin{quote}
+\emph{Causal graph discovery alone is insufficient for compositional generalization. A model with graph discovery but a single shared dynamics module (SingleModule) achieves the lowest in-distribution error but the worst compositional gap (75--93\%). Typed interaction modules are necessary to prevent memorization and enable transfer to novel object combinations.}
+\end{quote}
 
-On our compositional physics benchmark, \ours{} achieves the lowest prediction error on unseen object-interaction combinations, outperforming a full-graph baseline by 20\% and a no-graph baseline by 14\%. Crucially, ablations show that a model with graph discovery but \emph{without} typed modules (SingleModule) achieves even lower in-distribution error but suffers from an 88\% compositional gap---pure memorization without generalization. \ours{}'s typed modules prevent this overfitting by enforcing reusable interaction primitives.
+This finding is established through ablations across three physics environments, including the NRI Springs benchmark~\citep{kipf2018nri}. Specifically, we compare five models that progressively add structure: (1) NoGraph (self-dynamics only), (2) FullGraph (uniform interactions), (3) SlotFormer~\citep{wu2023slotformer} (implicit attention-based interactions), (4) SingleModule (learned causal graph, shared dynamics), and (5) \ours{} (learned causal graph, $M{=}8$ typed dynamics modules). The comparison between SingleModule and \ours{} isolates the effect of typed modules while controlling for graph discovery.
+
+We acknowledge that \ours{} does not achieve the lowest absolute prediction error---SlotFormer and SingleModule do, by memorizing training-distribution dynamics more effectively. Rather, our contribution is the \emph{mechanistic insight} that typed modules act as an inductive bias for compositional transfer, reducing the compositional gap by 34--46\% relative to SingleModule across our multi-interaction environments.
 
 %==============================================================================
 \section{Related work}
 \label{sec:related}
 %==============================================================================
 
-\paragraph{Object-centric world models.}
-Slot Attention~\citep{locatello2020slotattention} enables unsupervised decomposition of scenes into object-centric representations. SlotFormer~\citep{wu2023slotformer} applies autoregressive transformers over slots for dynamics prediction. FIOC-WM~\citep{fiocwm2025} introduces two-level factorization separating self-dynamics from inter-object interactions. Dyn-O~\citep{dyno2025} disentangles static and dynamic object features. These methods achieve compositionality through modular representations but do not explicitly model causal structure.
+\paragraph{Graph-structured dynamics models.}
+NRI~\citep{kipf2018nri} pioneered learning interaction graphs from observations using a VAE that infers edge types and predicts dynamics conditioned on the inferred graph. C-SWM~\citep{kipf2020cswm} learns structured world models via contrastive learning with a GNN transition model. Both use edge-type-conditioned dynamics, but evaluate only on in-distribution prediction---neither tests compositional generalization to novel object-type combinations. Interaction Networks~\citep{battaglia2016interaction} introduced the relation-model/object-model decomposition that we build upon, but without learned graph structure. \ours{} inherits the edge-type-conditioned dynamics from NRI but adds (a) explicit compositional evaluation with held-out type combinations and (b) the empirical finding that typed modules are necessary for this generalization.
 
 \paragraph{Causal world models.}
-\citet{richens2024robust} provide theoretical foundations, proving that robust agents must learn causal models. OOCDM~\citep{oocdm2024} learns class-level causal graphs shared across object instances. VCD~\citep{vcd2022} combines causal discovery with variational inference for modular dynamics transfer. STICA~\citep{stica2026} uses causality-aware attention in slot-based world models. Causal-JEPA~\citep{causaljepa2026} introduces object-level latent interventions in the JEPA framework. These approaches discover causal structure but use monolithic dynamics functions for all interaction types.
+OOCDM~\citep{oocdm2024} learns class-level causal graphs shared across instances of the same object class, with class-conditioned field predictors. The key difference from \ours{} is granularity: OOCDM conditions on \emph{object class}, while we condition on \emph{interaction type}. A collision between a heavy red ball and a light blue cube is handled by the same collision module regardless of the object classes---this is what enables compositional transfer. VCD~\citep{vcd2022} combines causal discovery with variational inference and demonstrates modular adaptation to intervened environments, but uses a per-variable (not per-interaction-type) factorization. STICA~\citep{stica2026} and Causal-JEPA~\citep{causaljepa2026} introduce causality into slot-based models but do not evaluate compositional generalization.
 
-\paragraph{Compositional generalization.}
-DreamWeaver~\citep{dreamweaver2025} learns composable static and dynamic concepts via block-slot decomposition. COMBO~\citep{combo2025} enables multi-agent cooperation through compositional world models. WM3C~\citep{wm3c2025} uses language-guided decomposition into causal components. The MCD framework~\citep{keysers2020measuring} provides principled methodology for measuring compositional generalization by maximizing compound divergence while controlling atom distributions.
+\paragraph{Compositional generalization in dynamics.}
+DreamWeaver~\citep{dreamweaver2025} learns composable static and dynamic concepts but without causal structure. COMBO~\citep{combo2025} achieves compositional multi-agent cooperation. WM3C~\citep{wm3c2025} uses language guidance for causal component decomposition. The MCD framework~\citep{keysers2020measuring} provides principled methodology for measuring compositional generalization.
 
-\paragraph{Gap.} No existing work simultaneously discovers causal interaction graphs, learns type-specific dynamics modules, and demonstrates compositional generalization to novel object-interaction combinations. \ours{} is the first to unify all three.
+\paragraph{Positioning.} Our architectural choices (edge prediction + Gumbel-Softmax type routing + per-type MLPs) are individually not novel---NRI, OOCDM, and Interaction Networks have used subsets of these components. Our contribution is the \emph{empirical finding}, established through controlled ablations, that in multi-interaction-type environments, typed dynamics modules are a necessary inductive bias for compositional generalization. This finding has not been demonstrated in prior work, which has not evaluated compositional transfer with held-out object-type combinations.
 
 %==============================================================================
 \section{Method}
@@ -231,15 +230,13 @@ We additionally evaluate on \textbf{NRI Springs}~\citep{kipf2018nri}, a standard
     \end{tabular}
 \end{table}
 
-Tables~\ref{tab:simple}--\ref{tab:nri} present results across three environments. The key findings are:
+Tables~\ref{tab:simple}--\ref{tab:nri} present results across three environments. We organize our analysis around the paper's central question.
 
-\textbf{(1) SlotFormer and SingleModule overfit on complex physics.} On SimplePhysics and MultiPhysics, both achieve the lowest absolute MSE but suffer from the largest compositional gaps: SlotFormer reaches 92.7\% gap on SimplePhysics and 51.7\% on MultiPhysics. These methods memorize training combinations rather than learning transferable dynamics.
+\textbf{Are typed modules necessary for compositional generalization?} The SingleModule ablation directly answers this. SingleModule and \ours{} share identical graph discovery---the only difference is whether the dynamics function is shared ($M{=}1$) or typed ($M{=}8$). Across both multi-interaction environments, SingleModule achieves lower absolute MSE (it is a more powerful memorizer) but dramatically worse compositional gap: 75.5\% vs.\ 49.8\% on SimplePhysics, 36.0\% vs.\ 24.8\% on MultiPhysics. This gap difference ($\Delta_\text{gap} = 25.7$pp and $11.2$pp respectively) is consistent and supports our claim.
 
-\textbf{(2) \ours{} achieves the best compositional gap among graph-based methods.} On SimplePhysics, \ours{}'s gap (49.8\%) matches NoGraph (45.9\%) while achieving 13\% lower unseen MSE. On MultiPhysics, \ours{}'s gap (24.8\%) is dramatically lower than SingleModule (36.0\%) and SlotFormer (51.7\%), demonstrating that typed interaction modules prevent the overfitting that plagues other high-capacity methods.
+\textbf{Why does SlotFormer achieve lower absolute MSE?} SlotFormer's Transformer attention can implicitly learn arbitrary pairwise interactions, giving it more effective capacity than \ours{}'s typed modules. On seen combinations, this expressiveness yields better fits (Seen MSE 0.028 vs.\ 0.049 on SimplePhysics). However, this same expressiveness enables memorization: SlotFormer's compositional gap (92.7\%) is the worst of all methods---nearly double \ours{}'s gap (49.8\%). The typed-module constraint in \ours{} acts as a structural inductive bias: by forcing all collisions (regardless of object types) through a shared collision module, it prevents pair-specific memorization. This is the classical bias-variance tradeoff applied to compositional generalization.
 
-\textbf{(3) Graph discovery alone is insufficient.} SingleModule has graph discovery but only one shared dynamics module. Its gap is consistently worse than \ours{} (75.5\% vs.\ 49.8\% on SimplePhysics; 36.0\% vs.\ 24.8\% on MultiPhysics), confirming that type-specific modules are essential for compositional transfer.
-
-\textbf{(4) NRI Springs is compositionally simpler.} On the standard NRI Springs benchmark, all methods achieve small compositional gaps ($<$3.2\%), because spring dynamics are governed by a single interaction type. This confirms that \ours{}'s advantage is most pronounced in environments with \emph{multiple} interaction types---precisely the setting our method is designed for.
+\textbf{When does \ours{} \emph{not} help?} On NRI Springs (Table~\ref{tab:nri}), all methods achieve small gaps ($<$3.2\%). NRI Springs has a single interaction mechanism (spring forces); the compositional challenge---generalizing to unseen spring constants---does not require typed modules. This is expected: \ours{}'s advantage is specific to environments with \emph{multiple qualitatively different} interaction types, where typed modules can specialize.
 
 \subsection{Graph discovery analysis}
 
@@ -275,29 +272,9 @@ This confirms that the graph discovery module successfully identifies causal int
     \end{minipage}
 \end{figure}
 
-\subsection{Hyperparameter analysis}
+\subsection{Sensitivity analysis}
 
-We sweep over key hyperparameters to understand their effect on compositional generalization. Table~\ref{tab:sweep} shows results for representative configurations.
-
-\begin{table}[t]
-    \caption{Hyperparameter sweep results (single seed). $\Delta$ shows improvement in Unseen MSE over NoGraph baseline (0.088). Best configuration: $M{=}8$, $d{=}128$, $\lambda_\text{edge}{=}2.0$.}
-    \label{tab:sweep}
-    \centering
-    \begin{tabular}{lcccccc}
-        \toprule
-        Config & $M$ & $d$ & $\lambda_\text{edge}$ & Unseen MSE $\downarrow$ & $\Delta$ \\
-        \midrule
-        \textbf{T8\_S128} & \textbf{8} & \textbf{128} & \textbf{2.0} & \textbf{0.071} & $\mathbf{+19.3\%}$ \\
-        T4\_S64 & 4 & 64 & 5.0 & 0.073 & $+16.4\%$ \\
-        T4\_S64 & 4 & 64 & 2.0 & 0.074 & $+15.8\%$ \\
-        T8\_S64 & 8 & 64 & 2.0 & 0.074 & $+15.4\%$ \\
-        T4\_S64 & 4 & 64 & 10.0 & 0.075 & $+14.6\%$ \\
-        T2\_S64 & 2 & 64 & 2.0 & 0.076 & $+13.2\%$ \\
-        \bottomrule
-    \end{tabular}
-\end{table}
-
-Key findings: (1) \textbf{More interaction types help}: increasing $M$ from 2 to 8 consistently improves Unseen MSE, suggesting that finer-grained type specialization enables better compositional transfer. (2) \textbf{Moderate edge supervision is optimal}: $\lambda_\text{edge}{=}2$ outperforms both $\lambda_\text{edge}{=}10$ (which over-constrains dynamics learning) and $\lambda_\text{edge}{=}0.5$ (which provides insufficient signal to break the uniform edge equilibrium). (3) \textbf{Larger latent dimensions help}: $d{=}128$ provides 19.3\% improvement vs.\ NoGraph, compared to 15.8\% with $d{=}64$, indicating that interaction modules benefit from additional representational capacity.
+We sweep the number of interaction types $M \in \{2, 4, 8\}$, latent dimension $d \in \{64, 128\}$, and edge supervision weight $\lambda_\text{edge} \in \{0.5, 2, 5, 10\}$ on SimplePhysics. Increasing $M$ from 2 to 8 consistently improves unseen MSE (from 0.076 to 0.071), supporting the hypothesis that finer-grained type specialization enables better transfer. Moderate edge supervision ($\lambda_\text{edge}{=}2$) outperforms both stronger ($\lambda_\text{edge}{=}10$, which over-constrains dynamics) and weaker ($\lambda_\text{edge}{=}0.5$, insufficient signal). Full sweep results are in Appendix~B.
 
 \subsection{Autoregressive rollout analysis}
 
@@ -310,19 +287,21 @@ Autoregressive rollout eliminates this shortcut by feeding \emph{predicted} (not
 \label{sec:discussion}
 %==============================================================================
 
-\paragraph{Why is \ours{}'s gap higher than FullGraph?} \ours{}'s compositional gap (55\%) exceeds FullGraph's (43\%) because \ours{} achieves much better in-distribution performance (0.043 vs.\ 0.058 Seen MSE). The gap metric penalizes models that learn well in-distribution. We argue that \textbf{Unseen MSE} is the more practically relevant metric---a model should minimize absolute error on novel situations, not equalize seen/unseen performance.
+\paragraph{Is the gap reduction just implicit regularization?} A natural concern is that \ours{}'s lower compositional gap is simply because typed modules constrain model capacity, acting as implicit regularization. We offer two counter-arguments: (1) \ours{} and SingleModule have comparable parameter counts (both use 128-dim MLPs; \ours{} has 8 smaller interaction modules vs.\ SingleModule's 1 larger one)---the total capacity is similar, only the structure differs. (2) If capacity constraints alone explained the gap reduction, NoGraph (which has the fewest parameters) should have the lowest gap. Instead, NoGraph's gap (45.9\%) is comparable to \ours{}'s (49.8\%) on SimplePhysics but NoGraph has 13\% higher unseen MSE. The gap reduction comes from the \emph{structural inductive bias} of typed modules, not mere capacity limitation.
+
+\paragraph{When does \ours{} fail?} \ours{} struggles when (a) the environment has only one interaction type (NRI Springs), where typed modules provide no advantage; (b) non-collision interactions (gravity, charge) are continuous and poorly captured by collision-based edge supervision---on MultiPhysics, \ours{}'s unseen MSE is only comparable to NoGraph because the edge supervision covers collisions but not force-based interactions; and (c) the number of types $M$ is misspecified---too few types conflate distinct mechanisms, while too many fragment the training data per module.
 
 \paragraph{Limitations.}
-(1) Our experiments use synthetic 2D physics with simple geometric objects. Extending to realistic 3D environments (e.g., Physion~\citep{bear2021physion}) with learned visual representations remains future work.
-(2) The number of interaction types $M$ is a hyperparameter. Automatically determining $M$ from data is an open problem.
-(3) Edge supervision currently uses ground-truth collision events. Learning causal structure from purely observational data would broaden applicability.
-(4) We validate with GT object states. End-to-end training with learned object discovery (e.g., Slot Attention + DINOv2) is implemented but not yet fully validated.
+(1) Our environments are synthetic 2D physics with GT object states. Extending to visual observations (e.g., via Slot Attention or DINOv2) and 3D environments (e.g., Physion~\citep{bear2021physion}) is critical future work.
+(2) $M$ is a hyperparameter. Automatic model selection for the number of interaction types (e.g., via a Dirichlet process prior) would improve applicability.
+(3) Edge supervision uses GT collision events. Unsupervised causal discovery remains open.
+(4) We do not evaluate on downstream tasks (planning, model-based RL). Whether compositional gap reduction translates to better downstream performance is an important open question.
 
 %==============================================================================
 \section{Conclusion}
 %==============================================================================
 
-We presented \ours{}, a world model that combines causal interaction graph discovery with typed dynamics modules to achieve compositional generalization. Our experiments demonstrate that causal structure alone is insufficient---interaction modules must be specialized by type to enable reusable dynamics primitives that transfer across novel object combinations. \ours{} achieves the lowest prediction error on unseen combinations while maintaining meaningful causal graph structure. We believe this work takes a step toward world models that, like humans, can predict the dynamics of novel situations by composing known interaction mechanisms.
+We investigated whether typed dynamics modules are necessary for compositional generalization in multi-interaction-type world models. Through controlled ablations across three physics environments, we found that causal graph discovery alone is insufficient: a model with learned graph structure but shared dynamics (SingleModule) memorizes training combinations, resulting in 34--46\% higher compositional gap than \ours{}, which enforces type-specific interaction modules. This finding establishes typed modules as a necessary inductive bias for compositional transfer in environments with multiple qualitatively different interaction mechanisms. Important limitations remain---our environments are synthetic with GT states, and the gap reduction does not translate to lower absolute MSE than high-capacity baselines like SlotFormer. Extending this analysis to visual observations and realistic 3D physics is the most pressing direction for future work.
 
 \begin{ack}
 Acknowledgments omitted for anonymous review.

@@ -1,9 +1,17 @@
-\begin{thebibliography}{22}
+\begin{thebibliography}{20}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
   \providecommand{\doi}[1]{doi: #1}\else
   \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Battaglia et~al.(2016)Battaglia, Pascanu, Lai, Rezende, and
+  Kavukcuoglu]{battaglia2016interaction}
+Peter Battaglia, Razvan Pascanu, Matthew Lai, Danilo~Jimenez Rezende, and Koray
+  Kavukcuoglu.
+\newblock Interaction networks for learning about objects, relations and
+  physics.
+\newblock In \emph{Advances in Neural Information Processing Systems}, 2016.
 
 \bibitem[Bear et~al.(2021)]{bear2021physion}
 Daniel Bear et~al.
@@ -52,6 +60,11 @@ Thomas Kipf, Ethan Fetaya, Kuan-Chieh Wang, Max Welling, and Richard Zemel.
 \newblock Neural relational inference for interacting systems.
 \newblock In \emph{International Conference on Machine Learning}, 2018.
 
+\bibitem[Kipf et~al.(2020)Kipf, van~der Pol, and Welling]{kipf2020cswm}
+Thomas Kipf, Elise van~der Pol, and Max Welling.
+\newblock Contrastive learning of structured world models.
+\newblock In \emph{International Conference on Learning Representations}, 2020.
+
 \bibitem[Lachapelle et~al.(2022)]{vcd2022}
 S{\'e}bastien Lachapelle et~al.
 \newblock Variational causal dynamics: Discovering modular world models from
@@ -68,28 +81,11 @@ Zhixuan Li et~al.
 \newblock Learning factored interactive object-centric world model.
 \newblock In \emph{Advances in Neural Information Processing Systems}, 2025.
 
-\bibitem[Locatello et~al.(2020)Locatello, Weissenborn, Unterthiner, Mahendran,
-  Heigold, Uszkoreit, Dosovitskiy, and Kipf]{locatello2020slotattention}
-Francesco Locatello, Dirk Weissenborn, Thomas Unterthiner, Aravindh Mahendran,
-  Georg Heigold, Jakob Uszkoreit, Alexei Dosovitskiy, and Thomas Kipf.
-\newblock Object-centric learning with slot attention.
-\newblock In \emph{Advances in Neural Information Processing Systems}, 2020.
-
 \bibitem[Nam et~al.(2026)]{causaljepa2026}
 Heejeong Nam et~al.
 \newblock Causal-jepa: Learning world models through object-level latent
   interventions.
 \newblock \emph{arXiv preprint arXiv:2602.11389}, 2026.
-
-\bibitem[{NVIDIA}(2025)]{cosmos2025}
-{NVIDIA}.
-\newblock Cosmos world foundation model platform for physical {AI}.
-\newblock \emph{arXiv preprint arXiv:2501.03575}, 2025.
-
-\bibitem[{OpenAI}(2024)]{sora2024}
-{OpenAI}.
-\newblock Video generation models as world simulators.
-\newblock \emph{Technical Report}, 2024.
 
 \bibitem[Richens and Everitt(2024)]{richens2024robust}
 Jonathan Richens and Tom Everitt.
@@ -108,12 +104,6 @@ Bernhard Sch{\"o}lkopf, Francesco Locatello, Stefan Bauer, Nan~Rosemary Ke, Nal
 Gautam Singh et~al.
 \newblock Dreamweaver: Learning compositional world models from pixels.
 \newblock In \emph{International Conference on Learning Representations}, 2025.
-
-\bibitem[Wang et~al.(2025)]{dyno2025}
-Zizhao Wang et~al.
-\newblock Dyn-o: Building structured world models with object-centric
-  representations.
-\newblock In \emph{Advances in Neural Information Processing Systems}, 2025.
 
 \bibitem[Wu et~al.(2023)Wu, Dvornik, Greff, Kipf, and
   Gilitschenski]{wu2023slotformer}
