@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.9.2)  1 MAY 2026 02:26
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.9.2)  1 MAY 2026 11:18
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -644,97 +644,106 @@ File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
 Underfull \vbox (badness 8019) has occurred while \output is active []
 
  [2]
-<figures/architecture.pdf, id=170, 711.53677pt x 245.718pt>
+<figures/architecture.pdf, id=170, 1026.23402pt x 556.47902pt>
 File: figures/architecture.pdf Graphic file (type pdf)
 <use figures/architecture.pdf>
 Package pdftex.def Info: figures/architecture.pdf  used on input line 88.
-(pdftex.def)             Requested size: 397.48499pt x 137.26369pt.
+(pdftex.def)             Requested size: 397.48499pt x 215.53998pt.
 
 [3
 pdfTeX warning (ext4): destination with the same identifier (name{figure.1}) ha
 s been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.123 \end{equation}
+l.113 \end{equation}
                      <./figures/architecture.pdf>] [4] [5
 pdfTeX warning (ext4): destination with the same identifier (name{table.1}) has
  been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.217 
-      
+l.237 
+      ]
+<figures/graph_discovery.pdf, id=376, 850.54701pt x 294.02725pt>
+File: figures/graph_discovery.pdf Graphic file (type pdf)
+<use figures/graph_discovery.pdf>
+Package pdftex.def Info: figures/graph_discovery.pdf  used on input line 257.
+(pdftex.def)             Requested size: 397.48499pt x 137.40768pt.
+<figures/edge_distribution.pdf, id=377, 426.29953pt x 280.32478pt>
+File: figures/edge_distribution.pdf Graphic file (type pdf)
+<use figures/edge_distribution.pdf>
+Package pdftex.def Info: figures/edge_distribution.pdf  used on input line 266.
+
+(pdftex.def)             Requested size: 190.79109pt x 125.45631pt.
+<figures/compositional_bar.pdf, id=378, 498.6291pt x 280.96819pt>
+File: figures/compositional_bar.pdf Graphic file (type pdf)
+<use figures/compositional_bar.pdf>
+Package pdftex.def Info: figures/compositional_bar.pdf  used on input line 272.
+
+(pdftex.def)             Requested size: 190.79109pt x 107.50641pt.
+
+Underfull \vbox (badness 2529) has occurred while \output is active []
+
+ [6
 pdfTeX warning (ext4): destination with the same identifier (name{table.2}) has
  been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.217 
-      ]
-<figures/graph_discovery.pdf, id=304, 850.54701pt x 294.02725pt>
-File: figures/graph_discovery.pdf Graphic file (type pdf)
-<use figures/graph_discovery.pdf>
-Package pdftex.def Info: figures/graph_discovery.pdf  used on input line 235.
-(pdftex.def)             Requested size: 397.48499pt x 137.40768pt.
-<figures/edge_distribution.pdf, id=305, 426.29953pt x 280.32478pt>
-File: figures/edge_distribution.pdf Graphic file (type pdf)
-<use figures/edge_distribution.pdf>
-Package pdftex.def Info: figures/edge_distribution.pdf  used on input line 244.
-
-(pdftex.def)             Requested size: 190.79109pt x 125.45631pt.
-<figures/compositional_bar.pdf, id=306, 498.6291pt x 280.96819pt>
-File: figures/compositional_bar.pdf Graphic file (type pdf)
-<use figures/compositional_bar.pdf>
-Package pdftex.def Info: figures/compositional_bar.pdf  used on input line 250.
-
-(pdftex.def)             Requested size: 190.79109pt x 107.50641pt.
- [6
-pdfTeX warning (ext4): destination with the same identifier (name{figure.2}) ha
-s been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.279 
-       <./figures/graph_discovery.pdf>] [7
-pdfTeX warning (ext4): destination with the same identifier (name{figure.3}) ha
-s been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.298 
-      
-pdfTeX warning (ext4): destination with the same identifier (name{figure.4}) ha
-s been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.298 
+l.281 
       
 pdfTeX warning (ext4): destination with the same identifier (name{table.3}) has
  been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.298 
-       <./figures/edge_distribution.pdf> <./figures/compositional_bar.pdf>]
-(./main.bbl [8])
-<figures/trajectory_prediction.pdf, id=458, 850.54701pt x 294.02725pt>
+l.281 
+      ] [7
+pdfTeX warning (ext4): destination with the same identifier (name{figure.2}) ha
+s been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.307 
+      
+pdfTeX warning (ext4): destination with the same identifier (name{figure.3}) ha
+s been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.307 
+      
+pdfTeX warning (ext4): destination with the same identifier (name{figure.4}) ha
+s been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.307 
+       <./figures/graph_discovery.pdf> <./figures/edge_distribution.pdf> <./fig
+ures/compositional_bar.pdf>] (./main.bbl [8
+pdfTeX warning (ext4): destination with the same identifier (name{table.4}) has
+ been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.43 
+     ]) [9]
+<figures/trajectory_prediction.pdf, id=537, 850.54701pt x 294.02725pt>
 File: figures/trajectory_prediction.pdf Graphic file (type pdf)
 <use figures/trajectory_prediction.pdf>
 Package pdftex.def Info: figures/trajectory_prediction.pdf  used on input line 
-327.
+349.
 (pdftex.def)             Requested size: 397.48499pt x 137.40768pt.
- [9
+ [10
 pdfTeX warning (ext4): destination with the same identifier (name{figure.5}) ha
 s been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.332 \newpage
-               <./figures/trajectory_prediction.pdf>] (./checklist.tex [10]
-[11] [12] [13] [14] [15]) [16] (./main.aux)
+l.354 \newpage
+               <./figures/trajectory_prediction.pdf>] (./checklist.tex [11]
+[12] [13] [14] [15] [16]) [17] (./main.aux)
 Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: 0BDFD625A9E93AE1E1B1B93C0FB063CA;2808.
  ) 
 Here is how much of TeX's memory you used:
- 14341 strings out of 476025
- 225835 string characters out of 5790018
- 1871388 words of memory out of 5000000
- 34127 multiletter control sequences out of 15000+600000
- 568588 words of font info for 274 fonts, out of 8000000 for 9000
+ 14352 strings out of 476025
+ 225969 string characters out of 5790018
+ 1873388 words of memory out of 5000000
+ 34131 multiletter control sequences out of 15000+600000
+ 568821 words of font info for 277 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  75i,12n,76p,1179b,747s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb
@@ -753,10 +762,10 @@ ocal/texlive/2023/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/local/te
 xlive/2023/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2023
 /texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2023/texmf-dis
 t/fonts/type1/urw/times/utmri8a.pfb>
-Output written on main.pdf (16 pages, 337830 bytes).
+Output written on main.pdf (17 pages, 361237 bytes).
 PDF statistics:
- 656 PDF objects out of 1000 (max. 8388607)
- 395 compressed objects within 4 object streams
- 107 named destinations out of 1000 (max. 500000)
+ 736 PDF objects out of 1000 (max. 8388607)
+ 414 compressed objects within 5 object streams
+ 110 named destinations out of 1000 (max. 500000)
  52914 words of extra memory for PDF output out of 61914 (max. 10000000)
 

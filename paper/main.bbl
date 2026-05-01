@@ -1,4 +1,4 @@
-\begin{thebibliography}{21}
+\begin{thebibliography}{22}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -46,6 +46,11 @@ Hyunseo Kim et~al.
 \newblock Slot transformer imagination with causality-aware reinforcement
   learning.
 \newblock In \emph{AAAI Conference on Artificial Intelligence}, 2026.
+
+\bibitem[Kipf et~al.(2018)Kipf, Fetaya, Wang, Welling, and Zemel]{kipf2018nri}
+Thomas Kipf, Ethan Fetaya, Kuan-Chieh Wang, Max Welling, and Richard Zemel.
+\newblock Neural relational inference for interacting systems.
+\newblock In \emph{International Conference on Machine Learning}, 2018.
 
 \bibitem[Lachapelle et~al.(2022)]{vcd2022}
 S{\'e}bastien Lachapelle et~al.
