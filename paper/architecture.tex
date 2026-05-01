@@ -1,0 +1,109 @@
+\begin{figure}[t]
+\centering
+\resizebox{\linewidth}{!}{%
+\begin{tikzpicture}[
+    >=stealth,
+    node distance=1.5cm,
+    box/.style={draw, rounded corners=5pt, minimum height=2.0cm, minimum width=2.8cm, align=center, line width=1pt, inner sep=8pt},
+    smallbox/.style={draw, rounded corners=3pt, minimum height=0.6cm, minimum width=0.8cm, align=center, font=\footnotesize\bfseries, line width=0.7pt, inner sep=3pt},
+    arr/.style={->, line width=1.2pt, color=black!65},
+    lbl/.style={font=\footnotesize, color=black!55, midway, above, inner sep=2pt},
+]
+
+% ===== Outer border =====
+\begin{scope}[on background layer]
+    \fill[gray!6, rounded corners=8pt] (-1.8,-2.7) rectangle (17.2,3.6);
+    \draw[gray!30, rounded corners=8pt, line width=0.8pt] (-1.8,-2.7) rectangle (17.2,3.6);
+\end{scope}
+
+% ===== Main modules =====
+\node[box, fill=blue!6, draw=blue!40] (enc) {
+    \textbf{State Encoder}\\[6pt]
+    {\large\color{blue!50} $f_{\mathrm{enc}}$}
+};
+
+\node[box, fill=red!6, draw=red!35, right=1.5cm of enc] (graph) {
+    \textbf{Causal Graph}\\
+    \textbf{Discovery}\\[6pt]
+    {\large\color{red!45} $g_{\mathrm{graph}}$}
+};
+
+\node[box, fill=green!6, draw=green!45!black, right=1.5cm of graph, minimum width=4.8cm] (dyn) {
+    \textbf{Modular Causal Dynamics}\\[6pt]
+    {\large\color{green!45!black} $f_{\mathrm{dyn}}$}
+};
+
+\node[box, fill=orange!8, draw=orange!50, right=1.5cm of dyn] (dec) {
+    \textbf{State Decoder}\\[6pt]
+    {\large\color{orange!60!black} $f_{\mathrm{dec}}$}
+};
+
+% ===== Arrows between modules =====
+\draw[arr] (enc) -- node[lbl] {$\mathbf{h}_t^i$} (graph);
+\draw[arr] (graph) -- node[lbl, color=red!45] {$e_{ij},\;\mathbf{w}_{ij}$} (dyn);
+\draw[arr] (dyn) -- node[lbl] {$\mathbf{h}_{t+1}^i$} (dec);
+
+% ===== Input above encoder =====
+\node[above=0.8cm of enc, font=\large] (inp) {$\mathbf{s}_t^{1..K}$};
+\node[above=0.1cm of inp, font=\small, color=black!45] {Object States};
+\draw[arr] (inp) -- (enc);
+
+% ===== Output above decoder =====
+\node[above=0.8cm of dec, font=\large] (outp) {$\hat{\mathbf{s}}_{t+1}^{1..K}$};
+\node[above=0.1cm of outp, font=\small, color=black!45] {Predicted States};
+\draw[arr] (dec) -- (outp);
+
+% ===== Typed modules below dynamics =====
+\node[smallbox, fill=green!10, draw=green!45!black] at ($(dyn.south)+(-2.0,-0.7)$) (fself) {\color{green!45!black}$f_{\mathrm{self}}$};
+\node[smallbox, fill=red!12, draw=red!40, right=0.2cm of fself] (f1) {\color{red!50}$f^1_{\mathrm{int}}$};
+\node[smallbox, fill=blue!12, draw=blue!40, right=0.2cm of f1] (f2) {\color{blue!50}$f^2_{\mathrm{int}}$};
+\node[smallbox, fill=purple!12, draw=purple!40, right=0.2cm of f2] (f3) {\color{purple!50}$f^3_{\mathrm{int}}$};
+\node[right=0.15cm of f3, font=\footnotesize, color=black!35] (fdots) {$\cdots$};
+\node[smallbox, fill=yellow!15, draw=yellow!55!black, right=0.15cm of fdots] (fM) {\color{yellow!55!black}$f^M_{\mathrm{int}}$};
+
+% Label
+\node[below=0.15cm of f2.south east, anchor=north, font=\scriptsize, color=green!35!black] {typed interaction modules};
+
+% Bracket connecting to dynamics
+\draw[gray!40, line width=0.6pt] (fself.north) -- ($(dyn.south)+(-2.0,0)$);
+\draw[gray!40, line width=0.6pt] (fM.north) -- ($(dyn.south)+(1.8,0)$);
+
+% ===== Mini graph in graph discovery box =====
+\begin{scope}[shift={($(graph.center)+(-0.5,-0.35)$)}]
+    \fill[red!50] (0,0) circle (0.07);
+    \fill[blue!50] (0.45,0) circle (0.07);
+    \fill[green!50!black] (0.22,-0.3) circle (0.07);
+    \draw[red!30, line width=0.9pt] (0,0) -- (0.45,0);
+    \draw[red!30, line width=0.5pt, opacity=0.3] (0,0) -- (0.22,-0.3);
+    \draw[red!30, line width=0.7pt] (0.45,0) -- (0.22,-0.3);
+\end{scope}
+
+% ===== Autoregressive rollout arrow =====
+% Simple path: below all boxes, from decoder side to encoder side
+\coordinate (ar_br) at ($(dec.south)+(0,-1.6)$);
+\coordinate (ar_bl) at ($(enc.south)+(0,-1.6)$);
+
+\draw[
+    ->,
+    line width=1.3pt,
+    color=violet!55,
+    densely dashed,
+    rounded corners=8pt,
+] (dec.south) -- (ar_br) -- (ar_bl) -- (enc.south);
+
+% Label on bottom
+\node[
+    font=\small,
+    color=violet!60,
+    fill=violet!4,
+    rounded corners=3pt,
+    inner sep=4pt,
+    draw=violet!20,
+    line width=0.5pt,
+] at ($(ar_br)!0.5!(ar_bl)+(0,0.35)$) {autoregressive rollout: \;$\hat{\mathbf{s}}_{t+1}$ feeds back as $\mathbf{s}_{t+1}$};
+
+\end{tikzpicture}
+}%
+\caption{\textbf{\ours{} architecture.} Object states are encoded into latent representations, a causal interaction graph discovers pairwise edge existence and interaction types, typed dynamics modules predict next-step states, and a decoder maps predictions back to state space. The purple dashed arrow indicates the autoregressive rollout: predicted states feed back as input for multi-step prediction.}
+\label{fig:architecture}
+\end{figure}
