@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.9.2)  2 MAY 2026 02:38
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.9.2)  2 MAY 2026 02:43
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -959,30 +959,30 @@ pdfTeX warning (ext4): destination with the same identifier (name{table.2}) has
                                                   \__shipout_drop_firstpage_...
 l.211 
       ]
-<figures/graph_discovery.pdf, id=223, 625.88536pt x 211.67537pt>
+<figures/graph_discovery.pdf, id=225, 625.88536pt x 211.67537pt>
 File: figures/graph_discovery.pdf Graphic file (type pdf)
 <use figures/graph_discovery.pdf>
 Package pdftex.def Info: figures/graph_discovery.pdf  used on input line 218.
 (pdftex.def)             Requested size: 397.48499pt x 134.43173pt.
-<figures/edge_distribution.pdf, id=224, 310.65121pt x 202.00658pt>
+<figures/edge_distribution.pdf, id=226, 310.65121pt x 202.00658pt>
 File: figures/edge_distribution.pdf Graphic file (type pdf)
 <use figures/edge_distribution.pdf>
 Package pdftex.def Info: figures/edge_distribution.pdf  used on input line 227.
 
 (pdftex.def)             Requested size: 190.79109pt x 124.06839pt.
-<figures/compositional_bar.pdf, id=225, 418.99536pt x 216.17865pt>
+<figures/compositional_bar.pdf, id=227, 418.99536pt x 216.17865pt>
 File: figures/compositional_bar.pdf Graphic file (type pdf)
 <use figures/compositional_bar.pdf>
 Package pdftex.def Info: figures/compositional_bar.pdf  used on input line 233.
 
 (pdftex.def)             Requested size: 190.79109pt x 98.4373pt.
-<figures/capacity_ablation.pdf, id=232, 346.75546pt x 216.19432pt>
+<figures/capacity_ablation.pdf, id=234, 346.75546pt x 216.19432pt>
 File: figures/capacity_ablation.pdf Graphic file (type pdf)
 <use figures/capacity_ablation.pdf>
 Package pdftex.def Info: figures/capacity_ablation.pdf  used on input line 267.
 
 (pdftex.def)             Requested size: 190.79109pt x 118.95341pt.
-<figures/m_curve.pdf, id=233, 317.39578pt x 199.35667pt>
+<figures/m_curve.pdf, id=235, 317.39578pt x 199.35667pt>
 File: figures/m_curve.pdf Graphic file (type pdf)
 <use figures/m_curve.pdf>
 Package pdftex.def Info: figures/m_curve.pdf  used on input line 273.
@@ -1003,7 +1003,7 @@ s been already used, duplicate ignored
                                                   \__shipout_drop_firstpage_...
 l.283 
        <./figures/graph_discovery.pdf>]
-<figures/transferability.pdf, id=285, 491.31116pt x 187.2695pt>
+<figures/transferability.pdf, id=287, 491.31116pt x 187.2695pt>
 File: figures/transferability.pdf Graphic file (type pdf)
 <use figures/transferability.pdf>
 Package pdftex.def Info: figures/transferability.pdf  used on input line 308.
@@ -1062,7 +1062,7 @@ s been already used, duplicate ignored
                                                   \__shipout_drop_firstpage_...
 l.27 
       <./figures/transferability.pdf>]) [10]
-<figures/trajectory_prediction.pdf, id=614, 850.54701pt x 294.02725pt>
+<figures/trajectory_prediction.pdf, id=616, 850.54701pt x 294.02725pt>
 File: figures/trajectory_prediction.pdf Graphic file (type pdf)
 <use figures/trajectory_prediction.pdf>
 Package pdftex.def Info: figures/trajectory_prediction.pdf  used on input line 
@@ -1114,10 +1114,10 @@ mf-dist/fonts/type1/public/cm-super/sftt1000.pfb></usr/local/texlive/2023/texmf
 onts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1
 /urw/times/utmr8a.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/urw/times
 /utmri8a.pfb>
-Output written on main.pdf (14 pages, 476975 bytes).
+Output written on main.pdf (14 pages, 477096 bytes).
 PDF statistics:
- 829 PDF objects out of 1000 (max. 8388607)
- 448 compressed objects within 5 object streams
+ 831 PDF objects out of 1000 (max. 8388607)
+ 450 compressed objects within 5 object streams
  104 named destinations out of 1000 (max. 500000)
  63144 words of extra memory for PDF output out of 74296 (max. 10000000)
 

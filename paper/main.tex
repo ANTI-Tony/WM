@@ -137,7 +137,7 @@ where $\mathcal{L}_\text{edge}$ is binary cross-entropy between predicted edge p
 
 This multi-physics setting is particularly challenging because the model must simultaneously discover and differentiate multiple interaction mechanisms, not just detect whether objects interact.
 
-\paragraph{Metrics.} (1) \textbf{Unseen MSE}: prediction error on held-out collision-pair combinations (primary metric). (2) \textbf{Seen MSE}: error on training combinations. (3) \textbf{Compositional Gap}: $(\text{Unseen} - \text{Seen}) / \text{Seen} \times 100\%$.
+\paragraph{Metrics.} (1) \textbf{Unseen MSE}: prediction error on held-out collision-pair combinations (primary metric). (2) \textbf{Seen MSE}: error on training combinations. (3) \textbf{Compositional Gap}~\citep{keysers2020measuring}: $(\text{Unseen} - \text{Seen}) / \text{Seen} \times 100\%$.
 
 \paragraph{Baselines.} We compare five variants: \textbf{NoGraph} (self-dynamics only; no inter-object interactions), \textbf{FullGraph} (all edges equally weighted; single shared interaction function), \textbf{SlotFormer}~\citep{wu2023slotformer} (autoregressive Transformer over object slots; attention implicitly handles interactions without explicit graph structure), \textbf{SingleModule} (causal graph discovery but only one shared dynamics module---no type specialization; tests whether the graph alone suffices), and \textbf{\ours{}} (full framework with causal graph discovery + $M{=}8$ typed interaction modules).
 
