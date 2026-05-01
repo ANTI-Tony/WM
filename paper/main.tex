@@ -278,7 +278,7 @@ This confirms that the graph discovery module successfully identifies causal int
 A natural concern is that typed modules reduce compositional gap simply by limiting model capacity. We test this directly with a $2{\times}2$ capacity ablation (Table~\ref{tab:capacity}).
 
 \begin{table}[t]
-    \caption{Capacity-matched ablation on SimplePhysics. Increasing capacity \emph{worsens} SingleModule's gap (+30pp) but \emph{improves} CausalComp's gap ($-$7pp). This rules out implicit regularization as the explanation for typed modules' advantage.}
+    \caption{Capacity-matched ablation on SimplePhysics (single seed; absolute values differ from Tables~\ref{tab:simple}--\ref{tab:multi} due to seed variance, but the \emph{opposing trends} within this table are the key finding). Increasing capacity \emph{worsens} SingleModule's gap (+30pp) but \emph{improves} CausalComp's gap ($-$7pp), ruling out implicit regularization.}
     \label{tab:capacity}
     \centering
     \begin{tabular}{lcccc}
@@ -337,7 +337,7 @@ Autoregressive rollout eliminates this shortcut by feeding \emph{predicted} (not
 
 \paragraph{Implicit regularization is ruled out.} Section~\ref{sec:capacity} and Table~\ref{tab:capacity} directly test whether typed modules' advantage is merely capacity limitation. The $2{\times}2$ ablation shows that increasing capacity makes SingleModule's gap \emph{worse} ($+$30pp) while making \ours{}'s gap \emph{better} ($-$7pp)---even when \ours{} has 2.7$\times$ more parameters. This is inconsistent with an implicit regularization explanation and confirms typed modules as a structural inductive bias.
 
-\paragraph{When does \ours{} fail?} \ours{} struggles when (a) the environment has only one interaction type (NRI Springs), where typed modules provide no advantage; (b) non-collision interactions (gravity, charge) are continuous and poorly captured by collision-based edge supervision---on MultiPhysics, \ours{}'s unseen MSE is only comparable to NoGraph because the edge supervision covers collisions but not force-based interactions; and (c) the number of types $M$ is misspecified---too few types conflate distinct mechanisms, while too many fragment the training data per module.
+\paragraph{When does \ours{} fail?} \ours{} struggles when (a) the environment has only one interaction type (NRI Springs), where typed modules provide no advantage; (b) edge supervision does not cover all interaction types---on MultiPhysics, supervision uses only collision events, missing continuous force-based interactions (gravity, charge). Extending supervision to proximity-based proxies for continuous forces is a natural next step that we expect to further improve unseen MSE; and (c) the number of types $M$ is misspecified---too few types conflate distinct mechanisms, while too many fragment the training data per module (Section~\ref{sec:m_curve}).
 
 \paragraph{Limitations.}
 (1) Our environments are synthetic 2D physics with GT object states. Extending to visual observations (e.g., via Slot Attention or DINOv2) and 3D environments (e.g., Physion~\citep{bear2021physion}) is critical future work.
