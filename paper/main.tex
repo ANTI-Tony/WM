@@ -39,13 +39,13 @@ Compositional generalization is a central challenge for object-centric world mod
 \label{sec:intro}
 %==============================================================================
 
-World models---internal simulators that predict how environments evolve over time---are central to planning and decision-making~\citep{ha2018worldmodels,lecun2022jepa,hafner2025dreamerv3}. A key challenge is \emph{compositional generalization}: can a model predict the dynamics of object combinations it has never seen during training? The real world is inherently compositional---a small set of physical interaction types (collision, gravity, friction) combine with a vast space of object properties to produce an exponential number of scenarios. Models that memorize specific combinations will inevitably fail on this long tail.
+World models---internal simulators that predict how environments evolve over time---are central to planning and decision-making~\citep{ha2018worldmodels,lecun2022jepa,hafner2025dreamerv3}. A key challenge is compositional generalization: can a model predict the dynamics of object combinations it has never seen during training? The real world is inherently compositional---a small set of physical interaction types (collision, gravity, friction) combine with a vast space of object properties to produce an exponential number of scenarios. Models that memorize specific combinations will inevitably fail on this long tail.
 
 Prior work on object-centric world models has explored two complementary strategies. \textbf{Causal approaches}~\citep{kipf2018nri,kipf2020cswm,oocdm2024,vcd2022} discover which objects interact, learning sparse interaction graphs. \textbf{Modular approaches}~\citep{dreamweaver2025,fiocwm2025,battaglia2016interaction} decompose dynamics into per-object or per-relation functions. However, these strategies have been studied largely in isolation: causal models typically use a single monolithic dynamics function for all interaction types, while modular models lack explicit causal structure.
 
 This paper asks a focused empirical question: \emph{In multi-interaction-type environments, is type-specific modular dynamics necessary for compositional generalization, or does causal graph structure alone suffice?}
 
-We investigate this through \ours{}, a model that combines causal interaction graph discovery with typed dynamics modules, and a carefully controlled ablation study. Our central finding is:
+We investigate this through \ours{}, a framework that combines causal interaction graph discovery with typed dynamics modules, and a carefully controlled ablation study. Our central finding is:
 
 \begin{quote}
 \emph{Causal graph discovery alone is insufficient for compositional generalization. A model with graph discovery but a single shared dynamics module (SingleModule) achieves the lowest in-distribution error but the worst compositional gap (up to 75\% on SimplePhysics). Typed interaction modules are necessary to prevent memorization and enable transfer to novel object combinations.}
@@ -76,26 +76,14 @@ DreamWeaver~\citep{dreamweaver2025} learns composable static and dynamic concept
 \label{sec:method}
 %==============================================================================
 
-\subsection{Problem formulation}
+\paragraph{Problem formulation.}
+We consider a scene with $K$ objects, each described by a state vector $\mathbf{s}_t^i \in \R^D$ at time $t$ (encoding position, velocity, appearance, etc.). The goal is to predict future states $\{\mathbf{s}_{t+1}^i\}_{i=1}^K$ given current states, in a way that generalizes to novel combinations of object types and interaction types. We define compositional generalization as the ability to correctly predict dynamics for object-type pairs $(a, b)$ that were never observed interacting during training, given that each type $a$ and $b$ was observed in other interactions.
 
-We consider a scene with $K$ objects, each described by a state vector $\mathbf{s}_t^i \in \R^D$ at time $t$ (encoding position, velocity, appearance, etc.). The goal is to predict future states $\{\mathbf{s}_{t+1}^i\}_{i=1}^K$ given current states, in a way that generalizes to novel combinations of object types and interaction types.
-
-We define \emph{compositional generalization} as the ability to correctly predict dynamics for object-type pairs $(a, b)$ that were \emph{never observed interacting during training}, given that each type $a$ and $b$ was observed in other interactions.
-
-\subsection{Architecture overview}
-
+\paragraph{Architecture overview.}
 \input{architecture.tex}
+\ours{} consists of four modules (Figure~\ref{fig:architecture}): (1)~\textbf{State encoder} $f_\text{enc}$: maps raw object states to latent representations $\mathbf{h}_t^i = f_\text{enc}(\mathbf{s}_t^i)$. (2)~\textbf{Causal graph discovery} $g_\text{graph}$: predicts edge existence and interaction type for each object pair. (3)~\textbf{Modular causal dynamics} $f_\text{dyn}$: predicts next-step latent states using type-specific interaction modules. (4)~\textbf{State decoder} $f_\text{dec}$: maps latent predictions back to state space $\hat{\mathbf{s}}_{t+1}^i = f_\text{dec}(\mathbf{h}_{t+1}^i)$.
 
-\ours{} consists of four modules (Figure~\ref{fig:architecture}):
-\begin{enumerate}
-    \item \textbf{State encoder} $f_\text{enc}$: maps raw object states to latent representations $\mathbf{h}_t^i = f_\text{enc}(\mathbf{s}_t^i)$.
-    \item \textbf{Causal graph discovery} $g_\text{graph}$: predicts edge existence and interaction type for each object pair.
-    \item \textbf{Modular causal dynamics} $f_\text{dyn}$: predicts next-step latent states using type-specific interaction modules.
-    \item \textbf{State decoder} $f_\text{dec}$: maps latent predictions back to state space $\hat{\mathbf{s}}_{t+1}^i = f_\text{dec}(\mathbf{h}_{t+1}^i)$.
-\end{enumerate}
-
-\subsection{Causal interaction graph discovery}
-
+\paragraph{Causal interaction graph discovery.}
 For each ordered pair $(i, j)$ with $i \neq j$, we compute:
 
 \textbf{Edge existence.} A probability $e_{ij} \in [0, 1]$ that object $j$ causally influences object $i$:
@@ -109,28 +97,21 @@ For each ordered pair $(i, j)$ with $i \neq j$, we compute:
 \end{equation}
 where $\tau$ is the temperature parameter.
 
-\subsection{Modular causal dynamics}
+\paragraph{Modular causal dynamics.}
 \label{sec:dynamics}
-
 Each interaction type $\tau \in \{1, \ldots, M\}$ has its own dynamics module $f_\text{inter}^\tau$, and all objects share a self-dynamics module $f_\text{self}$. The next-step latent state is:
 \begin{equation}
     \mathbf{h}_{t+1}^i = \text{MLP}_\text{update}\left(\left[f_\text{self}(\mathbf{h}_t^i),\; \sum_{j \neq i} e_{ij} \sum_{\tau=1}^{M} w_{ij}^\tau \cdot f_\text{inter}^\tau(\mathbf{h}_t^j, \mathbf{h}_t^i)\right]\right)
     \label{eq:dynamics}
 \end{equation}
 
-\textbf{Why this enables compositional generalization.} Consider interaction type $\tau$ = ``elastic collision.'' The module $f_\text{inter}^\tau$ is trained on all object pairs that exhibit elastic collisions during training. At test time, when a novel pair $(a, b)$ collides, the graph discovery module classifies this as type $\tau$, and the \emph{same} $f_\text{inter}^\tau$ is applied---regardless of whether types $a$ and $b$ were ever seen colliding together. The dynamics module generalizes because it has learned the \emph{mechanism} of collision, not the specific pair.
+\textbf{Why this enables compositional generalization.} Consider interaction type $\tau$ = ``elastic collision.'' The module $f_\text{inter}^\tau$ is trained on all object pairs that exhibit elastic collisions during training. At test time, when a novel pair $(a, b)$ collides, the graph discovery module classifies this as type $\tau$, and the same $f_\text{inter}^\tau$ is applied---regardless of whether types $a$ and $b$ were ever seen colliding together. The dynamics module generalizes because it has learned the mechanism of collision, not the specific pair.
 
-\subsection{Theoretical motivation}
+\paragraph{Theoretical motivation.}
 \label{sec:theory}
+Our design is motivated by two principles. The Independent Causal Mechanisms (ICM) principle~\citep{scholkopf2021causal} states that the causal generative process of a system consists of autonomous modules that do not inform or influence each other. In our setting, each interaction type $\tau$ corresponds to an independent causal mechanism: the physics of elastic collision is independent of gravitational attraction. By assigning a separate module $f_\text{inter}^\tau$ to each mechanism, \ours{} respects this independence. Additionally, \citet{richens2024robust} prove that any agent achieving bounded regret under distributional shifts must have learned an approximate causal model. We extend this informally: when the causal model is further factorized by interaction type, each factor can be independently reused across novel object combinations. If the true dynamics factorize as $P(\mathbf{s}_{t+1} | \mathbf{s}_t) = \prod_i P(\mathbf{s}_{t+1}^i | \text{pa}(\mathbf{s}_t^i), \tau_{ij})$, then learning each conditional $P(\cdot | \cdot, \tau)$ separately allows generalization to any parent set---including novel object-type combinations not seen during training.
 
-Our design is motivated by two theoretical principles:
-
-\textbf{Independent Causal Mechanisms (ICM)~\citep{scholkopf2021causal}.} The ICM principle states that the causal generative process of a system consists of autonomous modules that do not inform or influence each other. In our setting, each interaction type $\tau$ corresponds to an independent causal mechanism: the physics of elastic collision is independent of the physics of gravitational attraction. By assigning a separate module $f_\text{inter}^\tau$ to each mechanism, \ours{} respects this independence---changing one mechanism (e.g., making collisions inelastic) requires updating only $f_\text{inter}^\tau$ without affecting other modules.
-
-\textbf{Causal factorization enables transfer~\citep{richens2024robust}.} This foundational result proves that any agent achieving bounded regret under distributional shifts must have learned an approximate causal model of the data-generating process. We extend this result informally: when the causal model is further \emph{factorized} by interaction type, each factor can be independently reused across novel object combinations. Formally, if the true dynamics factorize as $P(\mathbf{s}_{t+1} | \mathbf{s}_t) = \prod_i P(\mathbf{s}_{t+1}^i | \text{pa}(\mathbf{s}_t^i), \tau_{ij})$ where $\text{pa}(\cdot)$ denotes causal parents and $\tau_{ij}$ the interaction type, then learning each conditional $P(\cdot | \cdot, \tau)$ separately allows generalization to any parent set---including novel object-type combinations not seen during training.
-
-\subsection{Training}
-
+\paragraph{Training.}
 We train in two phases with autoregressive rollout:
 
 \textbf{Phase 1} (epochs 1--$T_w$): Train state encoder and decoder only on reconstruction loss $\mathcal{L}_\text{recon} = \|\hat{\mathbf{s}}_t - \mathbf{s}_t\|^2$.
@@ -150,22 +131,15 @@ where $\mathcal{L}_\text{edge}$ is binary cross-entropy between predicted edge p
 
 \paragraph{Environments.} We evaluate on two 2D physics environments of increasing complexity:
 
-\textbf{SimplePhysics:} Colored circles with elastic collisions and wall bouncing. Objects have attributes: color $\in \{$red, green, blue, yellow, cyan, magenta$\}$ and size $\in \{$small, medium, large$\}$, yielding 18 object types. Each video contains 3--6 objects over 16 frames. \emph{Compositional split:} Following MCD~\citep{keysers2020measuring}, we hold out 40\% of (color$\times$size) collision pairs.
+\textbf{SimplePhysics:} Colored circles with elastic collisions and wall bouncing. Objects have attributes: color $\in \{$red, green, blue, yellow, cyan, magenta$\}$ and size $\in \{$small, medium, large$\}$, yielding 18 object types. Each video contains 3--6 objects over 16 frames. \textbf{Compositional split:} Following MCD~\citep{keysers2020measuring}, we hold out 40\% of (color$\times$size) collision pairs.
 
-\textbf{MultiPhysics:} A more challenging environment with \emph{three} interaction types: elastic collisions (mass-dependent), gravitational attraction, and electrostatic forces (charge-dependent attraction/repulsion). Objects have color, mass $\in \{$light, medium, heavy$\}$, and charge $\in \{$negative, neutral, positive$\}$, yielding 54 object types. \emph{Compositional split:} We hold out all same-charge collisions (positive-positive, negative-negative), testing whether the model can generalize collision dynamics to charge configurations not seen during training.
+\textbf{MultiPhysics:} A more challenging environment with three interaction types: elastic collisions (mass-dependent), gravitational attraction, and electrostatic forces (charge-dependent attraction/repulsion). Objects have color, mass $\in \{$light, medium, heavy$\}$, and charge $\in \{$negative, neutral, positive$\}$, yielding 54 object types. \textbf{Compositional split:} We hold out all same-charge collisions (positive-positive, negative-negative), testing whether the model can generalize collision dynamics to charge configurations not seen during training.
 
-This multi-physics setting is particularly challenging because the model must simultaneously discover \emph{and differentiate} multiple interaction mechanisms, not just detect whether objects interact.
+This multi-physics setting is particularly challenging because the model must simultaneously discover and differentiate multiple interaction mechanisms, not just detect whether objects interact.
 
 \paragraph{Metrics.} (1) \textbf{Unseen MSE}: prediction error on held-out collision-pair combinations (primary metric). (2) \textbf{Seen MSE}: error on training combinations. (3) \textbf{Compositional Gap}: $(\text{Unseen} - \text{Seen}) / \text{Seen} \times 100\%$.
 
-\paragraph{Baselines.}
-\begin{itemize}
-    \item \textbf{NoGraph}: Self-dynamics only; no inter-object interactions modeled.
-    \item \textbf{FullGraph}: All edges equally weighted; single shared interaction function.
-    \item \textbf{SlotFormer}~\citep{wu2023slotformer}: Autoregressive Transformer over object slots. Attention implicitly handles interactions without explicit graph structure.
-    \item \textbf{SingleModule}: Causal graph discovery but only one shared dynamics module (no type specialization). Tests whether the graph alone suffices.
-    \item \textbf{\ours{}}: Full model with causal graph discovery + $M{=}8$ typed interaction modules.
-\end{itemize}
+\paragraph{Baselines.} We compare five variants: \textbf{NoGraph} (self-dynamics only; no inter-object interactions), \textbf{FullGraph} (all edges equally weighted; single shared interaction function), \textbf{SlotFormer}~\citep{wu2023slotformer} (autoregressive Transformer over object slots; attention implicitly handles interactions without explicit graph structure), \textbf{SingleModule} (causal graph discovery but only one shared dynamics module---no type specialization; tests whether the graph alone suffices), and \textbf{\ours{}} (full framework with causal graph discovery + $M{=}8$ typed interaction modules).
 
 All methods use the same state encoder/decoder architecture (2-layer MLP, hidden dim 128) and are trained for 150 epochs with AdamW ($\text{lr}{=}3{\times}10^{-4}$).
 
@@ -233,18 +207,11 @@ Tables~\ref{tab:simple}--\ref{tab:nri} present results across three environments
 
 \textbf{Why does SlotFormer achieve lower absolute MSE?} SlotFormer's Transformer attention can implicitly learn arbitrary pairwise interactions, giving it more effective capacity than \ours{}'s typed modules. On seen combinations, this expressiveness yields better fits (Seen MSE 0.028 vs.\ 0.049 on SimplePhysics). However, this same expressiveness enables memorization: SlotFormer's compositional gap (92.7\%) is the worst of all methods---nearly double \ours{}'s gap (49.8\%). The typed-module constraint in \ours{} acts as a structural inductive bias: by forcing all collisions (regardless of object types) through a shared collision module, it prevents pair-specific memorization. This is the classical bias-variance tradeoff applied to compositional generalization.
 
-\textbf{When does \ours{} \emph{not} help?} On NRI Springs (Table~\ref{tab:nri}), all methods achieve small gaps ($<$3.2\%). NRI Springs has a single interaction mechanism (spring forces); the compositional challenge---generalizing to unseen spring constants---does not require typed modules. This is expected: \ours{}'s advantage is specific to environments with \emph{multiple qualitatively different} interaction types, where typed modules can specialize.
+\textbf{When does \ours{} not help?} On NRI Springs (Table~\ref{tab:nri}), all methods achieve small gaps ($<$3.2\%). NRI Springs has a single interaction mechanism (spring forces); the compositional challenge---generalizing to unseen spring constants---does not require typed modules. This is expected: \ours{}'s advantage is specific to environments with multiple qualitatively different interaction types, where typed modules can specialize.
 
 \subsection{Graph discovery analysis}
 
-To verify that \ours{} learns meaningful causal structure, we analyze the discovered edge probabilities. After training, edges between objects that collide in the video have significantly higher probability than non-colliding pairs:
-\begin{itemize}
-    \item Colliding pairs: mean edge probability $> 0.5$ ($\sim$6.4 edges per scene)
-    \item Non-colliding pairs: mean edge probability $< 0.1$ ($\sim$20.4 edges per scene)
-    \item Edge probability standard deviation: 0.304 (vs.\ 0.01 for an untrained model)
-\end{itemize}
-
-This confirms that the graph discovery module successfully identifies causal interactions, providing the structural foundation for typed dynamics modules. Figure~\ref{fig:graph} visualizes a representative example, and Figure~\ref{fig:edges} shows the distribution of edge probabilities.
+To verify that \ours{} learns meaningful causal structure, we analyze the discovered edge probabilities. After training, colliding pairs have mean edge probability $> 0.5$ ($\sim$6.4 edges per scene), non-colliding pairs have mean edge probability $< 0.1$ ($\sim$20.4 edges per scene), and the overall edge probability standard deviation is 0.304 (vs.\ 0.01 for an untrained model). This confirms that the graph discovery module successfully identifies causal interactions. Figure~\ref{fig:graph} visualizes a representative example, and Figure~\ref{fig:edges} shows the distribution of edge probabilities.
 
 \begin{figure}[t]
     \centering
@@ -275,7 +242,7 @@ This confirms that the graph discovery module successfully identifies causal int
 A natural concern is that typed modules reduce compositional gap simply by limiting model capacity. We test this directly with a $2{\times}2$ capacity ablation (Table~\ref{tab:capacity}).
 
 \begin{table}[t]
-    \caption{Capacity-matched ablation on SimplePhysics (single seed; absolute values differ from Tables~\ref{tab:simple}--\ref{tab:multi} due to seed variance, but the \emph{opposing trends} within this table are the key finding). Increasing capacity \emph{worsens} SingleModule's gap (+30pp) but \emph{improves} CausalComp's gap ($-$7pp), ruling out implicit regularization.}
+    \caption{Capacity-matched ablation on SimplePhysics (single seed; absolute values differ from Tables~\ref{tab:simple}--\ref{tab:multi} due to seed variance, but the opposing trends within this table are the key finding). Increasing capacity worsens SingleModule's gap (+30pp) but improves CausalComp's gap ($-$7pp), ruling out implicit regularization.}
     \label{tab:capacity}
     \centering
     \begin{tabular}{lcccc}
@@ -291,7 +258,7 @@ A natural concern is that typed modules reduce compositional gap simply by limit
     \end{tabular}
 \end{table}
 
-The result is striking: \ours{}-Big has \textbf{2.7$\times$ more parameters} than SingleModule-Big, yet its gap is \textbf{2.4$\times$ lower} (52.9\% vs.\ 125.6\%). More capacity makes SingleModule \emph{worse} (more memorization capacity $\to$ more overfitting), while \ours{} \emph{improves} (more capacity per typed module $\to$ better mechanism learning). This definitively rules out implicit regularization: the gap reduction comes from the \emph{structural inductive bias} of typed modules, not from capacity constraints. Figure~\ref{fig:capacity} visualizes these opposing trends.
+The result is striking: \ours{}-Big has \textbf{2.7$\times$ more parameters} than SingleModule-Big, yet its gap is \textbf{2.4$\times$ lower} (52.9\% vs.\ 125.6\%). More capacity makes SingleModule worse (more memorization capacity $\to$ more overfitting), while \ours{} improves (more capacity per typed module $\to$ better mechanism learning). This definitively rules out implicit regularization: the gap reduction comes from the structural inductive bias of typed modules, not from capacity constraints. Figure~\ref{fig:capacity} visualizes these opposing trends.
 
 \begin{figure}[t]
     \centering
@@ -334,7 +301,7 @@ For each type $\tau$, we collect the module's output activations on \emph{seen} 
 
 \textbf{Specialization across types.} Different typed modules in \ours{} produce near-orthogonal activations (mean cosine 0.066), in stark contrast to within-type seen/unseen similarity (0.998). This $15{\times}$ ratio is the structural fingerprint of mechanism learning: each module operates in its own representational subspace.
 
-\textbf{Why specialization matters more than transferability.} A natural alternative hypothesis is that any well-trained module shows high seen/unseen activation similarity (i.e., transferability is generic, not specific to typed modules). We confirm this: SingleModule's seen/unseen cosine is 0.975, nearly as high as \ours{}'s 0.998. Activation-level generalization alone does \emph{not} distinguish memorization from mechanism learning. What does distinguish them is whether the architecture forces interactions to be routed through specialized, non-overlapping modules. \ours{} does; SingleModule cannot. This explains why SingleModule achieves low absolute MSE (its single module generalizes well at the activation level) but high compositional gap (it conflates distinct interaction mechanisms into one representational subspace).
+\textbf{Why specialization matters more than transferability.} A natural alternative hypothesis is that any well-trained module shows high seen/unseen activation similarity (i.e., transferability is generic, not specific to typed modules). We confirm this: SingleModule's seen/unseen cosine is 0.975, nearly as high as \ours{}'s 0.998. Activation-level generalization alone does not distinguish memorization from mechanism learning. What does distinguish them is whether the architecture forces interactions to be routed through specialized, non-overlapping modules. \ours{} does; SingleModule cannot. This explains why SingleModule achieves low absolute MSE (its single module generalizes well at the activation level) but high compositional gap (it conflates distinct interaction mechanisms into one representational subspace).
 
 \begin{figure}[t]
     \centering
@@ -352,14 +319,14 @@ We vary the number of interaction types $M \in \{1, 2, 4, 8, 16, 32\}$ on Simple
 
 A critical design choice in \ours{} is the use of autoregressive rollout during training (Section~3.6). Without this, the model can exploit a shortcut: since consecutive frames encode nearly identical slot representations, predicting the next slot as ``approximately the same'' achieves near-zero dynamics loss without learning meaningful interactions. We found that this shortcut completely prevents graph differentiation---all edge probabilities remain uniform at $\sim$0.14 (= $K / K^2$ where $K{=}8$ is the number of slots).
 
-Autoregressive rollout eliminates this shortcut by feeding \emph{predicted} (not ground-truth) states back as input. Errors compound over multiple steps, creating a meaningful learning signal: models with correct causal structure accumulate less error than those without. In our experiments, the dynamics prediction loss stabilized at 0.085 with autoregressive rollout (vs.\ 0.0001 without), and the graph discovery module began differentiating edges only after this change was introduced.
+Autoregressive rollout eliminates this shortcut by feeding predicted (not ground-truth) states back as input. Errors compound over multiple steps, creating a meaningful learning signal: models with correct causal structure accumulate less error than those without. In our experiments, the dynamics prediction loss stabilized at 0.085 with autoregressive rollout (vs.\ 0.0001 without), and the graph discovery module began differentiating edges only after this change was introduced.
 
 %==============================================================================
 \section{Discussion and limitations}
 \label{sec:discussion}
 %==============================================================================
 
-\paragraph{Implicit regularization is ruled out.} Section~\ref{sec:capacity} and Table~\ref{tab:capacity} directly test whether typed modules' advantage is merely capacity limitation. The $2{\times}2$ ablation shows that increasing capacity makes SingleModule's gap \emph{worse} ($+$30pp) while making \ours{}'s gap \emph{better} ($-$7pp)---even when \ours{} has 2.7$\times$ more parameters. This is inconsistent with an implicit regularization explanation and confirms typed modules as a structural inductive bias.
+\paragraph{Implicit regularization is ruled out.} Section~\ref{sec:capacity} and Table~\ref{tab:capacity} directly test whether typed modules' advantage is merely capacity limitation. The $2{\times}2$ ablation shows that increasing capacity makes SingleModule's gap worse ($+$30pp) while making \ours{}'s gap better ($-$7pp)---even when \ours{} has 2.7$\times$ more parameters. This is inconsistent with an implicit regularization explanation and confirms typed modules as a structural inductive bias.
 
 \paragraph{When does \ours{} fail?} \ours{} struggles when (a) the environment has only one interaction type (NRI Springs), where typed modules provide no advantage; (b) edge supervision does not cover all interaction types---on MultiPhysics, supervision uses only collision events, missing continuous force-based interactions (gravity, charge). Extending supervision to proximity-based proxies for continuous forces is a natural next step that we expect to further improve unseen MSE; and (c) the number of types $M$ is misspecified---too few types conflate distinct mechanisms, while too many fragment the training data per module (Section~\ref{sec:m_curve}).
 
@@ -373,7 +340,7 @@ Autoregressive rollout eliminates this shortcut by feeding \emph{predicted} (not
 \section{Conclusion}
 %==============================================================================
 
-We investigated whether typed dynamics modules are necessary for compositional generalization in multi-interaction-type world models. Through controlled ablations across three physics environments, we found that causal graph discovery alone is insufficient: a model with learned graph structure but shared dynamics (SingleModule) achieves low absolute error but the worst compositional gap (up to 75\% on SimplePhysics, 126\% when capacity is increased), while \ours{}'s typed modules reduce the gap by 31--34\%. Our representation analysis (Section~\ref{sec:transfer}) further reveals that SingleModule's failure is not from poor representation transfer \emph{per se}---both architectures generalize at the activation level (cosine $>$0.97). Rather, the absence of \emph{specialization} across interaction types is what enables pair-specific memorization to surface in prediction error. This establishes typed modules as a necessary structural inductive bias: not because they improve transfer, but because they enforce non-overlapping mechanism representations. Important limitations remain---our environments are synthetic with GT states, and the gap reduction does not translate to lower absolute MSE than high-capacity baselines. Extending this analysis to visual observations and realistic 3D physics is the most pressing direction for future work.
+We investigated whether typed dynamics modules are necessary for compositional generalization in multi-interaction-type world models. Through controlled ablations across three physics environments, we found that causal graph discovery alone is insufficient: a model with learned graph structure but shared dynamics (SingleModule) achieves low absolute error but the worst compositional gap (up to 75\% on SimplePhysics, 126\% when capacity is increased), while \ours{}'s typed modules reduce the gap by 31--34\%. Our representation analysis (Section~\ref{sec:transfer}) further reveals that SingleModule's failure is not from poor representation transfer per se---both architectures generalize at the activation level (cosine $>$0.97). Rather, the absence of specialization across interaction types is what enables pair-specific memorization to surface in prediction error. This establishes typed modules as a necessary structural inductive bias: not because they improve transfer, but because they enforce non-overlapping mechanism representations. Important limitations remain---our environments are synthetic with GT states, and the gap reduction does not translate to lower absolute MSE than high-capacity baselines. Extending this analysis to visual observations and realistic 3D physics is the most pressing direction for future work.
 
 \begin{ack}
 Acknowledgments omitted for anonymous review.
