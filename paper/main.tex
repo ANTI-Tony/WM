@@ -309,15 +309,15 @@ The result is striking: \ours{}-Big has \textbf{2.7$\times$ more parameters} tha
     \end{minipage}
 \end{figure}
 
-\subsection{Do typed modules learn transferable mechanisms?}
+\subsection{Do typed modules learn specialized mechanisms?}
 \label{sec:transfer}
 
-Our central claim is that typed modules learn interaction \emph{mechanisms} (e.g., ``elastic collision'') rather than pair-specific dynamics. We test this directly by analyzing the internal representations of each typed module $f_\text{inter}^\tau$.
+Our central claim is that typed modules learn \emph{specialized} interaction mechanisms---each module captures one type of physics, and modules do not overlap. We test this through two complementary analyses on module activations (Table~\ref{tab:transfer}, Figure~\ref{fig:transfer}).
 
-For each type $\tau$, we collect the module's output activations on \emph{seen} collision pairs (training combinations) and \emph{unseen} collision pairs (held-out combinations), then compute cosine similarity between the mean activation vectors. If the module has learned a transferable mechanism, its activations should be similar regardless of which specific object types are involved.
+For each type $\tau$, we collect the module's output activations on \emph{seen} collision pairs (training combinations) and \emph{unseen} collision pairs (held-out combinations), then compute cosine similarity between the mean activation vectors.
 
 \begin{table}[t]
-    \caption{Representation transferability analysis. Each typed module activates nearly identically on seen and unseen object pairs (cosine 0.998), while different types are near-orthogonal (cosine 0.066). This $15{\times}$ ratio confirms typed modules learn specialized, transferable mechanisms.}
+    \caption{Representation analysis. Each typed module activates nearly identically on seen and unseen object pairs (cosine 0.998), while different types are near-orthogonal (cosine 0.066). This $15{\times}$ ratio confirms typed modules learn specialized, non-overlapping mechanisms.}
     \label{tab:transfer}
     \centering
     \begin{tabular}{lc}
@@ -332,8 +332,6 @@ For each type $\tau$, we collect the module's output activations on \emph{seen} 
     \end{tabular}
 \end{table}
 
-Our central claim is that typed modules learn \emph{specialized} interaction mechanisms---each module captures one type of physics, and modules do not overlap. We test this through two complementary analyses on module activations (Table~\ref{tab:transfer}, Figure~\ref{fig:transfer}).
-
 \textbf{Specialization across types.} Different typed modules in \ours{} produce near-orthogonal activations (mean cosine 0.066), in stark contrast to within-type seen/unseen similarity (0.998). This $15{\times}$ ratio is the structural fingerprint of mechanism learning: each module operates in its own representational subspace.
 
 \textbf{Why specialization matters more than transferability.} A natural alternative hypothesis is that any well-trained module shows high seen/unseen activation similarity (i.e., transferability is generic, not specific to typed modules). We confirm this: SingleModule's seen/unseen cosine is 0.975, nearly as high as \ours{}'s 0.998. Activation-level generalization alone does \emph{not} distinguish memorization from mechanism learning. What does distinguish them is whether the architecture forces interactions to be routed through specialized, non-overlapping modules. \ours{} does; SingleModule cannot. This explains why SingleModule achieves low absolute MSE (its single module generalizes well at the activation level) but high compositional gap (it conflates distinct interaction mechanisms into one representational subspace).
@@ -341,7 +339,7 @@ Our central claim is that typed modules learn \emph{specialized} interaction mec
 \begin{figure}[t]
     \centering
     \includegraphics[width=\linewidth]{figures/transferability.pdf}
-    \caption{\textbf{Representation transferability.} Left: per-type cosine similarity between seen and unseen activations (all $>$0.995). Red dashed line shows cross-type mean (0.066). Right: the 15$\times$ gap between same-type and cross-type similarity confirms typed modules learn transferable mechanisms.}
+    \caption{\textbf{Representation specialization.} Left: per-type cosine similarity between seen and unseen activations (all $>$0.995). Red dashed line shows cross-type mean (0.066). Right: the $15{\times}$ gap between same-type and cross-type similarity confirms typed modules learn specialized, non-overlapping mechanisms.}
     \label{fig:transfer}
 \end{figure}
 
