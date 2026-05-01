@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.9.2)  2 MAY 2026 01:45
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.9.2)  2 MAY 2026 02:11
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -933,17 +933,14 @@ Package microtype Info: Loading generic protrusion settings for font family
 
 {/usr/local/texlive/2023/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/usr/loc
 al/texlive/2023/texmf-dist/fonts/enc/dvips/base/8r.enc}{/usr/local/texlive/2023
-/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc}]
-Underfull \vbox (badness 4846) has occurred while \output is active []
-
- [2]
-(./architecture.tex) [3
+/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc}] [2] (./architecture.tex)
+ [3
 pdfTeX warning (ext4): destination with the same identifier (name{figure.1}) ha
 s been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.119 \end{equation}
-                    ] [4]
+l.112 \subsection{Modular causal dynamics}
+                                          ] [4]
 LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 1
 63.
 
@@ -1090,7 +1087,7 @@ Here is how much of TeX's memory you used:
  44723 multiletter control sequences out of 15000+600000
  586911 words of font info for 347 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 84i,10n,80p,1389b,922s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 84i,10n,80p,1665b,922s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb
 ></usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb>
 </usr/local/texlive/2023/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx8.pfb></
@@ -1119,7 +1116,7 @@ onts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1
 /urw/times/utmbi8a.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/urw/time
 s/utmr8a.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/urw/times/utmri8a.
 pfb>
-Output written on main.pdf (14 pages, 485313 bytes).
+Output written on main.pdf (14 pages, 485660 bytes).
 PDF statistics:
  856 PDF objects out of 1000 (max. 8388607)
  473 compressed objects within 5 object streams
