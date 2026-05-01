@@ -78,21 +78,25 @@
 \newlabel{fig:edges}{{3}{7}{\textbf {Edge probability distribution.} Colliding pairs (red) receive significantly higher edge probabilities than non-colliding pairs (blue), confirming meaningful causal discovery}{figure.3}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces \textbf  {Seen vs.\ Unseen MSE.} \textsc  {CausalComp}{} achieves the best balance: lowest unseen error among non-overfitting methods. SingleModule's small gap between bars masks its 88\% relative gap.}}{7}{figure.4}\protected@file@percent }
 \newlabel{fig:bar}{{4}{7}{\textbf {Seen vs.\ Unseen MSE.} \ours {} achieves the best balance: lowest unseen error among non-overfitting methods. SingleModule's small gap between bars masks its 88\% relative gap}{figure.4}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Sensitivity analysis}{7}{subsection.4.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Autoregressive rollout analysis}{7}{subsection.4.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Is the gap reduction just implicit regularization?}{7}{subsection.4.4}\protected@file@percent }
+\newlabel{sec:capacity}{{4.4}{7}{Is the gap reduction just implicit regularization?}{subsection.4.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Sensitivity to $M$ and hyperparameters}{7}{subsection.4.5}\protected@file@percent }
 \citation{bear2021physion}
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Capacity-matched ablation on SimplePhysics. Increasing capacity \emph  {worsens} SingleModule's gap (+30pp) but \emph  {improves} CausalComp's gap ($-$7pp). This rules out implicit regularization as the explanation for typed modules' advantage.}}{8}{table.4}\protected@file@percent }
+\newlabel{tab:capacity}{{4}{8}{Capacity-matched ablation on SimplePhysics. Increasing capacity \emph {worsens} SingleModule's gap (+30pp) but \emph {improves} CausalComp's gap ($-$7pp). This rules out implicit regularization as the explanation for typed modules' advantage}{table.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.6}Autoregressive rollout analysis}{8}{subsection.4.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5}Discussion and limitations}{8}{section.5}\protected@file@percent }
+\newlabel{sec:discussion}{{5}{8}{Discussion and limitations}{section.5}{}}
+\@writefile{toc}{\contentsline {paragraph}{Implicit regularization is ruled out.}{8}{section*.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{When does \textsc  {CausalComp}{} fail?}{8}{section*.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Limitations.}{8}{section*.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6}Conclusion}{8}{section.6}\protected@file@percent }
 \bibstyle{plainnat}
 \bibdata{references}
 \bibcite{battaglia2016interaction}{{1}{2016}{{Battaglia et~al.}}{{Battaglia, Pascanu, Lai, Rezende, and Kavukcuoglu}}}
 \bibcite{bear2021physion}{{2}{2021}{{Bear et~al.}}{{}}}
 \bibcite{wm3c2025}{{3}{2025}{{Chen et~al.}}{{}}}
 \bibcite{ha2018worldmodels}{{4}{2018}{{Ha and Schmidhuber}}{{}}}
-\@writefile{toc}{\contentsline {section}{\numberline {5}Discussion and limitations}{8}{section.5}\protected@file@percent }
-\newlabel{sec:discussion}{{5}{8}{Discussion and limitations}{section.5}{}}
-\@writefile{toc}{\contentsline {paragraph}{Is the gap reduction just implicit regularization?}{8}{section*.8}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{When does \textsc  {CausalComp}{} fail?}{8}{section*.9}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Limitations.}{8}{section*.10}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {6}Conclusion}{8}{section.6}\protected@file@percent }
 \bibcite{hafner2025dreamerv3}{{5}{2025}{{Hafner et~al.}}{{Hafner, Pasukonis, Ba, and Lillicrap}}}
 \bibcite{jang2017gumbel}{{6}{2017}{{Jang et~al.}}{{Jang, Gu, and Poole}}}
 \bibcite{keysers2020measuring}{{7}{2020}{{Keysers et~al.}}{{Keysers, Sch{\"a}rli, Scales, Buiber, Furber, Kasber, et~al.}}}
@@ -109,10 +113,10 @@
 \bibcite{wu2023slotformer}{{18}{2023}{{Wu et~al.}}{{Wu, Dvornik, Greff, Kipf, and Gilitschenski}}}
 \bibcite{oocdm2024}{{19}{2024}{{Yu et~al.}}{{}}}
 \bibcite{combo2025}{{20}{2025}{{Zhang et~al.}}{{}}}
-\@writefile{toc}{\contentsline {section}{\numberline {A}Implementation details}{9}{appendix.A}\protected@file@percent }
-\newlabel{app:impl}{{A}{9}{Implementation details}{appendix.A}{}}
-\@writefile{toc}{\contentsline {paragraph}{Architecture.}{9}{section*.12}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Training.}{9}{section*.13}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {A}Implementation details}{10}{appendix.A}\protected@file@percent }
+\newlabel{app:impl}{{A}{10}{Implementation details}{appendix.A}{}}
+\@writefile{toc}{\contentsline {paragraph}{Architecture.}{10}{section*.12}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Training.}{10}{section*.13}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{Synthetic environment.}{10}{section*.14}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {B}Qualitative results}{10}{appendix.B}\protected@file@percent }
 \@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces \textbf  {Trajectory prediction comparison.} (a) Ground-truth trajectories of 6 objects over 16 frames. (b) \textsc  {CausalComp}{} predictions closely track ground truth, including after collisions. (c) NoGraph baseline shows drift due to inability to model inter-object interactions. Filled circles show final positions; trails show full trajectories.}}{10}{figure.5}\protected@file@percent }
