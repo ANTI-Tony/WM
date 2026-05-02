@@ -64,7 +64,6 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Experimental setup}{4}{subsection.4.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{Environments.}{4}{section*.11}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{Metrics.}{4}{section*.12}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Baselines.}{4}{section*.13}\protected@file@percent }
 \citation{kipf2018nri}
 \citation{kipf2018nri}
 \citation{bear2021physion}
@@ -75,6 +74,7 @@
 \newlabel{tab:simple}{{1}{5}{Compositional generalization on \textbf {SimplePhysics} (elastic collisions, 18 object types, mean $\pm $ std over 3 seeds)}{table.1}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Compositional generalization on \textbf  {MultiPhysics} (collisions + gravity + charge, 54 object types, mean $\pm $ std over 3 seeds).}}{5}{table.2}\protected@file@percent }
 \newlabel{tab:multi}{{2}{5}{Compositional generalization on \textbf {MultiPhysics} (collisions + gravity + charge, 54 object types, mean $\pm $ std over 3 seeds)}{table.2}{}}
+\@writefile{toc}{\contentsline {paragraph}{Baselines.}{5}{section*.13}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Main results}{5}{subsection.4.2}\protected@file@percent }
 \@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Compositional generalization on \textbf  {NRI Springs}\nobreakspace  {}\citep  {kipf2018nri} (5 particles, 3 spring types, mean $\pm $ std over 3 seeds). All methods achieve small gaps ($<$3.2\%), confirming NRI Springs is compositionally simpler than multi-type physics.}}{6}{table.3}\protected@file@percent }
 \newlabel{tab:nri}{{3}{6}{Compositional generalization on \textbf {NRI Springs}~\citep {kipf2018nri} (5 particles, 3 spring types, mean $\pm $ std over 3 seeds). All methods achieve small gaps ($<$3.2\%), confirming NRI Springs is compositionally simpler than multi-type physics}{table.3}{}}
@@ -91,7 +91,6 @@
 \newlabel{fig:graph}{{2}{7}{Causal graph discovery. (a) A scene with 6 colored circles. (b) Ground-truth collision graph. (c) Graph discovered by \ours {}. The model correctly assigns high edge probabilities to colliding pairs and low probabilities to non-interacting pairs}{figure.2}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.6}Sensitivity to $M$}{7}{subsection.4.6}\protected@file@percent }
 \newlabel{sec:m_curve}{{4.6}{7}{Sensitivity to $M$}{subsection.4.6}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.7}Autoregressive rollout analysis}{7}{subsection.4.7}\protected@file@percent }
 \citation{kipf2018nri}
 \@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Edge probability distribution. Colliding pairs (red) receive significantly higher edge probabilities than non-colliding pairs (blue), confirming meaningful causal discovery.}}{8}{figure.3}\protected@file@percent }
 \newlabel{fig:edges}{{3}{8}{Edge probability distribution. Colliding pairs (red) receive significantly higher edge probabilities than non-colliding pairs (blue), confirming meaningful causal discovery}{figure.3}{}}
@@ -99,24 +98,25 @@
 \newlabel{fig:bar}{{4}{8}{Seen vs.\ Unseen MSE on SimplePhysics. \ours {} achieves the best balance: lowest unseen error among non-overfitting methods}{figure.4}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Capacity-matched ablation on SimplePhysics (mean $\pm $ std over 3 seeds; Std rows reuse the same seeds as Tables\nobreakspace  {}\ref {tab:simple}--\ref {tab:multi}). Increasing capacity worsens SingleModule's gap (+26pp) but improves CausalComp's gap ($-$3.5pp), ruling out implicit regularization.}}{8}{table.6}\protected@file@percent }
 \newlabel{tab:capacity}{{6}{8}{Capacity-matched ablation on SimplePhysics (mean $\pm $ std over 3 seeds; Std rows reuse the same seeds as Tables~\ref {tab:simple}--\ref {tab:multi}). Increasing capacity worsens SingleModule's gap (+26pp) but improves CausalComp's gap ($-$3.5pp), ruling out implicit regularization}{table.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.7}Autoregressive rollout analysis}{8}{subsection.4.7}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {5}Discussion and limitations}{8}{section.5}\protected@file@percent }
 \newlabel{sec:discussion}{{5}{8}{Discussion and limitations}{section.5}{}}
 \@writefile{toc}{\contentsline {paragraph}{Implicit regularization is ruled out.}{8}{section*.14}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{When does \textsc  {CausalComp}{} fail?}{8}{section*.15}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Limitations.}{8}{section*.16}\protected@file@percent }
 \bibstyle{plainnat}
 \bibdata{references}
 \bibcite{battaglia2016interaction}{{1}{2016}{{Battaglia et~al.}}{{Battaglia, Pascanu, Lai, Rezende, and Kavukcuoglu}}}
-\bibcite{bear2021physion}{{2}{2021}{{Bear et~al.}}{{}}}
-\bibcite{wm3c2025}{{3}{2025}{{Chen et~al.}}{{}}}
-\bibcite{ha2018worldmodels}{{4}{2018}{{Ha and Schmidhuber}}{{}}}
 \@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Capacity ablation. More capacity worsens SingleModule's gap (+26pp) but improves CausalComp's ($-$3.5pp).}}{9}{figure.5}\protected@file@percent }
 \newlabel{fig:capacity}{{5}{9}{Capacity ablation. More capacity worsens SingleModule's gap (+26pp) but improves CausalComp's ($-$3.5pp)}{figure.5}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Sensitivity to $M$. Gap follows a U-shape: $M{=}4$ is optimal, with mild increase for $M{>}8$.}}{9}{figure.6}\protected@file@percent }
 \newlabel{fig:mcurve}{{6}{9}{Sensitivity to $M$. Gap follows a U-shape: $M{=}4$ is optimal, with mild increase for $M{>}8$}{figure.6}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Representation analysis. Each typed module activates nearly identically on seen and unseen object pairs (cosine 0.998), while different types are near-orthogonal (cosine 0.066).}}{9}{table.7}\protected@file@percent }
 \newlabel{tab:transfer}{{7}{9}{Representation analysis. Each typed module activates nearly identically on seen and unseen object pairs (cosine 0.998), while different types are near-orthogonal (cosine 0.066)}{table.7}{}}
+\@writefile{toc}{\contentsline {paragraph}{Limitations.}{9}{section*.16}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {6}Conclusion}{9}{section.6}\protected@file@percent }
+\bibcite{bear2021physion}{{2}{2021}{{Bear et~al.}}{{}}}
+\bibcite{wm3c2025}{{3}{2025}{{Chen et~al.}}{{}}}
+\bibcite{ha2018worldmodels}{{4}{2018}{{Ha and Schmidhuber}}{{}}}
 \bibcite{hafner2025dreamerv3}{{5}{2025}{{Hafner et~al.}}{{Hafner, Pasukonis, Ba, and Lillicrap}}}
 \bibcite{jang2017gumbel}{{6}{2017}{{Jang et~al.}}{{Jang, Gu, and Poole}}}
 \bibcite{keysers2020measuring}{{7}{2020}{{Keysers et~al.}}{{Keysers, Sch{\"a}rli, Scales, Buiber, Furber, Kasber, et~al.}}}
@@ -129,10 +129,10 @@
 \bibcite{causaljepa2026}{{14}{2026}{{Nam et~al.}}{{}}}
 \bibcite{richens2024robust}{{15}{2024}{{Richens and Everitt}}{{}}}
 \bibcite{scholkopf2021causal}{{16}{2021}{{Sch{\"o}lkopf et~al.}}{{Sch{\"o}lkopf, Locatello, Bauer, Ke, Kalchbrenner, Goyal, and Bengio}}}
-\bibcite{dreamweaver2025}{{17}{2025}{{Singh et~al.}}{{}}}
-\bibcite{wu2023slotformer}{{18}{2023}{{Wu et~al.}}{{Wu, Dvornik, Greff, Kipf, and Gilitschenski}}}
 \@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Representation specialization. Left: per-type cosine similarity between seen and unseen activations (all $>$0.995). Red dashed line shows cross-type mean (0.066). Right: the $15{\times }$ gap between same-type and cross-type similarity confirms typed modules learn specialized, non-overlapping mechanisms.}}{10}{figure.7}\protected@file@percent }
 \newlabel{fig:transfer}{{7}{10}{Representation specialization. Left: per-type cosine similarity between seen and unseen activations (all $>$0.995). Red dashed line shows cross-type mean (0.066). Right: the $15{\times }$ gap between same-type and cross-type similarity confirms typed modules learn specialized, non-overlapping mechanisms}{figure.7}{}}
+\bibcite{dreamweaver2025}{{17}{2025}{{Singh et~al.}}{{}}}
+\bibcite{wu2023slotformer}{{18}{2023}{{Wu et~al.}}{{Wu, Dvornik, Greff, Kipf, and Gilitschenski}}}
 \bibcite{oocdm2024}{{19}{2024}{{Yu et~al.}}{{}}}
 \bibcite{combo2025}{{20}{2025}{{Zhang et~al.}}{{}}}
 \@writefile{toc}{\contentsline {section}{\numberline {A}Implementation details}{11}{appendix.A}\protected@file@percent }
@@ -140,7 +140,9 @@
 \@writefile{toc}{\contentsline {paragraph}{Architecture.}{11}{section*.18}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{Training.}{11}{section*.19}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{Synthetic environment.}{11}{section*.20}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {B}Qualitative results}{11}{appendix.B}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Trajectory prediction comparison. (a) Ground-truth trajectories of 6 objects over 16 frames. (b) \textsc  {CausalComp}{} predictions closely track ground truth, including after collisions. (c) NoGraph baseline shows drift due to inability to model inter-object interactions. Filled circles show final positions; trails show full trajectories.}}{11}{figure.8}\protected@file@percent }
-\newlabel{fig:trajectory}{{8}{11}{Trajectory prediction comparison. (a) Ground-truth trajectories of 6 objects over 16 frames. (b) \ours {} predictions closely track ground truth, including after collisions. (c) NoGraph baseline shows drift due to inability to model inter-object interactions. Filled circles show final positions; trails show full trajectories}{figure.8}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {B}Baseline tuning protocol}{11}{appendix.B}\protected@file@percent }
+\newlabel{app:tuning}{{B}{11}{Baseline tuning protocol}{appendix.B}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {C}Qualitative results}{11}{appendix.C}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Trajectory prediction comparison. (a) Ground-truth trajectories of 6 objects over 16 frames. (b) \textsc  {CausalComp}{} predictions closely track ground truth, including after collisions. (c) NoGraph baseline shows drift due to inability to model inter-object interactions. Filled circles show final positions; trails show full trajectories.}}{12}{figure.8}\protected@file@percent }
+\newlabel{fig:trajectory}{{8}{12}{Trajectory prediction comparison. (a) Ground-truth trajectories of 6 objects over 16 frames. (b) \ours {} predictions closely track ground truth, including after collisions. (c) NoGraph baseline shows drift due to inability to model inter-object interactions. Filled circles show final positions; trails show full trajectories}{figure.8}{}}
 \gdef \@abspage@last{14}
