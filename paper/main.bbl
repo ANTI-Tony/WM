@@ -22,7 +22,7 @@ Daniel Bear et~al.
 \bibitem[Chen et~al.(2025)]{wm3c2025}
 Jiawei Chen et~al.
 \newblock Modeling unseen environments with language-guided composable causal
-  components in rl.
+  components in {RL}.
 \newblock In \emph{International Conference on Learning Representations}, 2025.
 
 \bibitem[Ha and Schmidhuber(2018)]{ha2018worldmodels}
@@ -33,27 +33,27 @@ David Ha and J{\"u}rgen Schmidhuber.
 \bibitem[Hafner et~al.(2025)Hafner, Pasukonis, Ba, and
   Lillicrap]{hafner2025dreamerv3}
 Danijar Hafner, Jurgis Pasukonis, Jimmy Ba, and Timothy Lillicrap.
-\newblock Mastering diverse domains through world models.
-\newblock \emph{Nature}, 630:\penalty0 118--126, 2025.
+\newblock Mastering diverse control tasks through world models.
+\newblock \emph{Nature}, 640\penalty0 (8059):\penalty0 647--653, 2025.
 
 \bibitem[Jang et~al.(2017)Jang, Gu, and Poole]{jang2017gumbel}
 Eric Jang, Shixiang Gu, and Ben Poole.
-\newblock Categorical reparameterization with gumbel-softmax.
+\newblock Categorical reparameterization with {G}umbel-{S}oftmax.
 \newblock In \emph{International Conference on Learning Representations}, 2017.
 
-\bibitem[Keysers et~al.(2020)Keysers, Sch{\"a}rli, Scales, Buiber, Furber,
-  Kasber, et~al.]{keysers2020measuring}
-Daniel Keysers, Nathanael Sch{\"a}rli, Nathan Scales, Hylke Buiber, Daniel
-  Furber, Sergii Kasber, et~al.
+\bibitem[Keysers et~al.(2020)Keysers, Sch{\"a}rli, Scales, Buisman, Furrer,
+  Kashubin, et~al.]{keysers2020measuring}
+Daniel Keysers, Nathanael Sch{\"a}rli, Nathan Scales, Hylke Buisman, Daniel
+  Furrer, Sergii Kashubin, et~al.
 \newblock Measuring compositional generalization: A comprehensive method on
   realistic data.
 \newblock In \emph{International Conference on Learning Representations}, 2020.
 
-\bibitem[Kim et~al.(2026)]{stica2026}
+\bibitem[Kim et~al.(2025)]{stica2026}
 Hyunseo Kim et~al.
 \newblock Slot transformer imagination with causality-aware reinforcement
   learning.
-\newblock In \emph{AAAI Conference on Artificial Intelligence}, 2026.
+\newblock \emph{arXiv preprint arXiv:2511.14262}, 2025.
 
 \bibitem[Kipf et~al.(2018)Kipf, Fetaya, Wang, Welling, and Zemel]{kipf2018nri}
 Thomas Kipf, Ethan Fetaya, Kuan-Chieh Wang, Max Welling, and Richard Zemel.
@@ -81,9 +81,11 @@ Zhixuan Li et~al.
 \newblock Learning factored interactive object-centric world model.
 \newblock In \emph{Advances in Neural Information Processing Systems}, 2025.
 
-\bibitem[Nam et~al.(2026)]{causaljepa2026}
-Heejeong Nam et~al.
-\newblock Causal-jepa: Learning world models through object-level latent
+\bibitem[Nam et~al.(2026)Nam, Le~Lidec, Maes, LeCun, and
+  Balestriero]{causaljepa2026}
+Heejeong Nam, Quentin Le~Lidec, Lucas Maes, Yann LeCun, and Randall
+  Balestriero.
+\newblock Causal-{JEPA}: Learning world models through object-level latent
   interventions.
 \newblock \emph{arXiv preprint arXiv:2602.11389}, 2026.
 
