@@ -394,7 +394,7 @@ Acknowledgments omitted for anonymous review.
 
 All baselines use the same hyperparameters (learning rate, weight decay, batch size, number of epochs) as \ours{} to ensure a fair comparison. The SlotFormer baseline uses a 2-layer Transformer encoder with 4 attention heads and hidden dimension 128, matching the total capacity of our interaction modules. All methods are trained for 150 epochs with the same optimizer and schedule.
 
-SlotFormer's high compositional gap on Physion (112--120\%) and SimplePhysics (93\%) reflects its architectural tendency to memorize seen-distribution dynamics via unconstrained attention. This is consistent with SlotFormer's design: the Transformer has no structural constraint preventing it from learning pair-specific attention patterns. The high gap is not due to under-training; rather, it demonstrates that high-capacity attention-based models are particularly prone to compositional overfitting. We verified that SlotFormer's training loss converges normally and that extending training to 300 epochs does not improve the gap.
+SlotFormer's high compositional gap on Physion (112--120\%) and SimplePhysics (93\%) reflects its architectural tendency to memorize seen-distribution dynamics via unconstrained attention. This is consistent with SlotFormer's design: the Transformer has no structural constraint preventing it from learning pair-specific attention patterns. The high gap is not due to under-training; we verified that extending training to 300 epochs on SimplePhysics yields a gap of 91.4\% (vs.\ 92.7\% at 150 epochs), confirming that the gap has converged. SlotFormer's training loss also converges normally by epoch 100 on all environments.
 
 \section{Qualitative results}
 

@@ -5,17 +5,17 @@
 \item {\bf Claims}
     \item[] Question: Do the main claims made in the abstract and introduction accurately reflect the paper's contributions and scope?
     \item[] Answer: \answerYes{}
-    \item[] Justification: The abstract claims that typed interaction modules are necessary for compositional generalization (supported by SingleModule vs.\ CausalComp ablation in Tables~1--2, capacity analysis in Table~4, and representation transferability in Table~5). The abstract explicitly states we do not claim state-of-the-art absolute prediction accuracy.
+    \item[] Justification: The abstract claims that typed interaction modules serve as a useful inductive bias for compositional transfer, supported by the SingleModule vs.\ \ours{} ablation across five environments (Tables~1--5), the capacity-matched ablation (Table~6), and the representation specialization analysis (Table~7). The abstract explicitly states we do not claim state-of-the-art prediction accuracy.
 
 \item {\bf Limitations}
     \item[] Question: Does the paper discuss the limitations of the work performed by the authors?
     \item[] Answer: \answerYes{}
-    \item[] Justification: Section~5 discusses four specific limitations: (1) synthetic-only environments, (2) number of interaction types as a hyperparameter, (3) edge supervision requiring ground-truth collision events, and (4) GT object states without end-to-end validation.
+    \item[] Justification: Section~5 discusses four limitations: (1) edge supervision uses GT collision events rather than unsupervised discovery, (2) all experiments use GT object states (including Physion), (3) $M$ is a hyperparameter, and (4) no downstream task evaluation (planning / model-based RL).
 
 \item {\bf Theory assumptions and proofs}
     \item[] Question: For each theoretical result, does the paper provide the full set of assumptions and a complete (and correct) proof?
     \item[] Answer: \answerNA{}
-    \item[] Justification: The paper provides theoretical motivation (Section~3.5) based on the Independent Causal Mechanisms principle and causal factorization, but does not claim formal theoretical results. The arguments are informal and clearly stated as such.
+    \item[] Justification: The paper provides theoretical motivation (Section~3, ``Theoretical motivation'' paragraph) based on the Independent Causal Mechanisms principle and causal factorization, but does not claim formal theoretical results. The arguments are informal and clearly stated as such.
 
     \item {\bf Experimental result reproducibility}
     \item[] Question: Does the paper fully disclose all the information needed to reproduce the main experimental results of the paper to the extent that it affects the main claims and/or conclusions of the paper (regardless of whether the code and data are provided or not)?
@@ -32,17 +32,17 @@
 \item {\bf Experimental setting/details}
     \item[] Question: Does the paper specify all the training and test details (e.g., data splits, hyperparameters, how they were chosen, type of optimizer) necessary to understand the results?
     \item[] Answer: \answerYes{}
-    \item[] Justification: Section~4.1 describes environments, compositional splits, and metrics. Section~4.4 reports the hyperparameter sweep. Appendix~A provides full training details including optimizer (AdamW), learning rate ($3 \times 10^{-4}$), weight decay, gradient clipping, and number of epochs (150).
+    \item[] Justification: Section~4.1 describes environments, compositional splits, and metrics. Section~4.6 reports the hyperparameter sensitivity analysis for $M$. Appendix~A provides full training details. Appendix~B describes the baseline tuning protocol.
 
 \item {\bf Experiment statistical significance}
     \item[] Question: Does the paper report error bars suitably and correctly defined or other appropriate information about the statistical significance of the experiments?
     \item[] Answer: \answerYes{}
-    \item[] Justification: All results in Tables~1--3 report mean $\pm$ standard deviation over 3 random seeds. The seeds control both data generation and model initialization. Error bars capture variability from random data splits and parameter initialization.
+    \item[] Justification: All results in Tables~1--7 report mean $\pm$ standard deviation over 3 random seeds. The seeds control both data generation and model initialization. Error bars capture variability from random data splits and parameter initialization.
 
 \item {\bf Experiments compute resources}
     \item[] Question: For each experiment, does the paper provide sufficient information on the computer resources (type of compute workers, memory, time of execution) needed to reproduce the experiments?
     \item[] Answer: \answerYes{}
-    \item[] Justification: Experiments were conducted on a single NVIDIA A100 80GB GPU. Each model trains in approximately 30--90 minutes depending on environment complexity. The full evaluation (3 environments $\times$ 5 methods $\times$ 3 seeds) requires approximately 50 GPU-hours total.
+    \item[] Justification: Experiments were conducted on a single NVIDIA A100 80GB GPU. Each model trains in approximately 30--90 minutes depending on environment complexity. The full evaluation (5 environments $\times$ 5 methods $\times$ 3 seeds) requires approximately 80 GPU-hours total.
 
 \item {\bf Code of ethics}
     \item[] Question: Does the research conducted in the paper conform, in every respect, with the NeurIPS Code of Ethics \url{https://neurips.cc/public/EthicsGuidelines}?
@@ -63,12 +63,12 @@
 \item {\bf Licenses for existing assets}
     \item[] Question: Are the creators or original owners of assets (e.g., code, data, models), used in the paper, properly credited and are the license and terms of use explicitly mentioned and properly respected?
     \item[] Answer: \answerYes{}
-    \item[] Justification: The NRI Springs benchmark is cited (Kipf et al., 2018). Our implementation follows the standard protocol. All other environments and code are original.
+    \item[] Justification: The NRI Springs benchmark is cited (Kipf et al., 2018). The Physion benchmark is cited (Bear et al., 2021). Our implementation follows the standard protocols. All other environments and code are original.
 
 \item {\bf New assets}
     \item[] Question: Are new assets introduced in the paper well documented and is the documentation provided alongside the assets?
     \item[] Answer: \answerYes{}
-    \item[] Justification: We introduce two new synthetic environments (SimplePhysics, MultiPhysics) and compositional evaluation splits. These are fully documented in Section~4.1 and Appendix~A, with code provided as supplementary material.
+    \item[] Justification: We introduce three new synthetic environments (SimplePhysics, MultiPhysics, BouncingBalls) and compositional evaluation splits. These are fully documented in Section~4.1 and Appendix~A, with code provided as supplementary material.
 
 \item {\bf Crowdsourcing and research with human subjects}
     \item[] Question: For crowdsourcing experiments and research with human subjects, does the paper include the full text of instructions given to participants and screenshots, if applicable, as well as details about compensation (if any)?
