@@ -41,7 +41,7 @@ Compositional generalization is a central challenge for object-centric world mod
 
 World models---internal simulators that predict how environments evolve over time---are central to planning and decision-making~\citep{ha2018worldmodels,lecun2022jepa,hafner2025dreamerv3}. A key challenge is compositional generalization: can a model predict the dynamics of object combinations it has never seen during training? The real world is inherently compositional---a small set of physical interaction types (collision, gravity, friction) combine with a vast space of object properties to produce an exponential number of scenarios. Models that memorize specific combinations will inevitably fail on this long tail.
 
-Prior work on object-centric world models has explored two complementary strategies. \textbf{Causal approaches}~\citep{kipf2018nri,kipf2020cswm,oocdm2024,vcd2022} discover which objects interact, learning sparse interaction graphs. \textbf{Modular approaches}~\citep{dreamweaver2025,fiocwm2025,battaglia2016interaction} decompose dynamics into per-object or per-relation functions. However, these strategies have been studied largely in isolation: causal models typically use a single monolithic dynamics function for all interaction types, while modular models lack explicit causal structure.
+Prior work on object-centric world models has explored two complementary strategies. Causal approaches~\citep{kipf2018nri,kipf2020cswm,oocdm2024,vcd2022} discover which objects interact, learning sparse interaction graphs. Modular approaches~\citep{dreamweaver2025,fiocwm2025,battaglia2016interaction} decompose dynamics into per-object or per-relation functions. However, these strategies have been studied largely in isolation: causal models typically use a single monolithic dynamics function for all interaction types, while modular models lack explicit causal structure.
 
 This paper asks a focused empirical question: \emph{In multi-interaction-type environments, is type-specific modular dynamics necessary for compositional generalization, or does causal graph structure alone suffice?}
 
@@ -84,14 +84,11 @@ We consider a scene with $K$ objects, each described by a state vector $\mathbf{
 \ours{} consists of four modules (Figure~\ref{fig:architecture}): (1)~\textbf{State encoder} $f_\text{enc}$: maps raw object states to latent representations $\mathbf{h}_t^i = f_\text{enc}(\mathbf{s}_t^i)$. (2)~\textbf{Causal graph discovery} $g_\text{graph}$: predicts edge existence and interaction type for each object pair. (3)~\textbf{Modular causal dynamics} $f_\text{dyn}$: predicts next-step latent states using type-specific interaction modules. (4)~\textbf{State decoder} $f_\text{dec}$: maps latent predictions back to state space $\hat{\mathbf{s}}_{t+1}^i = f_\text{dec}(\mathbf{h}_{t+1}^i)$.
 
 \paragraph{Causal interaction graph discovery.}
-For each ordered pair $(i, j)$ with $i \neq j$, we compute:
-
-\textbf{Edge existence.} A probability $e_{ij} \in [0, 1]$ that object $j$ causally influences object $i$:
+For each ordered pair $(i, j)$ with $i \neq j$, the model predicts an edge existence probability $e_{ij} \in [0, 1]$ indicating whether object $j$ causally influences object $i$:
 \begin{equation}
     e_{ij} = \sigma\left(\text{MLP}_\text{edge}\left([\mathbf{h}^i; \mathbf{h}^j; |\mathbf{h}^i - \mathbf{h}^j|]\right)\right)
 \end{equation}
-
-\textbf{Interaction type.} A soft assignment $\mathbf{w}_{ij} \in \Delta^{M-1}$ over $M$ interaction types, computed via Gumbel-Softmax~\citep{jang2017gumbel}:
+It also predicts a soft interaction type assignment $\mathbf{w}_{ij} \in \Delta^{M-1}$ over $M$ types via Gumbel-Softmax~\citep{jang2017gumbel}:
 \begin{equation}
     \mathbf{w}_{ij} = \text{GumbelSoftmax}\left(\text{MLP}_\text{type}\left([\mathbf{h}^i; \mathbf{h}^j; \mathbf{h}^i - \mathbf{h}^j; \mathbf{h}^i \odot \mathbf{h}^j]\right), \tau\right)
 \end{equation}
@@ -112,11 +109,7 @@ Each interaction type $\tau \in \{1, \ldots, M\}$ has its own dynamics module $f
 Our design is motivated by two principles. The Independent Causal Mechanisms (ICM) principle~\citep{scholkopf2021causal} states that the causal generative process of a system consists of autonomous modules that do not inform or influence each other. In our setting, each interaction type $\tau$ corresponds to an independent causal mechanism: the physics of elastic collision is independent of gravitational attraction. By assigning a separate module $f_\text{inter}^\tau$ to each mechanism, \ours{} respects this independence. Additionally, \citet{richens2024robust} prove that any agent achieving bounded regret under distributional shifts must have learned an approximate causal model. We extend this informally: when the causal model is further factorized by interaction type, each factor can be independently reused across novel object combinations. If the true dynamics factorize as $P(\mathbf{s}_{t+1} | \mathbf{s}_t) = \prod_i P(\mathbf{s}_{t+1}^i | \text{pa}(\mathbf{s}_t^i), \tau_{ij})$, then learning each conditional $P(\cdot | \cdot, \tau)$ separately allows generalization to any parent set---including novel object-type combinations not seen during training.
 
 \paragraph{Training.}
-We train in two phases with autoregressive rollout:
-
-\textbf{Phase 1} (epochs 1--$T_w$): Train state encoder and decoder only on reconstruction loss $\mathcal{L}_\text{recon} = \|\hat{\mathbf{s}}_t - \mathbf{s}_t\|^2$.
-
-\textbf{Phase 2} (epochs $T_w$--$T$): Add dynamics prediction with multi-step autoregressive rollout. Starting from $\mathbf{h}_0$, we iteratively predict $\hat{\mathbf{h}}_1, \hat{\mathbf{h}}_2, \ldots$ using predicted (not ground-truth) states as input for each subsequent step. The total loss is:
+We train in two phases with autoregressive rollout. In the first phase (epochs 1--$T_w$), we train only the state encoder and decoder on reconstruction loss $\mathcal{L}_\text{recon} = \|\hat{\mathbf{s}}_t - \mathbf{s}_t\|^2$. In the second phase (epochs $T_w$--$T$), we add dynamics prediction with multi-step autoregressive rollout. Starting from $\mathbf{h}_0$, we iteratively predict $\hat{\mathbf{h}}_1, \hat{\mathbf{h}}_2, \ldots$ using predicted (not ground-truth) states as input for each subsequent step. The total loss is:
 \begin{equation}
     \mathcal{L} = \mathcal{L}_\text{recon} + \lambda_\text{dyn} \sum_{t=1}^{T'} (1 + \alpha t) \|\hat{\mathbf{s}}_t - \mathbf{s}_t\|^2 + \lambda_\text{edge} \mathcal{L}_\text{edge} + \lambda_\text{sparse} \|\mathbf{E}\|_1
 \end{equation}
@@ -129,13 +122,11 @@ where $\mathcal{L}_\text{edge}$ is binary cross-entropy between predicted edge p
 
 \subsection{Experimental setup}
 
-\paragraph{Environments.} We evaluate on two 2D physics environments of increasing complexity:
+\paragraph{Environments.} We evaluate on two 2D physics environments of increasing complexity.
 
-\textbf{SimplePhysics:} Colored circles with elastic collisions and wall bouncing. Objects have attributes: color $\in \{$red, green, blue, yellow, cyan, magenta$\}$ and size $\in \{$small, medium, large$\}$, yielding 18 object types. Each video contains 3--6 objects over 16 frames. \textbf{Compositional split:} Following MCD~\citep{keysers2020measuring}, we hold out 40\% of (color$\times$size) collision pairs.
+SimplePhysics consists of colored circles with elastic collisions and wall bouncing. Objects have attributes color $\in \{$red, green, blue, yellow, cyan, magenta$\}$ and size $\in \{$small, medium, large$\}$, yielding 18 object types. Each video contains 3--6 objects over 16 frames. Following MCD~\citep{keysers2020measuring}, we hold out 40\% of (color$\times$size) collision pairs for compositional evaluation.
 
-\textbf{MultiPhysics:} A more challenging environment with three interaction types: elastic collisions (mass-dependent), gravitational attraction, and electrostatic forces (charge-dependent attraction/repulsion). Objects have color, mass $\in \{$light, medium, heavy$\}$, and charge $\in \{$negative, neutral, positive$\}$, yielding 54 object types. \textbf{Compositional split:} We hold out all same-charge collisions (positive-positive, negative-negative), testing whether the model can generalize collision dynamics to charge configurations not seen during training.
-
-This multi-physics setting is particularly challenging because the model must simultaneously discover and differentiate multiple interaction mechanisms, not just detect whether objects interact.
+MultiPhysics is a more challenging environment with three interaction types: elastic collisions (mass-dependent), gravitational attraction, and electrostatic forces (charge-dependent attraction/repulsion). Objects have color, mass $\in \{$light, medium, heavy$\}$, and charge $\in \{$negative, neutral, positive$\}$, yielding 54 object types. We hold out all same-charge collisions (positive-positive, negative-negative), testing whether the framework can generalize collision dynamics to charge configurations not seen during training. This setting is particularly challenging because the framework must simultaneously discover and differentiate multiple interaction mechanisms, not just detect whether objects interact.
 
 \paragraph{Metrics.} (1) \textbf{Unseen MSE}: prediction error on held-out collision-pair combinations (primary metric). (2) \textbf{Seen MSE}: error on training combinations. (3) \textbf{Compositional Gap}~\citep{keysers2020measuring}: $(\text{Unseen} - \text{Seen}) / \text{Seen} \times 100\%$.
 
