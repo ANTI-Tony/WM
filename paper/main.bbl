@@ -108,9 +108,8 @@ Xinyue Wang et~al.
   components in {RL}.
 \newblock \emph{arXiv preprint arXiv:2505.08361}, 2025.
 
-\bibitem[Wu et~al.(2023)Wu, Dvornik, Greff, Kipf, and
-  Gilitschenski]{wu2023slotformer}
-Ziyi Wu, Nikita Dvornik, Klaus Greff, Thomas Kipf, and Igor Gilitschenski.
+\bibitem[Wu et~al.(2023)Wu, Dvornik, Greff, Kipf, and Garg]{wu2023slotformer}
+Ziyi Wu, Nikita Dvornik, Klaus Greff, Thomas Kipf, and Animesh Garg.
 \newblock Slotformer: Unsupervised visual dynamics simulation with
   object-centric models.
 \newblock In \emph{International Conference on Learning Representations}, 2023.
