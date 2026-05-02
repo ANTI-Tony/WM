@@ -342,7 +342,7 @@ SingleModule's seen/unseen cosine is 0.975, nearly as high as \ours{}'s 0.998. T
 \subsection{Sensitivity to $M$}
 \label{sec:m_curve}
 
-We vary the number of interaction types $M \in \{1, 2, 4, 8, 16, 32\}$ on SimplePhysics using the full \ours{} framework (including edge supervision). The compositional gap follows a U-shape: decreasing from 69.1\% ($M{=}1$) to a minimum of 59.0\% ($M{=}4$), then mildly increasing to 60.2\% ($M{=}32$). Too few types conflate distinct mechanisms; too many fragment the training data per module. The sweet spot ($M{=}4$--$8$) balances expressiveness with sufficient training signal per type. Note that $M{=}1$ here (69.1\%) differs from SingleModule in Table~\ref{tab:simple} (75.5\%) because SingleModule does not use edge supervision loss; the $M$ sweep uses the full \ours{} training pipeline for all values of $M$.
+We vary the number of interaction types $M \in \{1, 2, 4, 8, 16, 32\}$ on SimplePhysics using the full \ours{} framework (including edge supervision). The compositional gap follows a U-shape: decreasing from 69.1\% ($M{=}1$) to a minimum of 59.0\% ($M{=}4$), with $M{=}8$ at 59.6\%, then mildly increasing to 60.0\% ($M{=}16$) and 60.2\% ($M{=}32$). Too few types conflate distinct mechanisms; too many fragment the training data per module. The sweet spot ($M{=}4$--$8$) balances expressiveness with sufficient training signal per type. Note that $M{=}1$ here (69.1\%) differs from SingleModule in Table~\ref{tab:simple} (75.5\%) because SingleModule does not use edge supervision loss; the $M$ sweep uses the full \ours{} training pipeline for all values of $M$.
 
 \subsection{Autoregressive rollout analysis}
 
