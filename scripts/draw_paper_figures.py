@@ -153,36 +153,38 @@ def fig_m_curve(out_dir):
 
 
 def fig_capacity(out_dir):
-    """Figure: Capacity-matched ablation visualization."""
+    """Figure: Capacity-matched ablation visualization — 3-seed data."""
     models = ["SM-Std\n(316K)", "SM-Big\n(1.25M)", "CC-Std\n(845K)", "CC-Big\n(3.36M)"]
-    gaps = [96.2, 125.6, 59.6, 52.9]
+    gaps = [75.5, 101.3, 49.8, 46.3]  # 3-seed means
+    stds = [14.8, 17.2, 6.9, 5.2]     # 3-seed stds
     colors = [C["red"], C["red"], C["blue"], C["blue"]]
     hatches = ["", "//", "", "//"]
 
     fig, ax = plt.subplots(figsize=(5, 3.2))
 
-    bars = ax.bar(range(4), gaps, color=colors, alpha=0.8,
-                  edgecolor="white", linewidth=1)
+    bars = ax.bar(range(4), gaps, yerr=stds, color=colors, alpha=0.8,
+                  edgecolor="white", linewidth=1, capsize=3,
+                  error_kw=dict(lw=0.8, capthick=0.8))
     for bar, hatch in zip(bars, hatches):
         bar.set_hatch(hatch)
 
     ax.set_xticks(range(4))
     ax.set_xticklabels(models, fontsize=9)
     ax.set_ylabel("Compositional Gap (%)")
-    ax.set_ylim(0, 145)
+    ax.set_ylim(0, 135)
 
     # Arrows showing trends
-    ax.annotate("", xy=(1, 130), xytext=(0, 100),
+    ax.annotate("", xy=(1, 115), xytext=(0, 85),
                 arrowprops=dict(arrowstyle="-|>", color=C["red"], lw=2))
-    ax.text(0.5, 132, "+30pp\n(worse)", ha="center", fontsize=7, color=C["red"], fontweight="bold")
+    ax.text(0.5, 118, "+26pp\n(worse)", ha="center", fontsize=7, color=C["red"], fontweight="bold")
 
-    ax.annotate("", xy=(3, 48), xytext=(2, 64),
+    ax.annotate("", xy=(3, 42), xytext=(2, 54),
                 arrowprops=dict(arrowstyle="-|>", color=C["blue"], lw=2))
-    ax.text(2.5, 38, "−7pp\n(better)", ha="center", fontsize=7, color=C["blue"], fontweight="bold")
+    ax.text(2.5, 34, "$-$3.5pp\n(better)", ha="center", fontsize=7, color=C["blue"], fontweight="bold")
 
     # Value labels on bars
-    for i, v in enumerate(gaps):
-        ax.text(i, v + 2, f"{v:.1f}%", ha="center", fontsize=8, fontweight="bold")
+    for i, (v, s) in enumerate(zip(gaps, stds)):
+        ax.text(i, v + s + 3, f"{v:.1f}%", ha="center", fontsize=8, fontweight="bold")
 
     # Legend
     sm_patch = mpatches.Patch(color=C["red"], alpha=0.8, label="SingleModule")
