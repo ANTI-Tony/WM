@@ -77,18 +77,19 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Graph discovery analysis}{6}{subsection.4.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Is the gap reduction just implicit regularization?}{6}{subsection.4.4}\protected@file@percent }
 \newlabel{sec:capacity}{{4.4}{6}{Is the gap reduction just implicit regularization?}{subsection.4.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Do typed modules learn specialized mechanisms?}{6}{subsection.4.5}\protected@file@percent }
+\newlabel{sec:transfer}{{4.5}{6}{Do typed modules learn specialized mechanisms?}{subsection.4.5}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces \textbf  {Edge probability distribution.} Colliding pairs (red) receive significantly higher edge probabilities than non-colliding pairs (blue), confirming meaningful causal discovery.}}{7}{figure.3}\protected@file@percent }
 \newlabel{fig:edges}{{3}{7}{\textbf {Edge probability distribution.} Colliding pairs (red) receive significantly higher edge probabilities than non-colliding pairs (blue), confirming meaningful causal discovery}{figure.3}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces \textbf  {Seen vs.\ Unseen MSE.} \textsc  {CausalComp}{} achieves the best balance: lowest unseen error among non-overfitting methods. SingleModule's small gap between bars masks its 88\% relative gap.}}{7}{figure.4}\protected@file@percent }
 \newlabel{fig:bar}{{4}{7}{\textbf {Seen vs.\ Unseen MSE.} \ours {} achieves the best balance: lowest unseen error among non-overfitting methods. SingleModule's small gap between bars masks its 88\% relative gap}{figure.4}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Capacity-matched ablation on SimplePhysics (single seed; absolute values differ from Tables\nobreakspace  {}\ref {tab:simple}--\ref {tab:multi} due to seed variance, but the opposing trends within this table are the key finding). Increasing capacity worsens SingleModule's gap (+30pp) but improves CausalComp's gap ($-$7pp), ruling out implicit regularization.}}{7}{table.4}\protected@file@percent }
-\newlabel{tab:capacity}{{4}{7}{Capacity-matched ablation on SimplePhysics (single seed; absolute values differ from Tables~\ref {tab:simple}--\ref {tab:multi} due to seed variance, but the opposing trends within this table are the key finding). Increasing capacity worsens SingleModule's gap (+30pp) but improves CausalComp's gap ($-$7pp), ruling out implicit regularization}{table.4}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Do typed modules learn specialized mechanisms?}{7}{subsection.4.5}\protected@file@percent }
-\newlabel{sec:transfer}{{4.5}{7}{Do typed modules learn specialized mechanisms?}{subsection.4.5}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Capacity-matched ablation on SimplePhysics (mean $\pm $ std over 3 seeds). Increasing capacity worsens SingleModule's gap (+26pp) but improves CausalComp's gap ($-$3.5pp), ruling out implicit regularization.}}{7}{table.4}\protected@file@percent }
+\newlabel{tab:capacity}{{4}{7}{Capacity-matched ablation on SimplePhysics (mean $\pm $ std over 3 seeds). Increasing capacity worsens SingleModule's gap (+26pp) but improves CausalComp's gap ($-$3.5pp), ruling out implicit regularization}{table.4}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.6}Sensitivity to $M$}{7}{subsection.4.6}\protected@file@percent }
 \newlabel{sec:m_curve}{{4.6}{7}{Sensitivity to $M$}{subsection.4.6}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces \textbf  {Capacity ablation.} More capacity worsens SingleModule's gap (+30pp) but improves CausalComp's ($-$7pp).}}{8}{figure.5}\protected@file@percent }
-\newlabel{fig:capacity}{{5}{8}{\textbf {Capacity ablation.} More capacity worsens SingleModule's gap (+30pp) but improves CausalComp's ($-$7pp)}{figure.5}{}}
+\citation{bear2021physion}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces \textbf  {Capacity ablation.} More capacity worsens SingleModule's gap (+26pp) but improves CausalComp's ($-$3.5pp).}}{8}{figure.5}\protected@file@percent }
+\newlabel{fig:capacity}{{5}{8}{\textbf {Capacity ablation.} More capacity worsens SingleModule's gap (+26pp) but improves CausalComp's ($-$3.5pp)}{figure.5}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces \textbf  {Sensitivity to $M$.} Gap follows a U-shape: $M{=}4$ is optimal, with mild increase for $M{>}8$.}}{8}{figure.6}\protected@file@percent }
 \newlabel{fig:mcurve}{{6}{8}{\textbf {Sensitivity to $M$.} Gap follows a U-shape: $M{=}4$ is optimal, with mild increase for $M{>}8$}{figure.6}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Representation analysis. Each typed module activates nearly identically on seen and unseen object pairs (cosine 0.998), while different types are near-orthogonal (cosine 0.066). This $15{\times }$ ratio confirms typed modules learn specialized, non-overlapping mechanisms.}}{8}{table.5}\protected@file@percent }
@@ -98,18 +99,17 @@
 \newlabel{sec:discussion}{{5}{8}{Discussion and limitations}{section.5}{}}
 \@writefile{toc}{\contentsline {paragraph}{Implicit regularization is ruled out.}{8}{section*.14}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{When does \textsc  {CausalComp}{} fail?}{8}{section*.15}\protected@file@percent }
-\citation{bear2021physion}
 \bibstyle{plainnat}
 \bibdata{references}
 \bibcite{battaglia2016interaction}{{1}{2016}{{Battaglia et~al.}}{{Battaglia, Pascanu, Lai, Rezende, and Kavukcuoglu}}}
 \bibcite{bear2021physion}{{2}{2021}{{Bear et~al.}}{{}}}
 \bibcite{wm3c2025}{{3}{2025}{{Chen et~al.}}{{}}}
+\bibcite{ha2018worldmodels}{{4}{2018}{{Ha and Schmidhuber}}{{}}}
+\bibcite{hafner2025dreamerv3}{{5}{2025}{{Hafner et~al.}}{{Hafner, Pasukonis, Ba, and Lillicrap}}}
 \@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces \textbf  {Representation specialization.} Left: per-type cosine similarity between seen and unseen activations (all $>$0.995). Red dashed line shows cross-type mean (0.066). Right: the $15{\times }$ gap between same-type and cross-type similarity confirms typed modules learn specialized, non-overlapping mechanisms.}}{9}{figure.7}\protected@file@percent }
 \newlabel{fig:transfer}{{7}{9}{\textbf {Representation specialization.} Left: per-type cosine similarity between seen and unseen activations (all $>$0.995). Red dashed line shows cross-type mean (0.066). Right: the $15{\times }$ gap between same-type and cross-type similarity confirms typed modules learn specialized, non-overlapping mechanisms}{figure.7}{}}
 \@writefile{toc}{\contentsline {paragraph}{Limitations.}{9}{section*.16}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {6}Conclusion}{9}{section.6}\protected@file@percent }
-\bibcite{ha2018worldmodels}{{4}{2018}{{Ha and Schmidhuber}}{{}}}
-\bibcite{hafner2025dreamerv3}{{5}{2025}{{Hafner et~al.}}{{Hafner, Pasukonis, Ba, and Lillicrap}}}
 \bibcite{jang2017gumbel}{{6}{2017}{{Jang et~al.}}{{Jang, Gu, and Poole}}}
 \bibcite{keysers2020measuring}{{7}{2020}{{Keysers et~al.}}{{Keysers, Sch{\"a}rli, Scales, Buiber, Furber, Kasber, et~al.}}}
 \bibcite{stica2026}{{8}{2026}{{Kim et~al.}}{{}}}
@@ -128,7 +128,7 @@
 \@writefile{toc}{\contentsline {section}{\numberline {A}Implementation details}{10}{appendix.A}\protected@file@percent }
 \newlabel{app:impl}{{A}{10}{Implementation details}{appendix.A}{}}
 \@writefile{toc}{\contentsline {paragraph}{Architecture.}{10}{section*.18}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Training.}{11}{section*.19}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Training.}{10}{section*.19}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{Synthetic environment.}{11}{section*.20}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {B}Qualitative results}{11}{appendix.B}\protected@file@percent }
 \@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces \textbf  {Trajectory prediction comparison.} (a) Ground-truth trajectories of 6 objects over 16 frames. (b) \textsc  {CausalComp}{} predictions closely track ground truth, including after collisions. (c) NoGraph baseline shows drift due to inability to model inter-object interactions. Filled circles show final positions; trails show full trajectories.}}{11}{figure.8}\protected@file@percent }

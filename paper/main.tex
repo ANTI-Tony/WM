@@ -242,30 +242,30 @@ To verify that \ours{} learns meaningful causal structure, we analyze the discov
 A natural concern is that typed modules reduce compositional gap simply by limiting model capacity. We test this directly with a $2{\times}2$ capacity ablation (Table~\ref{tab:capacity}).
 
 \begin{table}[t]
-    \caption{Capacity-matched ablation on SimplePhysics (single seed; absolute values differ from Tables~\ref{tab:simple}--\ref{tab:multi} due to seed variance, but the opposing trends within this table are the key finding). Increasing capacity worsens SingleModule's gap (+30pp) but improves CausalComp's gap ($-$7pp), ruling out implicit regularization.}
+    \caption{Capacity-matched ablation on SimplePhysics (mean $\pm$ std over 3 seeds). Increasing capacity worsens SingleModule's gap (+26pp) but improves CausalComp's gap ($-$3.5pp), ruling out implicit regularization.}
     \label{tab:capacity}
     \centering
     \begin{tabular}{lcccc}
         \toprule
         Model & Params & Seen MSE & Unseen MSE & Comp Gap $\downarrow$ \\
         \midrule
-        SingleModule-Std ($d{=}128$) & 316K & \textbf{0.030} & \textbf{0.058} & 96.2\% \\
-        SingleModule-Big ($d{=}256$) & 1.25M & 0.023 & 0.051 & 125.6\% \\
+        SingleModule-Std ($d{=}128$) & 316K & \textbf{0.034$\pm$0.003} & \textbf{0.059$\pm$0.000} & 75.5$\pm$14.8\% \\
+        SingleModule-Big ($d{=}256$) & 1.25M & 0.026$\pm$0.002 & 0.052$\pm$0.001 & 101.3$\pm$17.2\% \\
         \midrule
-        \ours{}-Std ($d{=}128$, $M{=}8$) & 845K & 0.046 & 0.073 & 59.6\% \\
-        \ours{}-Big ($d{=}256$, $M{=}8$) & \textbf{3.36M} & 0.048 & 0.074 & \textbf{52.9\%} \\
+        \ours{}-Std ($d{=}128$, $M{=}8$) & 845K & 0.049$\pm$0.002 & 0.073$\pm$0.001 & 49.8$\pm$6.9\% \\
+        \ours{}-Big ($d{=}256$, $M{=}8$) & \textbf{3.36M} & 0.052$\pm$0.003 & 0.076$\pm$0.002 & \textbf{46.3$\pm$5.2\%} \\
         \bottomrule
     \end{tabular}
 \end{table}
 
-The result is striking: \ours{}-Big has \textbf{2.7$\times$ more parameters} than SingleModule-Big, yet its gap is \textbf{2.4$\times$ lower} (52.9\% vs.\ 125.6\%). More capacity makes SingleModule worse (more memorization capacity $\to$ more overfitting), while \ours{} improves (more capacity per typed module $\to$ better mechanism learning). This definitively rules out implicit regularization: the gap reduction comes from the structural inductive bias of typed modules, not from capacity constraints. Figure~\ref{fig:capacity} visualizes these opposing trends.
+The result is striking: \ours{}-Big has \textbf{2.7$\times$ more parameters} than SingleModule-Big, yet its gap is \textbf{2.2$\times$ lower} (46.3\% vs.\ 101.3\%). More capacity makes SingleModule worse (gap $+$26pp), while \ours{} improves (gap $-$3.5pp). This rules out implicit regularization: the gap reduction comes from the structural inductive bias of typed modules, not from capacity constraints. Figure~\ref{fig:capacity} visualizes these opposing trends.
 
 \begin{figure}[t]
     \centering
     \begin{minipage}{0.48\linewidth}
         \centering
         \includegraphics[width=\linewidth]{figures/capacity_ablation.pdf}
-        \caption{\textbf{Capacity ablation.} More capacity worsens SingleModule's gap (+30pp) but improves CausalComp's ($-$7pp).}
+        \caption{\textbf{Capacity ablation.} More capacity worsens SingleModule's gap (+26pp) but improves CausalComp's ($-$3.5pp).}
         \label{fig:capacity}
     \end{minipage}\hfill
     \begin{minipage}{0.48\linewidth}
@@ -326,7 +326,7 @@ Autoregressive rollout eliminates this shortcut by feeding predicted (not ground
 \label{sec:discussion}
 %==============================================================================
 
-\paragraph{Implicit regularization is ruled out.} Section~\ref{sec:capacity} and Table~\ref{tab:capacity} directly test whether typed modules' advantage is merely capacity limitation. The $2{\times}2$ ablation shows that increasing capacity makes SingleModule's gap worse ($+$30pp) while making \ours{}'s gap better ($-$7pp)---even when \ours{} has 2.7$\times$ more parameters. This is inconsistent with an implicit regularization explanation and confirms typed modules as a structural inductive bias.
+\paragraph{Implicit regularization is ruled out.} Section~\ref{sec:capacity} and Table~\ref{tab:capacity} directly test whether typed modules' advantage is merely capacity limitation. The $2{\times}2$ ablation shows that increasing capacity makes SingleModule's gap worse ($+$26pp) while making \ours{}'s gap better ($-$3.5pp)---even when \ours{} has 2.7$\times$ more parameters. This is inconsistent with an implicit regularization explanation and confirms typed modules as a structural inductive bias.
 
 \paragraph{When does \ours{} fail?} \ours{} struggles when (a) the environment has only one interaction type (NRI Springs), where typed modules provide no advantage; (b) edge supervision does not cover all interaction types---on MultiPhysics, supervision uses only collision events, missing continuous force-based interactions (gravity, charge). Extending supervision to proximity-based proxies for continuous forces is a natural next step that we expect to further improve unseen MSE; and (c) the number of types $M$ is misspecified---too few types conflate distinct mechanisms, while too many fragment the training data per module (Section~\ref{sec:m_curve}).
 
