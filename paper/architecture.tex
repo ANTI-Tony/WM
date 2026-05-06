@@ -12,8 +12,8 @@
 
 % ===== Outer border =====
 \begin{scope}[on background layer]
-    \fill[gray!6, rounded corners=8pt] (-1.8,-2.7) rectangle (17.2,3.6);
-    \draw[gray!30, rounded corners=8pt, line width=0.8pt] (-1.8,-2.7) rectangle (17.2,3.6);
+    \fill[gray!6, rounded corners=8pt] (-1.8,-3.5) rectangle (17.2,3.6);
+    \draw[gray!30, rounded corners=8pt, line width=0.8pt] (-1.8,-3.5) rectangle (17.2,3.6);
 \end{scope}
 
 % ===== Main modules =====
@@ -80,8 +80,8 @@
 
 % ===== Autoregressive rollout arrow =====
 % Simple path: below all boxes, from decoder side to encoder side
-\coordinate (ar_br) at ($(dec.south)+(0,-1.6)$);
-\coordinate (ar_bl) at ($(enc.south)+(0,-1.6)$);
+\coordinate (ar_br) at ($(dec.south)+(0,-2.4)$);
+\coordinate (ar_bl) at ($(enc.south)+(0,-2.4)$);
 
 \draw[
     ->,

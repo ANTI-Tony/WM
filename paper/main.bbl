@@ -1,9 +1,15 @@
-\begin{thebibliography}{20}
+\begin{thebibliography}{29}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
   \providecommand{\doi}[1]{doi: #1}\else
   \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Alet et~al.(2019)Alet, Weng, Lozano-P{\'e}rez, and
+  Kaelbling]{alet2019modular}
+Ferran Alet, Erica Weng, Tom{\'a}s Lozano-P{\'e}rez, and Leslie~Pack Kaelbling.
+\newblock Modular meta-learning.
+\newblock In \emph{Conference on Robot Learning}, 2019.
 
 \bibitem[Baek et~al.(2025)Baek, Wu, Singh, and Ahn]{dreamweaver2025}
 Junyeob Baek, Yi-Fu Wu, Gautam Singh, and Sungjin Ahn.
@@ -24,11 +30,35 @@ Daniel Bear et~al.
   machines.
 \newblock In \emph{NeurIPS Datasets and Benchmarks}, 2021.
 
+\bibitem[Bengio et~al.(2020)Bengio, Deleu, Rahaman, Ke, Lachapelle, Bilaniuk,
+  Goyal, and Pal]{bengio2020machine}
+Yoshua Bengio, Tristan Deleu, Nasim Rahaman, Nan~Rosemary Ke, S{\'e}bastien
+  Lachapelle, Olexa Bilaniuk, Anirudh Goyal, and Christopher Pal.
+\newblock A meta-transfer objective for learning to disentangle causal
+  mechanisms.
+\newblock \emph{International Conference on Learning Representations}, 2020.
+
 \bibitem[Feng et~al.(2025)Feng, Lippe, and Magliacane]{fiocwm2025}
 Fan Feng, Phillip Lippe, and Sara Magliacane.
 \newblock Learning interactive world model for object-centric reinforcement
   learning.
 \newblock In \emph{Advances in Neural Information Processing Systems}, 2025.
+
+\bibitem[Goyal et~al.(2021)Goyal, Lamb, Hoffmann, Sodhani, Levine, Bengio, and
+  Sch{\"o}lkopf]{goyal2021recurrent}
+Anirudh Goyal, Alex Lamb, Jordan Hoffmann, Shagun Sodhani, Sergey Levine,
+  Yoshua Bengio, and Bernhard Sch{\"o}lkopf.
+\newblock Recurrent independent mechanisms.
+\newblock In \emph{International Conference on Learning Representations}, 2021.
+
+\bibitem[Greff et~al.(2019)Greff, Kaufman, Kabra, Watters, Burgess, Zoran,
+  Matthey, Botvinick, and Lerchner]{greff2019multi}
+Klaus Greff, Raphael~Lopez Kaufman, Rishabh Kabra, Nick Watters, Christopher
+  Burgess, Daniel Zoran, Loic Matthey, Matthew Botvinick, and Alexander
+  Lerchner.
+\newblock Multi-object representation learning with iterative variational
+  inference.
+\newblock In \emph{International Conference on Machine Learning}, 2019.
 
 \bibitem[Ha and Schmidhuber(2018)]{ha2018worldmodels}
 David Ha and J{\"u}rgen Schmidhuber.
@@ -41,10 +71,14 @@ Danijar Hafner, Jurgis Pasukonis, Jimmy Ba, and Timothy Lillicrap.
 \newblock Mastering diverse control tasks through world models.
 \newblock \emph{Nature}, 640\penalty0 (8059):\penalty0 647--653, 2025.
 
-\bibitem[Jang et~al.(2017)Jang, Gu, and Poole]{jang2017gumbel}
-Eric Jang, Shixiang Gu, and Ben Poole.
-\newblock Categorical reparameterization with {G}umbel-{S}oftmax.
-\newblock In \emph{International Conference on Learning Representations}, 2017.
+\bibitem[Johnson et~al.(2017)Johnson, Hariharan, van~der Maaten, Fei-Fei,
+  Zitnick, and Girshick]{johnson2017clevr}
+Justin Johnson, Bharath Hariharan, Laurens van~der Maaten, Li~Fei-Fei,
+  C~Lawrence Zitnick, and Ross Girshick.
+\newblock {CLEVR}: A diagnostic dataset for compositional language and
+  elementary visual reasoning.
+\newblock In \emph{IEEE Conference on Computer Vision and Pattern Recognition},
+  2017.
 
 \bibitem[Keysers et~al.(2020)Keysers, Sch{\"a}rli, Scales, Buisman, Furrer,
   Kashubin, et~al.]{keysers2020measuring}
@@ -81,6 +115,19 @@ Anson Lei, Bernhard Sch{\"o}lkopf, and Ingmar Posner.
   interventions.
 \newblock \emph{arXiv preprint arXiv:2206.11131}, 2022.
 
+\bibitem[Li et~al.(2020)Li, Torralba, Anandkumar, Fox, and Garg]{li2020causal}
+Yunzhu Li, Antonio Torralba, Animashree Anandkumar, Dieter Fox, and Animesh
+  Garg.
+\newblock Causal discovery in physical systems from videos.
+\newblock In \emph{Advances in Neural Information Processing Systems}, 2020.
+
+\bibitem[Locatello et~al.(2020)Locatello, Weissenborn, Unterthiner, Mahendran,
+  Heigold, Uszkoreit, Dosovitskiy, and Kipf]{locatello2020slotattention}
+Francesco Locatello, Dirk Weissenborn, Thomas Unterthiner, Aravindh Mahendran,
+  Georg Heigold, Jakob Uszkoreit, Alexei Dosovitskiy, and Thomas Kipf.
+\newblock Object-centric learning with slot attention.
+\newblock In \emph{Advances in Neural Information Processing Systems}, 2020.
+
 \bibitem[Nam et~al.(2026)Nam, Le~Lidec, Maes, LeCun, and
   Balestriero]{causaljepa2026}
 Heejeong Nam, Quentin Le~Lidec, Lucas Maes, Yann LeCun, and Randall
@@ -89,10 +136,17 @@ Heejeong Nam, Quentin Le~Lidec, Lucas Maes, Yann LeCun, and Randall
   interventions.
 \newblock \emph{arXiv preprint arXiv:2602.11389}, 2026.
 
-\bibitem[Richens and Everitt(2024)]{richens2024robust}
-Jonathan Richens and Tom Everitt.
-\newblock Robust agents learn causal world models.
-\newblock In \emph{International Conference on Learning Representations}, 2024.
+\bibitem[Pearl(2009)]{pearl2009causality}
+Judea Pearl.
+\newblock Causality.
+\newblock Cambridge University Press, 2009.
+
+\bibitem[Sanchez-Gonzalez et~al.(2020)Sanchez-Gonzalez, Godwin, Pfaff, Ying,
+  Leskovec, and Battaglia]{sanchez2020learning}
+Alvaro Sanchez-Gonzalez, Jonathan Godwin, Tobias Pfaff, Rex Ying, Jure
+  Leskovec, and Peter Battaglia.
+\newblock Learning to simulate complex physics with graph networks.
+\newblock In \emph{International Conference on Machine Learning}, 2020.
 
 \bibitem[Sch{\"o}lkopf et~al.(2021)Sch{\"o}lkopf, Locatello, Bauer, Ke,
   Kalchbrenner, Goyal, and Bengio]{scholkopf2021causal}
@@ -114,6 +168,13 @@ Ziyi Wu, Nikita Dvornik, Klaus Greff, Thomas Kipf, and Animesh Garg.
   object-centric models.
 \newblock In \emph{International Conference on Learning Representations}, 2023.
 
+\bibitem[Yi et~al.(2020)Yi, Gan, Li, Kohli, Wu, Torralba, and
+  Tenenbaum]{yi2020clevrer}
+Kexin Yi, Chuang Gan, Yunzhu Li, Pushmeet Kohli, Jiajun Wu, Antonio Torralba,
+  and Joshua~B Tenenbaum.
+\newblock {CLEVRER}: Collision events for video representation and reasoning.
+\newblock In \emph{International Conference on Learning Representations}, 2020.
+
 \bibitem[Yu et~al.(2024)Yu, Ruan, and Xing]{oocdm2024}
 Zhongwei Yu, Jingqing Ruan, and Dengpeng Xing.
 \newblock Learning causal dynamics models in object-oriented environments.
@@ -123,5 +184,11 @@ Zhongwei Yu, Jingqing Ruan, and Dengpeng Xing.
 Hongxin Zhang et~al.
 \newblock Compositional world models for embodied multi-agent cooperation.
 \newblock In \emph{International Conference on Learning Representations}, 2025.
+
+\bibitem[Zhao et~al.(2022)Zhao, Kong, Walters, and Wong]{zhao2022toward}
+Linfeng Zhao, Lingzhi Kong, Robin Walters, and Lawson~L.S. Wong.
+\newblock Toward compositional generalization in object-oriented world
+  modeling.
+\newblock In \emph{International Conference on Machine Learning}, 2022.
 
 \end{thebibliography}

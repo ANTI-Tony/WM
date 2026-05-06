@@ -3,44 +3,46 @@ Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: main.aux
 The style file: plainnat.bst
 Database file #1: references.bib
-You've used 20 entries,
+Warning--empty booktitle in pearl2009causality
+You've used 29 entries,
             2773 wiz_defined-function locations,
-            680 strings with 7965 characters,
-and the built_in function-call counts, 9266 in all, are:
-= -- 733
-> -- 683
+            712 strings with 9924 characters,
+and the built_in function-call counts, 14856 in all, are:
+= -- 1136
+> -- 1248
 < -- 7
-+ -- 230
-- -- 210
-* -- 731
-:= -- 1460
-add.period$ -- 60
-call.type$ -- 20
-change.case$ -- 125
-chr.to.int$ -- 20
-cite$ -- 40
-duplicate$ -- 443
-empty$ -- 754
-format.name$ -- 238
-if$ -- 1923
++ -- 419
+- -- 390
+* -- 1241
+:= -- 2360
+add.period$ -- 87
+call.type$ -- 29
+change.case$ -- 212
+chr.to.int$ -- 29
+cite$ -- 59
+duplicate$ -- 654
+empty$ -- 1111
+format.name$ -- 425
+if$ -- 3050
 int.to.chr$ -- 1
 int.to.str$ -- 1
-missing$ -- 20
-newline$ -- 108
-num.names$ -- 80
-pop$ -- 299
+missing$ -- 29
+newline$ -- 153
+num.names$ -- 116
+pop$ -- 506
 preamble$ -- 1
-purify$ -- 105
+purify$ -- 183
 quote$ -- 0
-skip$ -- 319
+skip$ -- 485
 stack$ -- 0
-substring$ -- 90
-swap$ -- 32
+substring$ -- 108
+swap$ -- 48
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 220
-warning$ -- 0
-while$ -- 64
+type$ -- 319
+warning$ -- 1
+while$ -- 91
 width$ -- 0
-write$ -- 249
+write$ -- 357
+(There was 1 warning)
