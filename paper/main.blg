@@ -3,46 +3,44 @@ Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: main.aux
 The style file: plainnat.bst
 Database file #1: references.bib
-Warning--empty booktitle in pearl2009causality
 You've used 29 entries,
             2773 wiz_defined-function locations,
-            712 strings with 9924 characters,
-and the built_in function-call counts, 14856 in all, are:
-= -- 1136
+            713 strings with 9961 characters,
+and the built_in function-call counts, 14860 in all, are:
+= -- 1133
 > -- 1248
 < -- 7
 + -- 419
 - -- 390
-* -- 1241
+* -- 1243
 := -- 2360
 add.period$ -- 87
 call.type$ -- 29
 change.case$ -- 212
 chr.to.int$ -- 29
-cite$ -- 59
-duplicate$ -- 654
-empty$ -- 1111
+cite$ -- 58
+duplicate$ -- 656
+empty$ -- 1115
 format.name$ -- 425
-if$ -- 3050
+if$ -- 3052
 int.to.chr$ -- 1
 int.to.str$ -- 1
-missing$ -- 29
+missing$ -- 30
 newline$ -- 153
 num.names$ -- 116
-pop$ -- 506
+pop$ -- 508
 preamble$ -- 1
 purify$ -- 183
 quote$ -- 0
-skip$ -- 485
+skip$ -- 484
 stack$ -- 0
 substring$ -- 108
-swap$ -- 48
+swap$ -- 49
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 319
-warning$ -- 1
+type$ -- 314
+warning$ -- 0
 while$ -- 91
 width$ -- 0
-write$ -- 357
-(There was 1 warning)
+write$ -- 358

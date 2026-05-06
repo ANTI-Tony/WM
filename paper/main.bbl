@@ -36,7 +36,7 @@ Yoshua Bengio, Tristan Deleu, Nasim Rahaman, Nan~Rosemary Ke, S{\'e}bastien
   Lachapelle, Olexa Bilaniuk, Anirudh Goyal, and Christopher Pal.
 \newblock A meta-transfer objective for learning to disentangle causal
   mechanisms.
-\newblock \emph{International Conference on Learning Representations}, 2020.
+\newblock In \emph{International Conference on Learning Representations}, 2020.
 
 \bibitem[Feng et~al.(2025)Feng, Lippe, and Magliacane]{fiocwm2025}
 Fan Feng, Phillip Lippe, and Sara Magliacane.
@@ -138,8 +138,8 @@ Heejeong Nam, Quentin Le~Lidec, Lucas Maes, Yann LeCun, and Randall
 
 \bibitem[Pearl(2009)]{pearl2009causality}
 Judea Pearl.
-\newblock Causality.
-\newblock Cambridge University Press, 2009.
+\newblock \emph{Causality: Models, Reasoning, and Inference}.
+\newblock Cambridge University Press, 2nd edition, 2009.
 
 \bibitem[Sanchez-Gonzalez et~al.(2020)Sanchez-Gonzalez, Godwin, Pfaff, Ying,
   Leskovec, and Battaglia]{sanchez2020learning}
