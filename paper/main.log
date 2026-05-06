@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.9.2)  6 MAY 2026 15:04
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.9.2)  6 MAY 2026 15:18
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1005,11 +1005,11 @@ s been already used, duplicate ignored
 l.351 
        <./figures/graph_discovery.pdf> <./figures/edge_distribution.pdf> <./fig
 ures/compositional_bar.pdf>]
-<figures/transferability.pdf, id=440, 491.31116pt x 187.2695pt>
+<figures/transferability.pdf, id=440, 238.36617pt x 201.85187pt>
 File: figures/transferability.pdf Graphic file (type pdf)
 <use figures/transferability.pdf>
 Package pdftex.def Info: figures/transferability.pdf  used on input line 376.
-(pdftex.def)             Requested size: 397.48499pt x 151.51314pt.
+(pdftex.def)             Requested size: 397.48499pt x 336.62631pt.
  [8
 pdfTeX warning (ext4): destination with the same identifier (name{table.2}) has
  been already used, duplicate ignored
@@ -1027,14 +1027,14 @@ pdfTeX warning (ext4): destination with the same identifier (name{table.3}) has
  been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.408 
+l.400 
       
 pdfTeX warning (ext4): destination with the same identifier (name{figure.6}) ha
 s been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.408 
-       <./figures/transferability.pdf>] (./main.bbl [10])
+l.400 
+       <./figures/transferability.pdf>] (./main.bbl [10]) [11]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `math shift' on input line 427.
@@ -1043,38 +1043,41 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `math shift' on input line 427.
 
-[11]
-<figures/m_curve.pdf, id=610, 317.39578pt x 199.35667pt>
+<figures/m_curve.pdf, id=586, 317.39578pt x 199.35667pt>
 File: figures/m_curve.pdf Graphic file (type pdf)
 <use figures/m_curve.pdf>
 Package pdftex.def Info: figures/m_curve.pdf  used on input line 434.
 (pdftex.def)             Requested size: 218.61795pt x 137.31592pt.
-<figures/trajectory_prediction.pdf, id=611, 850.54701pt x 294.02725pt>
+[12
+pdfTeX warning (ext4): destination with the same identifier (name{figure.7}) ha
+s been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.450 
+       <./figures/m_curve.pdf>]
+<figures/trajectory_prediction.pdf, id=642, 850.54701pt x 294.02725pt>
 File: figures/trajectory_prediction.pdf Graphic file (type pdf)
 <use figures/trajectory_prediction.pdf>
 Package pdftex.def Info: figures/trajectory_prediction.pdf  used on input line 
 457.
 (pdftex.def)             Requested size: 397.48499pt x 137.40768pt.
- [12
-pdfTeX warning (ext4): destination with the same identifier (name{figure.7}) ha
-s been already used, duplicate ignored
-<argument> ...shipout:D \box_use:N \l_shipout_box 
-                                                  \__shipout_drop_firstpage_...
-l.462 \newpage
-               <./figures/m_curve.pdf>] (./checklist.tex [13
+ [13
 pdfTeX warning (ext4): destination with the same identifier (name{figure.8}) ha
 s been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.27     \item[]
-                 Question: Does the paper provide open access to the data an...
- <./figures/trajectory_prediction.pdf>] [14]) [15] (./main.aux)
+l.462 \newpage
+               <./figures/trajectory_prediction.pdf>] (./checklist.tex [14]
+[15]) [16] (./main.aux)
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
 Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: 62A3BF5435A15EB7621D12EF93A4A274;2543.
  ) 
 Here is how much of TeX's memory you used:
- 25589 strings out of 476025
- 472941 string characters out of 5790018
+ 25590 strings out of 476025
+ 472948 string characters out of 5790018
  1879388 words of memory out of 5000000
  45080 multiletter control sequences out of 15000+600000
  591260 words of font info for 339 fonts, out of 8000000 for 9000
@@ -1109,10 +1112,10 @@ t/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/local/texlive/2023/texmf-dist/fonts
 /type1/urw/times/utmb8a.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/urw
 /times/utmr8a.pfb></usr/local/texlive/2023/texmf-dist/fonts/type1/urw/times/utm
 ri8a.pfb>
-Output written on main.pdf (15 pages, 503456 bytes).
+Output written on main.pdf (16 pages, 497115 bytes).
 PDF statistics:
- 880 PDF objects out of 1000 (max. 8388607)
- 495 compressed objects within 5 object streams
- 109 named destinations out of 1000 (max. 500000)
+ 863 PDF objects out of 1000 (max. 8388607)
+ 494 compressed objects within 5 object streams
+ 110 named destinations out of 1000 (max. 500000)
  73392 words of extra memory for PDF output out of 74296 (max. 10000000)
 

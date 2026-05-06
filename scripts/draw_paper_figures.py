@@ -199,42 +199,27 @@ def fig_capacity(out_dir):
 
 
 def fig_transfer(out_dir):
-    """Figure: Transferability cosine similarity — real data from mech.log."""
-    # Per-type cosines from actual experiment
+    """Figure: Transferability cosine similarity — summary only."""
     per_type = [0.9981, 0.9987, 0.9986, 0.9979, 0.9956, 0.9979, 0.9978, 0.9976]
     cross_mean = 0.0655
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(7, 2.8), gridspec_kw={"width_ratios": [3, 1.2]})
+    fig, ax = plt.subplots(figsize=(3.5, 3))
 
-    # Left: per-type cosines
-    x = range(8)
-    ax1.bar(x, per_type, color=C["blue"], alpha=0.85, edgecolor="white", linewidth=0.5)
-    ax1.axhline(y=cross_mean, color=C["red"], linestyle="--", linewidth=1.2, label=f"Cross-type mean ({cross_mean:.3f})")
-    ax1.set_xlabel("Interaction Type $\\tau$")
-    ax1.set_ylabel("Cosine Similarity")
-    ax1.set_xticks(x)
-    ax1.set_xticklabels([f"$f^{i+1}$" for i in range(8)])
-    ax1.set_ylim(0, 1.1)
-    ax1.legend(loc="lower left", frameon=True, fancybox=False, edgecolor="#ccc")
-    ax1.set_title("Same-type: seen vs. unseen", fontsize=10)
-
-    # Right: summary comparison
-    labels = ["Same-type\nseen↔unseen", "Cross-type\nwithin seen"]
+    labels = ["Same-type\nseen$\\leftrightarrow$unseen", "Cross-type\nwithin seen"]
     vals = [np.mean(per_type), cross_mean]
     colors_bar = [C["blue"], C["red"]]
-    ax2.bar(range(2), vals, color=colors_bar, alpha=0.85, edgecolor="white", width=0.6)
-    ax2.set_xticks(range(2))
-    ax2.set_xticklabels(labels, fontsize=8)
-    ax2.set_ylabel("Cosine Similarity")
-    ax2.set_ylim(0, 1.1)
-    ax2.set_title("Summary", fontsize=10)
+    ax.bar(range(2), vals, color=colors_bar, alpha=0.85, edgecolor="white", width=0.55)
+    ax.set_xticks(range(2))
+    ax.set_xticklabels(labels, fontsize=9)
+    ax.set_ylabel("Cosine Similarity")
+    ax.set_ylim(0, 1.15)
 
     for i, v in enumerate(vals):
-        ax2.text(i, v + 0.03, f"{v:.3f}", ha="center", fontsize=9, fontweight="bold",
+        ax.text(i, v + 0.03, f"{v:.3f}", ha="center", fontsize=10, fontweight="bold",
                 color=colors_bar[i])
 
     # 15x annotation
-    ax2.annotate("15×", xy=(0.5, 0.55), fontsize=14, fontweight="bold",
+    ax.annotate("15$\\times$", xy=(0.5, 0.55), fontsize=14, fontweight="bold",
                 color=C["dark"], ha="center")
 
     plt.tight_layout()
