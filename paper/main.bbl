@@ -88,12 +88,6 @@ Daniel Keysers, Nathanael Sch{\"a}rli, Nathan Scales, Hylke Buisman, Daniel
   realistic data.
 \newblock In \emph{International Conference on Learning Representations}, 2020.
 
-\bibitem[Kim et~al.(2025)]{stica2026}
-Hyunseo Kim et~al.
-\newblock Slot transformer imagination with causality-aware reinforcement
-  learning.
-\newblock \emph{arXiv preprint arXiv:2511.14262}, 2025.
-
 \bibitem[Kipf et~al.(2018)Kipf, Fetaya, Wang, Welling, and Zemel]{kipf2018nri}
 Thomas Kipf, Ethan Fetaya, Kuan-Chieh Wang, Max Welling, and Richard Zemel.
 \newblock Neural relational inference for interacting systems.
@@ -135,6 +129,12 @@ Heejeong Nam, Quentin Le~Lidec, Lucas Maes, Yann LeCun, and Randall
 \newblock Causal-{JEPA}: Learning world models through object-level latent
   interventions.
 \newblock \emph{arXiv preprint arXiv:2602.11389}, 2026.
+
+\bibitem[Nishimoto and Matsubara(2026)]{stica2026}
+Yosuke Nishimoto and Takashi Matsubara.
+\newblock Object-centric world models for causality-aware reinforcement
+  learning.
+\newblock In \emph{AAAI Conference on Artificial Intelligence}, 2026.
 
 \bibitem[Pearl(2009)]{pearl2009causality}
 Judea Pearl.
